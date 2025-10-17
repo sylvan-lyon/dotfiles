@@ -1,0 +1,161 @@
+format = "$os$time$username$hostname$directory$git_branch$git_state$git_status$character"
+
+add_newline = false
+scan_timeout = 30
+palette = "catppuccin_mocha"
+
+[palettes.catppuccin_mocha]
+# 标准颜色
+black = "#585b70"
+red = "#f38ba8"
+green = "#a6e3a1"
+yellow = "#f9e2af"
+blue = "#89b4fa"
+purple = "#f5c2e7"
+cyan = "#94e2d5"
+white = "#bac2de"
+
+# 更亮的颜色
+bright_black = "#585b70"
+bright_red = "#f37799"
+bright_green = "#89d88b"
+bright_yellow = "#ebd391"
+bright_blue = "#74a8fc"
+bright_purple = "#f2aede"
+bright_cyan = "#6bd7ca"
+bright_white = "#bac2de"
+
+# cappuccin_mocha 的颜色
+peach = "#fab387"
+rosewater = "#f5e0dc"
+lavender = "#b4befe"
+crust = "#11111b"
+mauve = "#cba6f7"
+sapphire = "#74c7ec"
+
+# catppuccin_mocha 的变体颜色
+dimmed_mauve = "#65537b"
+dimmed_lavender = "#5a5f7f"
+
+[os]
+format = "[$symbol]($style)"
+style = "dimmed_lavender"
+disabled = false
+
+[time]
+disabled = false
+time_format = "%R" # 小时:分钟（二十四小时制）
+format = '[\[$time\]]($style)[ ]()'
+style = "dimmed_mauve bold"
+
+[username]
+style_root = "bold mauve"
+style_user = "bold mauve"
+show_always = true
+format = "[$user]($style)"
+
+[hostname]
+style = "bold mauve"
+ssh_only = false
+format = "[@$hostname ]($style)"
+
+[directory]
+truncation_length = 5
+truncation_symbol = "…/"
+truncate_to_repo = true
+use_os_path_sep = false # 在 Windows 下也是 "/" 作为分隔符
+style = "bold lavender underline"
+
+# 普通的路径
+format = """\
+[$path]($style)\
+[$read_only]($read_only_style)\
+[ ](none)\
+"""
+
+# git 仓库的路径
+repo_root_style = "bold lavender underline"
+repo_root_format = """\
+[$repo_root]($repo_root_style)\
+[$path]($style)\
+[$read_only]($read_only_style)\
+[ ](none)\
+"""
+
+[git_branch]
+format = "[$symbol$branch]($style)[ ](none)"
+symbol = ""
+style = "white"
+
+[git_state]
+format = "[$state](none)[ ](none)"
+merge = "[MERGING](yellow bold)"
+
+[git_status]
+format = "[$conflicted$diverged$staged$deleted$renamed$modified$untracked$up_to_date](none)"
+conflicted = '[$count\(C\)](black bg:red)[ ](none)'
+diverged   = '[$count\(D\)](black bg:red)[ ](none)'
+staged     = '[$count\(✓\)](bright_green)[ ](none)'
+deleted    = '[$count\(-\)](red dimmed)[ ](none)'
+renamed    = '[$count\(r\)](yellow dimmed)[ ](none)'
+modified   = '[$count\(m\)](yellow dimmed)[ ](none)'
+untracked  = '[$count\(+\)](green dimmed)[ ](none)'
+up_to_date = '[  ](bright_green)'
+ignore_submodules = true
+
+[character]
+error_symbol = "[»](bold bright_red)"
+success_symbol = "[»](bold cyan)"
+
+[os.symbols]
+AIX = "AIX"
+Alpaquita = "Alpaquita"
+AlmaLinux = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+Bluefin = "Bluefin"
+CachyOS = "CachyOS"
+CentOS = " "
+Debian = " "
+DragonFly = "DragonFly"
+Emscripten = "Emscripten"
+EndeavourOS = "EndeavourOS"
+Fedora = " "
+FreeBSD = " "
+Garuda = " "
+Gentoo = " "
+HardenedBSD = "HardenedBSD"
+Illumos = " "
+Kali = " "
+Linux = " "
+Mabox = "Mabox"
+Macos = " "
+Manjaro = " "
+Mariner = "Mariner"
+MidnightBSD = "MidnightBSD"
+Mint = "󰣭 "
+NetBSD = "NetBSD"
+NixOS = " "
+Nobara = " "
+OpenBSD = " "
+OpenCloudOS = "OpenCloudOS"
+openEuler = "openEuler"
+openSUSE = " "
+OracleLinux = "OracleLinux"
+Pop = " "
+Raspbian = "Raspbian"
+Redhat = " "
+RedHatEnterprise = "RedHatEnterprise"
+RockyLinux = " "
+Redox = "Redox"
+Solus = " "
+SUSE = " "
+Ubuntu = " "
+Ultramarine = "Ultramarine"
+Unknown = "Unknown"
+Uos = "Uos"
+Void = " "
+Windows = " "

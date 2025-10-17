@@ -1,0 +1,9 @@
+[[mgr.prepend_keymap]]
+on   = [ "g", "p" ]
+run  = 'cd "D:\\code"'
+desc = 'Jump to "D:/code"'
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "d" ]
+run  = 'cd "D:\\下载"'
+desc = 'Jump to "D:/download"'
