@@ -106,7 +106,7 @@ keymaps.keys = {
         key = '!',
         mods = 'CTRL|SHIFT',
         action = act.SpawnTab {
-            DomainName = "wsl:ubuntu",
+            DomainName = "wsl:fedora",
         },
     },
     {

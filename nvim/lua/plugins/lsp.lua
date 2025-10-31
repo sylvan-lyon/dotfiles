@@ -61,29 +61,24 @@ return {
                 local map = function(mode, lhs, rhs, desc)
                     vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true, noremap = true })
                 end
-                -- vscode 的默认键位绑定
-                map("n", "<F12>", vim.lsp.buf.definition, "[LSP] 转到定义")
-                map("n", "<S-F12>", vim.lsp.buf.references, "[LSP] 转到引用")
-                map("n", "<C-F12>", vim.lsp.buf.implementation, "[LSP] 转到实现")
-                map("n", "<F2>", vim.lsp.buf.rename, "[LSP] 符号重命名")
-                map("n", "<C-.>", vim.lsp.buf.code_action, "[LSP] Code Action")
 
                 -- 跳转
                 map("n", "gd", vim.lsp.buf.definition, "[LSP] 转到定义")
-                map("n", "gr", vim.lsp.buf.references, "[LSP] 转到引用")
-                map("n", "gi", vim.lsp.buf.implementation, "[LSP] 转到实现")
-                map("n", "gt", vim.lsp.buf.type_definition, "[LSP] 类型定义")
+                map("n", "gD", vim.lsp.buf.declaration, "[LSP] 转到声明")
+                map("n", "gy", vim.lsp.buf.type_definition, "[LSP] 转到类型定义")
+                map("n", "gI", vim.lsp.buf.implementation, "[LSP] 转到实现")
+                map("n", "gA", vim.lsp.buf.references, "[LSP] 转到当前选中单词的引用")
+                map("n", "gs", vim.lsp.buf.document_symbol, "[LSP] 此 buffer 的所有符号")
+                map("n", "gS", vim.lsp.buf.workspace_symbol, "[LSP] 此项目的所有符号")
 
-                -- 信息
-                map("n", "K", vim.lsp.buf.hover, "[LSP] 查看文档")
-                map("n", "<leader>rn", vim.lsp.buf.rename, "[LSP] 符号重命名")
-                map({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, "[LSP] Code Action")
+                map("n", "cd", vim.lsp.buf.rename, "[LSP] 重命名")
 
                 -- 诊断
                 map("n", "gl", vim.diagnostic.open_float, "[LSP] 查看代码诊断")
-                map("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "[LSP] 上一个代码诊断")
-                map("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "[LSP] 下一个代码诊断")
-
+                map("n", "g[", function() vim.diagnostic.jump({ count = -1, float = true }) end, "[LSP] 上一个代码诊断")
+                map("n", "g]", function() vim.diagnostic.jump({ count = 1, float = true }) end, "[LSP] 下一个代码诊断")
+                map("n", "gh", vim.lsp.buf.hover, "[LSP] 查看 inline hints")
+                map("n", "g.", vim.lsp.buf.code_action, "[LSP] 打开 code actions")
                 -- 格式化
                 map("n", "<leader>cf", function()
                     vim.lsp.buf.format { async = true }

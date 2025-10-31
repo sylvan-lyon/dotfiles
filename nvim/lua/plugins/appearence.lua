@@ -27,6 +27,28 @@ return {
     },
 
     {
+        "nvim-neo-tree/neo-tree.nvim",
+        branch = "v3.x",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+            "nvim-tree/nvim-web-devicons",
+        },
+        lazy = false,
+        keys = {
+            { mode = "n", "<leader>e", "<CMD>Neotree toggle=true<CR>", desc = "[NEO TREE] 打开文件树" }
+        }
+    },
+
+    {
+        "HiPhish/rainbow-delimiters.nvim",
+        main = "rainbow-delimiters.setup",
+        submodules = false,
+        opts = {}
+    },
+
+
+    {
         -- 底部栏美化
         "nvim-lualine/lualine.nvim",
         dependencies = {
@@ -49,28 +71,10 @@ return {
                 "mason", "nvim-tree", "lazy"
             }
         },
-        -- 不知道为什么用不了
-        config = function(_, opts)
-            local function show_macro_recording()
-                local recording_register = vim.fn.reg_recording()
-                if recording_register ~= '' then
-                    return 'RECORDING @' .. recording_register
-                else
-                    return ''
-                end
-            end
-
-            local macro_recording = {
-                show_macro_recording,
-                padding = 0,
-            }
-
-            table.insert(opts.sections.lualine_x, macro_recording)
-            require("lualine").setup(opts)
-        end
     },
 
     {
+        -- 顶部的 tab 栏
         'akinsho/bufferline.nvim',
         version = "*",
         dependencies = 'nvim-tree/nvim-web-devicons',
@@ -81,7 +85,7 @@ return {
                 numbers = "ordinal",
                 diagnostics = "nvim_lsp",
                 offsets = { {
-                    filetype = "snacks_layout_box",
+                    filetype = "NvimTree",
                     text = "",
                     highlight = "Directory",
                     text_align = "left"

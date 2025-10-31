@@ -10,8 +10,8 @@ M.apply_to = function(config)
 
     -- 性能设置
     config.front_end = "WebGpu"
-    config.max_fps = 165
-    config.animation_fps = 165
+    config.max_fps = 255
+    config.animation_fps = 255
 end
 
 return M

@@ -1,8 +1,9 @@
 {
   "root_path": "D:\\scoop",
   "global_path": "D:\\scoop",
-  "last_update": "2025-10-17T18:57:33.5110142+08:00",
+  "last_update": "2025-10-30T23:40:09.4190803+08:00",
   "scoop_branch": "master",
   "cache_path": "D:\\scoop\\cache",
-  "scoop_repo": "https://github.com/ScoopInstaller/Scoop"
+  "scoop_repo": "https://github.com/ScoopInstaller/Scoop",
+  "aria2-warning-enabled": false
 }

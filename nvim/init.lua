@@ -16,8 +16,8 @@ vim.wo.relativenumber = true
 vim.wo.cursorline = true
 
 -- 光标移动时保留上下 8 行
-vim.o.scrolloff = 8
-vim.o.sidescrolloff = 8
+vim.o.scrolloff = 4
+vim.o.sidescrolloff = 4
 
 -- 设置缩进
 vim.o.tabstop = 4

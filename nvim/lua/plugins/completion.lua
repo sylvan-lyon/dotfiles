@@ -191,6 +191,43 @@ return {
                     menu = {
                         auto_show = true,
                     },
+                    keymap = {
+                        ['<Up>'] = { 'select_prev', 'fallback' },
+                        ['<Down>'] = { 'select_next', 'fallback' },
+                        ['<Tab>'] = { 'select_and_accept', 'fallback' },
+                    },
+                },
+
+                -- 设置命令行类型专属选项
+                sources = {
+                    [":"] = { "cmdline", "path" },
+                    ["/"] = { "buffer" },
+                    ["?"] = { "buffer" },
+                },
+
+                keymap = {
+                    -- 方向键选择
+                    ['<Up>'] = { 'select_prev', 'fallback' },
+                    ['<Down>'] = { 'select_next', 'fallback' },
+
+                    -- Tab 接受补全
+                    ['<Tab>'] = {
+                        function(cmp)
+                            if cmp.snippet_active() then
+                                return cmp.accept()
+                            else
+                                return cmp.select_and_accept()
+                            end
+                        end,
+                        'fallback',
+                    },
+
+                    -- Shift-Tab 反向
+                    ['<S-Tab>'] = { 'snippet_backward', 'fallback' },
+
+                    -- 兼容性按键（可以不要）
+                    ['<C-n>'] = { 'select_next', 'fallback_to_mappings' },
+                    ['<C-p>'] = { 'select_prev', 'fallback_to_mappings' },
                 },
             },
         },

@@ -6,7 +6,7 @@ return {
     opts = {
         bigfile = { enabled = true },
         dashboard = { enabled = true },
-        explorer = { enabled = true },
+        explorer = { enabled = false },
         indent = { enabled = true },
         input = { enabled = true },
         notifier = {
@@ -34,7 +34,6 @@ return {
         { "<leader>/", function() Snacks.picker.grep() end, desc = "[snacks code   ] 全局文本搜索" },
         { "<leader>:", function() Snacks.picker.command_history() end, desc = "[snacks command] 命令历史记录" },
         { "<leader>n", function() Snacks.picker.notifications() end, desc = "[snacks notice ] 通知历史记录" },
-        { "<leader>e", function() Snacks.explorer() end, desc = "[snacks file   ] 文件资源管理器" },
 
         { "<leader>fb", function() Snacks.picker.buffers() end, desc = "[snacks buffer ] 查找缓冲区" },
         { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath('config') }) end, desc = "[snacks file   ] 查找配置文件" },

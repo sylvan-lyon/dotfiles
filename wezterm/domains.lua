@@ -1,8 +1,8 @@
 return {
     wsl_domains = {
         {
-            name = "wsl:ubuntu",
-            distribution = "ubuntu",
+            name = "wsl:fedora",
+            distribution = "fedora",
             default_cwd = "~"
         }
     },
