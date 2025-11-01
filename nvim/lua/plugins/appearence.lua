@@ -36,7 +36,12 @@ return {
         },
         lazy = false,
         keys = {
-            { mode = "n", "<leader>e", "<CMD>Neotree toggle=true<CR>", desc = "[NEO TREE] 打开文件树" }
+            { mode = "n", "<leader>e", "<CMD>Neotree position=left toggle=true<CR>", desc = "[NEO TREE] 打开文件树" }
+        },
+        opts = {
+            -- https://github.com/nvim-neo-tree/neo-tree.nvim/issues/1743
+            -- 维护者说使用 popup_border_style = "" 来使用 winborder 的设置
+            popup_border_style = ""
         }
     },
 
@@ -68,43 +73,41 @@ return {
                 lualine_z = { "location" },
             },
             extensions = {
-                "mason", "nvim-tree", "lazy"
-            }
+                "mason", "neo-tree", "lazy"
+            },
         },
     },
 
     {
-        -- 顶部的 tab 栏
-        'akinsho/bufferline.nvim',
-        version = "*",
-        dependencies = 'nvim-tree/nvim-web-devicons',
-        opts = {
-            options = {
-                mode = "buffers",
-                themable = true,
-                numbers = "ordinal",
-                diagnostics = "nvim_lsp",
-                offsets = { {
-                    filetype = "NvimTree",
-                    text = "",
-                    highlight = "Directory",
-                    text_align = "left"
-                } }
-            }
+        'romgrk/barbar.nvim',
+        dependencies = {
+            'lewis6991/gitsigns.nvim',
+            'nvim-tree/nvim-web-devicons',
         },
+        lazy = false,
+        opts = {
+            sidebar_filetypes = {
+                ['neo-tree'] = {
+                    text = "File Explorer",
+                    align = "center",
+                },
+            },
+        },
+        version = '^1.0.0',
         keys = {
-            { mode = all, "<A-[>", "<CMD>BufferLineCyclePrev<CR>", desc = "[BufferLine]切换至上一个打开的文件" },
-            { mode = all, "<A-]>", "<CMD>BufferLineCycleNext<CR>", desc = "[BufferLine]切换至下一个打开的文件" },
-            { mode = all, "<A-1>", "<CMD>BufferLineGoToBuffer 1<CR>", desc = "[BufferLine]切换至打开的第 1 个文件" },
-            { mode = all, "<A-2>", "<CMD>BufferLineGoToBuffer 2<CR>", desc = "[BufferLine]切换至打开的第 2 个文件" },
-            { mode = all, "<A-3>", "<CMD>BufferLineGoToBuffer 3<CR>", desc = "[BufferLine]切换至打开的第 3 个文件" },
-            { mode = all, "<A-4>", "<CMD>BufferLineGoToBuffer 4<CR>", desc = "[BufferLine]切换至打开的第 4 个文件" },
-            { mode = all, "<A-5>", "<CMD>BufferLineGoToBuffer 5<CR>", desc = "[BufferLine]切换至打开的第 5 个文件" },
-            { mode = all, "<A-6>", "<CMD>BufferLineGoToBuffer 6<CR>", desc = "[BufferLine]切换至打开的第 6 个文件" },
-            { mode = all, "<A-7>", "<CMD>BufferLineGoToBuffer 7<CR>", desc = "[BufferLine]切换至打开的第 7 个文件" },
-            { mode = all, "<A-8>", "<CMD>BufferLineGoToBuffer 8<CR>", desc = "[BufferLine]切换至打开的第 8 个文件" },
-            { mode = all, "<A-9>", "<CMD>BufferLineGoToBuffer 9<CR>", desc = "[BufferLine]切换至打开的第 9 个文件" },
-            { mode = all, "<A-0>", "<CMD>BufferLineGoToBuffer 10<CR>", desc = "[BufferLine]切换至打开的第 10 个文件" },
+            { mode = all, "<A-[>", "<CMD>BufferPrev<CR>", desc = "[Barbar] 切换至上一个打开的文件" },
+            { mode = all, "<A-]>", "<CMD>BufferNext<CR>", desc = "[Barbar] 切换至下一个打开的文件" },
+            { mode = all, "<A-1>", "<CMD>BufferGoto 1<CR>", desc = "[Barbar] 切换至打开的第 1 个文件" },
+            { mode = all, "<A-2>", "<CMD>BufferGoto 2<CR>", desc = "[Barbar] 切换至打开的第 2 个文件" },
+            { mode = all, "<A-3>", "<CMD>BufferGoto 3<CR>", desc = "[Barbar] 切换至打开的第 3 个文件" },
+            { mode = all, "<A-4>", "<CMD>BufferGoto 4<CR>", desc = "[Barbar] 切换至打开的第 4 个文件" },
+            { mode = all, "<A-5>", "<CMD>BufferGoto 5<CR>", desc = "[Barbar] 切换至打开的第 5 个文件" },
+            { mode = all, "<A-6>", "<CMD>BufferGoto 6<CR>", desc = "[Barbar] 切换至打开的第 6 个文件" },
+            { mode = all, "<A-7>", "<CMD>BufferGoto 7<CR>", desc = "[Barbar] 切换至打开的第 7 个文件" },
+            { mode = all, "<A-8>", "<CMD>BufferGoto 8<CR>", desc = "[Barbar] 切换至打开的第 8 个文件" },
+            { mode = all, "<A-9>", "<CMD>BufferGoto 9<CR>", desc = "[Barbar] 切换至打开的第 9 个文件" },
+            { mode = all, "<A-0>", "<CMD>BufferGoto 10<CR>", desc = "[Barbar] 切换至打开的第 10 个文件" },
+            { mode = all, "<A-x>", "<CMD>BufferClose<CR>", desc = "[Barbar] 关闭此缓冲区" }
         }
     },
 

@@ -191,18 +191,6 @@ return {
                     menu = {
                         auto_show = true,
                     },
-                    keymap = {
-                        ['<Up>'] = { 'select_prev', 'fallback' },
-                        ['<Down>'] = { 'select_next', 'fallback' },
-                        ['<Tab>'] = { 'select_and_accept', 'fallback' },
-                    },
-                },
-
-                -- 设置命令行类型专属选项
-                sources = {
-                    [":"] = { "cmdline", "path" },
-                    ["/"] = { "buffer" },
-                    ["?"] = { "buffer" },
                 },
 
                 keymap = {

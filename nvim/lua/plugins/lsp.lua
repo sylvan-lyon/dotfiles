@@ -80,7 +80,7 @@ return {
                 map("n", "gh", vim.lsp.buf.hover, "[LSP] 查看 inline hints")
                 map("n", "g.", vim.lsp.buf.code_action, "[LSP] 打开 code actions")
                 -- 格式化
-                map("n", "<leader>cf", function()
+                map("n", "cf", function()
                     vim.lsp.buf.format { async = true }
                 end, "[LSP] 代码格式化")
             end
@@ -121,24 +121,6 @@ return {
                 end
             end
 
-            ------------------------------------------------------------
-            -- 最后返回定义表，方便在别处 require() 时访问
-            ------------------------------------------------------------
-            return servers
         end,
-    },
-
-    -- Mason 可选
-    {
-        "mason-org/mason.nvim",
-        opts = {
-            ui = {
-                icons = {
-                    package_installed = "✓",
-                    package_pending = "➜",
-                    package_uninstalled = "✗",
-                },
-            },
-        },
     },
 }

@@ -10,7 +10,7 @@ return {
         indent = { enabled = true },
         input = { enabled = true },
         notifier = {
-            enabled = false,
+            enabled = true,
             timeout = 3000, -- default timeout in ms
             refresh = 50,
         },
@@ -24,6 +24,17 @@ return {
             notification = {
                 -- wo = { wrap = true } -- Wrap notifications
             }
+        },
+        terminal = {
+            enabled = true,
+            win = {
+                style = "float",
+                border = "rounded",
+                width = 0.8,
+                height = 0.8,
+                resize = true,
+            },
+            shell = "nu",
         }
     },
     keys = {
@@ -95,7 +106,7 @@ return {
         { "<leader>n", function() Snacks.notifier.show_history() end, desc = "[snacks notice ] 查看通知历史" },
         { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "[snacks file] 重命名文件" },
         { "<c-/>", function() Snacks.terminal() end, desc = "[snacks terminal] 切换终端" },
-        { "<c-_>", function() Snacks.terminal() end, desc = "[snacks terminal] 切换终端 (别名)" },
+        { "<c-_>",      function() Snacks.terminal() end, desc = "which_key_ignore" },
         { "]]", function() Snacks.words.jump(vim.v.count1) end, desc = "[snacks word] 跳转到下一个引用", mode = { "n", "t" } },
         { "[[", function() Snacks.words.jump(-vim.v.count1) end, desc = "[snacks word] 跳转到上一个引用", mode = { "n", "t" } },
     },
