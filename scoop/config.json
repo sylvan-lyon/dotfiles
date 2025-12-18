@@ -1,7 +1,7 @@
 {
   "root_path": "D:\\scoop",
-  "global_path": "D:\\scoop",
-  "last_update": "2025-10-31T22:46:51.3986793+08:00",
+  "global_path": "D:\\scoop\\global-install",
+  "last_update": "2025-12-18T23:22:28.6892940+08:00",
   "scoop_branch": "master",
   "cache_path": "D:\\scoop\\cache",
   "scoop_repo": "https://github.com/ScoopInstaller/Scoop",

@@ -2,53 +2,120 @@ local wezterm = require 'wezterm'
 
 local M = {}
 
-local tab_title = function(tab_info)
+local tab_title = function(tab_info, max_width, extra_glyphs)
     local title = tab_info.tab_title
     if title and #title > 0 then
-        -- 如果主动设定了标题名称，那么使用这个名称
-        return title, true
+        -- do nothing
     else
-        -- 否则使用默认的名称，大多数情况下应该都是这个
-        return tab_info.active_pane.title, false
+        title = tab_info.active_pane.title
     end
+
+    if wezterm.column_width(title) > max_width - extra_glyphs then
+        title = '…' .. wezterm.truncate_left(title, max_width - (extra_glyphs + 1))
+    end
+
+    return string.gsub(title, '\\', '/')
 end
 
 M.apply = function()
     wezterm.on('format-tab-title',
-        function(tab, tabs, panes, config, hover, max_width)
-            local edge_background = '#0b0022'
-            local background = '#1b1032'
-            local foreground = '#808080'
+        function(tab, _, _, _, hover, max_width)
+            local extra_glyphs = 0
 
+            -- dark
+            local base = '#1e1e2e'
+            local surface2 = '#585b70'
+            local surface1 = '#45475a'
+            local surface0 = '#313244'
+
+            -- semi dark
+            local overlay2 = '#9399b2'
+            local overlay1 = '#7f849c'
+            local overlay0 = '#6c7086'
+
+            -- bright
+            local text = '#cdd6f4'
+            local mauve = '#cba6f7'
+            local lavender = '#b4befe'
+
+            -- color preperation
+            local index_fg, index_bg
             if tab.is_active then
-                background = '#2b2042'
-                foreground = '#c0c0c0'
-            elseif hover then
-                background = '#3b3052'
-                foreground = '#909090'
+                index_fg, index_bg = { Color = base }, { Color = mauve }
+            else
+                index_fg, index_bg = { Color = base }, { Color = overlay2 }
             end
 
-            local edge_foreground = background
+            local main_fg, main_bg
+            if tab.is_active then
+                main_fg, main_bg = { Color = lavender }, { Color = surface1 }
+            else
+                if hover then
+                    main_fg, main_bg = { Color = lavender }, { Color = surface1 }
+                else
+                    main_fg, main_bg = { Color = text }, { Color = surface0 }
+                end
+            end
 
-            local title = tab_title(tab)
+            -- text style preperation
+            local main_style_underline, main_style_intensity
+            if tab.is_active or hover then
+                main_style_underline, main_style_intensity = { Underline = "Single" }, { Intensity = "Bold" }
+            end
 
-            -- ensure that the titles fit in the available space,
-            -- and that we have room for the edges.
-            title = wezterm.truncate_right(title, max_width - 2)
+            -- index part
+            local index_str = wezterm.to_string(tab.tab_index + 1) .. ' '
+            extra_glyphs = extra_glyphs + (#index_str + 1)
+            local index = {
+                { Foreground = index_bg },
+                { Background = { Color = base } },
+                { Text = '' },
+                'ResetAttributes',
+                -- extra_glyphs += 1
 
-            return {
-                { Background = { Color = edge_background } },
-                { Foreground = { Color = edge_foreground } },
-                { Text = "<" },
-                { Background = { Color = background } },
-                { Foreground = { Color = foreground } },
-                { Text = title .. tab.tab_id },
-                { Background = { Color = edge_background } },
-                { Foreground = { Color = edge_foreground } },
-                { Text = ">" },
+                { Foreground = index_fg },
+                { Background = index_bg },
+                { Attribute = { Intensity = "Bold" } },
+                { Text = index_str },
+                'ResetAttributes'
+                -- extra_glyphs += #index_str
             }
-        end
-    )
+
+            -- suffix part
+            extra_glyphs = extra_glyphs + 2
+            local suffix = {
+                { Foreground = main_bg },
+                { Background = { Color = base } },
+                { Text = ' ' },
+                'ResetAttributes'
+                -- extra_glyphs += 2
+            }
+
+            -- main part
+            local main
+            extra_glyphs = extra_glyphs + 1
+            if tab.is_active or hover then
+                main = {
+                    { Background = main_bg },
+                    { Foreground = main_fg },
+                    { Text = ' ' },
+                    { Attribute = { Underline = "Single" } },
+                    { Attribute = { Intensity = "Bold" } },
+                    { Text = tab_title(tab, max_width, extra_glyphs) },
+                    'ResetAttributes',
+                }
+            else
+                main = {
+                    { Background = main_bg },
+                    { Foreground = main_fg },
+                    { Text = ' ' .. tab_title(tab, max_width, extra_glyphs) },
+                    'ResetAttributes',
+                }
+            end
+
+            local concat_tables = require("utils").concat_tables
+            return concat_tables(index, concat_tables(main, suffix))
+        end)
 end
 
 return M

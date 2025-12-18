@@ -18,7 +18,7 @@ return {
             function()
                 require("which-key").show({ global = false })
             end,
-            desc = "[which-key     ] 展示键位绑定",
+            desc = "[which-key] 展示键位绑定",
         },
     },
 }

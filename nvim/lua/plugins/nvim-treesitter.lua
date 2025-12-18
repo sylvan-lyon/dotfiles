@@ -93,7 +93,6 @@ return {
             local function clear_state()
                 state.span_stack = {}
                 state.enter_mode = nil
-                vim.notify("增量选择已退出", vim.log.levels.DEBUG, { title = "TS-Select" })
             end
 
             --- 辅助函数：Span 和 节点 ---
@@ -129,7 +128,7 @@ return {
                 if vim.fn.mode() == "V" then
                     start_col = 0
                     local line_content = api.nvim_buf_get_lines(0, end_row, end_row + 1, false)[1] or ""
-                    end_col = math.max(0, vim.fn.strbytes(line_content) - 1)
+                    end_col = math.max(0, vim.fn.strcharlen(line_content) - 1)
                     if #line_content == 0 then end_col = 0 end
                 end
 
@@ -237,7 +236,6 @@ return {
 
             -- [x] in Normal (启动会话)
             vim.keymap.set("n", "[x", function()
-                vim.notify("[x] Normal: 启动增量选择", vim.log.levels.DEBUG, { title = "TS-Select" })
                 clear_state()
                 state.enter_mode = "n"
 
@@ -245,7 +243,6 @@ return {
                 local node = get_smallest_node_at_cursor()
 
                 if not node then
-                    vim.notify("[x] Normal: 未找到节点", vim.log.levels.WARN, { title = "TS-Select" })
                     return
                 end
 
@@ -264,13 +261,11 @@ return {
                 local node = get_covering_node(current_span)
 
                 if not node then
-                    vim.notify("[x] Visual: 未找到覆盖节点", vim.log.levels.WARN, { title = "TS-Select" })
                     return
                 end
 
                 if #state.span_stack == 0 then
                     -- 1. 新会话 (New Session)
-                    vim.notify("[x] Visual: 启动增量选择", vim.log.levels.DEBUG, { title = "TS-Select" })
                     state.enter_mode = "v"
                     table.insert(state.span_stack, current_span) -- [1] 栈底: 原始 Visual 选区
 
@@ -280,7 +275,6 @@ return {
                         table.insert(state.span_stack, parent_span) -- [2] 栈顶: 父节点
                         select_node_safe(parent_span)
                     else
-                        vim.notify("[x] Visual: 已在顶层", vim.log.levels.INFO, { title = "TS-Select" })
                         -- 栈中只有原始选区，保持选中
                     end
                 else
@@ -289,7 +283,6 @@ return {
 
                     -- 检查手动移动
                     if not spans_equal_safe(current_span, top_span) then
-                        vim.notify("[x] Visual: 检测到手动选区, 重启会话", vim.log.levels.WARN, { title = "TS-Select" })
                         clear_state()
                         vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("[x", true, false, true), "x", false)
                         return
@@ -302,12 +295,9 @@ return {
                     local parent = top_node:parent()
                     if parent and parent:parent() then
                         local parent_span = node_to_span(parent)
-                        vim.notify(string.format("[x] Visual: 扩大到 %s", parent:type()), vim.log.levels.DEBUG,
-                            { title = "TS-Select" })
                         table.insert(state.span_stack, parent_span)
                         select_node_safe(parent_span)
                     else
-                        vim.notify("[x] Visual: 扩大到文档根节点 (ggVG)", vim.log.levels.INFO, { title = "TS-Select" })
                         vim.cmd("normal! \27")
                         vim.cmd("normal! ggVG")
                         -- 这是一个受迫退出，清理状态
@@ -320,7 +310,6 @@ return {
             vim.keymap.set("x", "]x", function()
                 -- 1. 检查是否在会话中
                 if #state.span_stack == 0 then
-                    vim.notify("]x Visual: 不在增量选择模式", vim.log.levels.WARN, { title = "TS-Select" })
                     clear_state()
                     vim.cmd("normal! \27")
                     return
@@ -331,7 +320,6 @@ return {
 
                 -- 2. 检查手动移动 (受迫退出)
                 if not spans_equal_safe(current_span, top_span) then
-                    vim.notify("]x Visual: 检测到手动选区, 退出会话", vim.log.levels.WARN, { title = "TS-Select" })
                     clear_state()
                     vim.cmd("normal! \27")
                     return
@@ -343,7 +331,6 @@ return {
                     local original_mode = state.enter_mode
                     local base_span = state.span_stack[1]
 
-                    vim.notify("]x Visual: 自然退出", vim.log.levels.DEBUG, { title = "TS-Select" })
                     clear_state() -- 必须在操作前清理
 
                     if original_mode == "n" then
@@ -357,9 +344,7 @@ return {
                 else
                     -- 3b. 正常缩小
                     table.remove(state.span_stack) -- 弹出当前
-                    -- [TYPO FIX]: 修复了 state.stack_span -> state.span_stack
                     local new_top_span = state.span_stack[#state.span_stack]
-                    vim.notify("]x Visual: 缩小", vim.log.levels.DEBUG, { title = "TS-Select" })
                     select_node_safe(new_top_span)
                 end
             end, { desc = "Shrink selection / exit incremental (semantic)" })
@@ -371,19 +356,15 @@ return {
                 callback = function()
                     -- [1] 检查锁
                     if is_internal_selection then
-                        vim.notify("ModeChanged: 内部选择, 跳过清理", vim.log.levels.DEBUG, { title = "TS-Select" })
                         return -- 如果是内部选择，不要清理
                     end
 
                     -- [2] 检查是否在会话中 (用户手动按 <Esc>)
                     if state.enter_mode ~= nil then
-                        vim.notify("ModeChanged: 用户退出, 清理增量状态", vim.log.levels.DEBUG, { title = "TS-Select" })
                         clear_state()
                     end
                 end,
             })
-
-            vim.notify("Treesitter 自定义增量选择已加载 (v3 - 已修复)", vim.log.levels.DEBUG, { title = "TS-Config" })
         end
     },
 }

@@ -1,12 +1,12 @@
+vim.opt.winborder = "rounded"
+
+-- 禁用 netrw
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 -- 设置编码
 vim.g.encoding = "UTF-8"
 vim.o.fileencoding = "utf-8"
-
--- 窗口样式
-vim.o.winborder = "rounded"
 
 -- 显示行号和相对行号
 vim.wo.number = true
@@ -25,10 +25,16 @@ vim.bo.tabstop = 4
 vim.o.shiftwidth = 4
 vim.bo.shiftwidth = 4
 vim.o.expandtab = true
+-- 自动缩进
+vim.opt.autoindent = true
 
 -- 搜索设置
 vim.o.ignorecase = true -- 忽略大小写
 vim.o.smartcase = true  -- 智能大小写
+vim.opt.hlsearch = true
+
+-- 禁用折行
+vim.opt.wrap = false
 
 -- 鼠标支持
 vim.o.mouse = "a"
@@ -40,6 +46,7 @@ vim.o.swapfile = false
 
 -- 启用终端颜色支持
 vim.o.termguicolors = true
+
 
 -- 启动lazy vim，应用键位配置
 require("config.lazy")

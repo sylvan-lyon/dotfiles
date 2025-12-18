@@ -45,25 +45,14 @@ M.apply_to = function(config)
     --------------------- tab 栏 ---------------------
     config.use_fancy_tab_bar = false
     config.enable_tab_bar = true
-    config.show_tab_index_in_tab_bar = true
+    config.show_tab_index_in_tab_bar = false
     config.hide_tab_bar_if_only_one_tab = false
     config.tab_max_width = 32
     config.show_new_tab_button_in_tab_bar = false
+
     config.colors = {
         tab_bar = {
             background = catppuccin.base,
-
-            active_tab = {
-                bg_color = catppuccin.mauve,
-                fg_color = catppuccin.base,
-                intensity = "Bold"
-            },
-
-            inactive_tab = {
-                bg_color = catppuccin.base,
-                fg_color = catppuccin.mauve,
-                intensity = "Normal"
-            }
         }
     }
 

@@ -12,6 +12,11 @@ M.apply_to = function(config)
     config.front_end = "WebGpu"
     config.max_fps = 255
     config.animation_fps = 255
+
+    config.status_update_interval = 16
+
+    config.initial_cols = 140
+    config.initial_rows = 40
 end
 
 return M
