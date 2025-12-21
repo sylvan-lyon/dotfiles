@@ -25,6 +25,10 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+require("config.options")
+require("config.autocmds")
+require("config.keymaps")
+
 -- Setup lazy.nvim
 require("lazy").setup({
     spec = {
@@ -44,6 +48,7 @@ require("lazy").setup({
     throttle = 60,
     git = {
         timeout = 300, -- 把超时限制改大一点，避免什么都直接爆炸了
+    	log = { "-4" },
     }
 })
 

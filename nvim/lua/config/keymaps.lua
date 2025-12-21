@@ -17,11 +17,4 @@ vim.keymap.set(all_modes_applied, "<A-]>", "<CMD>bnext<CR>", { desc = "[custom] 
 vim.keymap.set(all_modes_applied, "<A-x>", "<CMD>bdelete<CR>", { desc = "[custom] 关闭当前 buffer" })
 
 -- ==================== lazyvim 的快捷键
-vim.keymap.set(
-    "n",             -- 模式，n 表示 NORMAL，i 表示 INSERT，v 表示 VISUAL，{ "n", "i" }表示在 n 和 i 下都能触发
-    "<leader>l",     -- 使用 leader + l（小写）触发
-    "<CMD>Lazy<CR>", -- 打开 lazy.nvim 窗口
-
-    -- 其他的选项，详见 https://neovim.io/doc/user/lua.html#vim.keymap.set()
-    { desc = "[custom] 打开 lazyvim 的窗口" }
-)
+vim.keymap.set("n", "<leader>l", "<CMD>Lazy<CR>", { desc = "[custom] 打开 lazyvim 的窗口" })

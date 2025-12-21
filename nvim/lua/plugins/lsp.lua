@@ -11,19 +11,6 @@ local servers = {
 
 return {
     {
-        "mason-org/mason.nvim",
-        opts = {
-            ui = {
-                icons = {
-                    package_installed = "✓",
-                    package_pending = "➜",
-                    package_uninstalled = "✗"
-                }
-            }
-        }
-    },
-
-    {
         "neovim/nvim-lspconfig",
         dependencies = { "saghen/blink.cmp" },
         config = function()

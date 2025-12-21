@@ -30,7 +30,7 @@ return {
         },
         lazy = false,
         keys = {
-            { mode = "n", "<leader>e", "<CMD>Neotree position=left toggle=true reveal=true<CR>", desc = "[neotree] 打开文件树" }
+            { mode = "n", "<leader>e", "<CMD>Neotree position=float toggle=true reveal=true<CR>", desc = "[neotree] 打开文件树" }
         },
         opts = {
             popup_border_style = "",
@@ -79,24 +79,6 @@ return {
                 "mason", "neo-tree", "lazy"
             },
         },
-    },
-
-    {
-        'romgrk/barbar.nvim',
-        dependencies = {
-            'lewis6991/gitsigns.nvim',
-            'nvim-tree/nvim-web-devicons',
-        },
-        lazy = false,
-        opts = {
-            sidebar_filetypes = {
-                ['neo-tree'] = {
-                    text = "File Explorer",
-                    align = "center",
-                },
-            },
-        },
-        version = '^1.0.0',
     },
 
     {
