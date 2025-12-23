@@ -3,20 +3,21 @@ return {
         -- 配色方案
         "catppuccin/nvim",
         name = "catppuccin",
+        lazy = false,
         priority = 1000,
         config = function(_, opts)
             require("catppuccin").setup(opts)
-            vim.cmd.colorscheme("catppuccin")
+            vim.cmd([[colorscheme catppuccin]])
         end,
         opts = {
             float = {
                 transparent = true,
-                solid = true,
+                solid = false
             },
             flavour = "mocha",
             transparent_background = true,
             auto_integrations = true,
-            default_integrations = false,
+            default_integrations = true,
         }
     },
 
@@ -30,7 +31,7 @@ return {
         },
         lazy = false,
         keys = {
-            { mode = "n", "<leader>e", "<CMD>Neotree position=float toggle=true reveal=true<CR>", desc = "[neotree] 打开文件树" }
+            { mode = "n", "<leader>e", "<CMD>Neotree position=left toggle=true reveal=true<CR>", desc = "[neotree] 打开文件树" }
         },
         opts = {
             popup_border_style = "",
@@ -54,43 +55,4 @@ return {
         submodules = false,
         opts = {}
     },
-
-
-    {
-        -- 底部栏美化
-        "nvim-lualine/lualine.nvim",
-        dependencies = {
-            "nvim-tree/nvim-web-devicons",
-        },
-        opts = {
-            options = {
-                theme = "catppuccin",
-                always_devide_middle = true,
-            },
-            sections = {
-                lualine_a = { "mode" },
-                lualine_b = { "branch", "diff", "diagnostics" },
-                lualine_c = { "filename" },
-                lualine_x = { "lsp_status" },
-                lualine_y = { "encoding", "fileformat", "filestyle", "filesize" },
-                lualine_z = { "location" },
-            },
-            extensions = {
-                "mason", "neo-tree", "lazy"
-            },
-        },
-    },
-
-    {
-        "folke/noice.nvim",
-        event = "VeryLazy",
-        opts = {
-            -- add any options here
-            throttle = 1000 / 30,
-        },
-        dependencies = {
-            "MunifTanjim/nui.nvim",
-            "rcarriga/nvim-notify",
-        }
-    }
 }
