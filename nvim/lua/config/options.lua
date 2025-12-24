@@ -43,3 +43,5 @@ vim.opt.swapfile = false
 -- 启用终端颜色支持
 vim.opt.termguicolors = true
 
+-- 关闭自带的 mode 显示
+vim.opt.showmode = false
