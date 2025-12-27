@@ -1,6 +1,7 @@
 return {
     {
         'linrongbin16/lsp-progress.nvim',
+        event = "VeryLazy",
         config = function()
             require("lsp-progress").setup({
                 format = function(client_messages)
@@ -86,67 +87,78 @@ return {
         "nvim-lualine/lualine.nvim",
         dependencies = {
             "nvim-tree/nvim-web-devicons",
-            'linrongbin16/lsp-progress.nvim',
             "catppuccin/nvim",
         },
-        lazy = false,
+        event = "VeryLazy",
         config = function(_, _)
-            require("lualine").setup {
+            local normalized_relative_filename = {
+                "filename",
+                path = 1,
+                fmt = function(content, _)
+                    local normalized = content:gsub("\\", "/")
+                    return normalized
+                end
+            }
+
+            local win_bar = {
+                lualine_a = {},
+                lualine_b = {},
+                lualine_c = {},
+                lualine_x = {},
+                lualine_y = {},
+                lualine_z = { normalized_relative_filename },
+            }
+
+            require("lualine").setup({
                 options = {
                     theme = "catppuccin",
                     always_devide_middle = false,
                     section_separators = { left = '', right = '' },
-                    component_separators = { left = '│', right = '│' },
+                    component_separators = { left = '', right = '' },
                     globalstatus = false,
+                    disabled_filetypes = {
+                        statusline = { "snacks_dashboard", },
+                        winbar = { "snacks_dashboard", },
+                    },
                 },
                 sections = {
-                    lualine_a = {
-                        "mode"
-                    },
+                    lualine_a = { "mode" },
                     lualine_b = {
                         { "branch" },
-                        { "diff" },
                         { "diagnostics", update_in_insert = true },
-                        {
-                            "filename",
-                            path = 1,
-                            fmt = function(content, _)
-                                local normalized = content:gsub("\\", "/")
-                                return normalized
-                            end
-                        }
+                        { "filename" },
                     },
                     lualine_c = {
-                        { function() return require('lsp-progress').progress() end },
+                        { 'filetype', icon_only = true, icon = { align = "right" } },
+                        { function() return require("lsp-progress").progress() end, color = "Comment" },
                     },
                     lualine_x = {
                         { 'lsp_status',                   symbols = { spinner = {} } },
                         { require("lazy.status").updates, cond = require("lazy.status").has_updates },
                     },
-                    lualine_y = { "encoding", "fileformat", "filestyle", "filesize" },
+                    lualine_y = { "encoding", "fileformat", "filestyle" },
                     lualine_z = { "location" },
                 },
-                winbar = {
-                    lualine_a = {},
-                    lualine_b = {},
-                    lualine_c = {},
-                    lualine_x = {},
-                    lualine_y = {},
-                    lualine_z = { 'filename' }
+                inactive_sections = {
+                    lualine_a = { "mode" },
+                    lualine_b = {
+                        { "branch" },
+                        { "diagnostics", update_in_insert = true },
+                        { "filename" },
+                    },
+                    lualine_c = {
+                        { 'filetype', icon_only = true, icon = { align = "right" } },
+                    },
+                    lualine_x = {
+                        { 'lsp_status', symbols = { spinner = {} } },
+                    },
+                    lualine_y = { "encoding", "fileformat", "filestyle" },
+                    lualine_z = { "location" },
                 },
-                inactive_winbar = {
-                    lualine_a = {},
-                    lualine_b = {},
-                    lualine_c = {},
-                    lualine_x = {},
-                    lualine_y = { 'filename' },
-                    lualine_z = {}
-                },
-                extensions = {
-                    "mason", "neo-tree", "lazy"
-                },
-
-            }
+                winbar = win_bar,
+                inactive_winbar = win_bar,
+                extensions = { "neo-tree", "lazy" },
+            })
 
             -- listen lsp-progress event and refresh lualine
             vim.api.nvim_create_augroup("lualine_augroup", { clear = true })

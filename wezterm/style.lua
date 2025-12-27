@@ -1,11 +1,6 @@
 local wezterm = require("wezterm")
-local catppuccin = require("palattes").catppuccin_mocha
+local custom_catppuccin = require("palattes").catppuccin_mocha
 local M = {}
-
-local custom_catppuccin = wezterm.color.get_builtin_schemes()["Catppuccin Mocha"]
-
-custom_catppuccin.ansi = catppuccin:get_ansi_table()
-custom_catppuccin.brights = catppuccin:get_bright_table()
 
 M.apply_to = function(config)
     ------------------ 设置字体 ---------------------
@@ -52,7 +47,7 @@ M.apply_to = function(config)
 
     config.colors = {
         tab_bar = {
-            background = catppuccin.base,
+            background = require("palattes").palette.catppuccin_mocha.base,
         }
     }
 

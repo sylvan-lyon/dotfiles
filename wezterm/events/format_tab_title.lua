@@ -48,19 +48,13 @@ M.apply = function()
 
             local main_fg, main_bg
             if tab.is_active then
-                main_fg, main_bg = { Color = lavender }, { Color = surface1 }
+                main_fg, main_bg = { Color = lavender }, { Color = surface0 }
             else
                 if hover then
-                    main_fg, main_bg = { Color = lavender }, { Color = surface1 }
+                    main_fg, main_bg = { Color = lavender }, { Color = surface0 }
                 else
                     main_fg, main_bg = { Color = text }, { Color = surface0 }
                 end
-            end
-
-            -- text style preperation
-            local main_style_underline, main_style_intensity
-            if tab.is_active or hover then
-                main_style_underline, main_style_intensity = { Underline = "Single" }, { Intensity = "Bold" }
             end
 
             -- index part
@@ -92,26 +86,14 @@ M.apply = function()
             }
 
             -- main part
-            local main
             extra_glyphs = extra_glyphs + 1
-            if tab.is_active or hover then
-                main = {
-                    { Background = main_bg },
-                    { Foreground = main_fg },
-                    { Text = ' ' },
-                    { Attribute = { Underline = "Single" } },
-                    { Attribute = { Intensity = "Bold" } },
-                    { Text = tab_title(tab, max_width, extra_glyphs) },
-                    'ResetAttributes',
-                }
-            else
-                main = {
-                    { Background = main_bg },
-                    { Foreground = main_fg },
-                    { Text = ' ' .. tab_title(tab, max_width, extra_glyphs) },
-                    'ResetAttributes',
-                }
-            end
+            local main = {
+                { Background = main_bg },
+                { Foreground = main_fg },
+                { Attribute = { Intensity = "Bold" } },
+                { Text = ' ' .. tab_title(tab, max_width, extra_glyphs) },
+                'ResetAttributes',
+            }
 
             local concat_tables = require("utils").concat_tables
             return concat_tables(index, concat_tables(main, suffix))

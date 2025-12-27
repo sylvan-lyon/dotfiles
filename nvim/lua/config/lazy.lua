@@ -1,7 +1,7 @@
 -- 这个文件将安装 lazyvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-    local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+    local lazyrepo = "https://gh-proxy.org/https://github.com/folke/lazy.nvim.git"
     local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
     if vim.v.shell_error ~= 0 then
         vim.api.nvim_echo({
@@ -41,8 +41,12 @@ require("lazy").setup({
     },
     throttle = 60,
     git = {
-        timeout = 300, -- 把超时限制改大一点，避免什么都直接爆炸了
-    	log = { "-4" },
+        timeout = 600, -- 把超时限制改大一点，避免什么都直接爆炸了
+        log = { "-4" },
+        url_format = "https://gh-proxy.org/https://github.com/%s.git",
+    },
+    change_detection = {
+        enabled = false,
     }
 })
 

@@ -4,7 +4,7 @@ local presets = {
     ["lua_ls"] = {
         cmd = { "lua-language-server" },
         filetypes = { "lua" },
-        root_markers = { ".nvim-lsp.json", ".git" },
+        root_markers = { ".nvim-lsp.json", "stylua.toml", ".stylua.toml", ".git" },
     },
     ["rust-analyzer"] = {
         cmd = { "rust-analyzer" },
@@ -14,32 +14,39 @@ local presets = {
 }
 
 ---主要是配置按键绑定，没什么其他的
-local on_attach = function(client, bufnr)
+---comment
+---@param _ any
+---@param bufnr any
+local on_attach = function(_, bufnr)
     local map = function(mode, lhs, rhs, desc)
         vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true, noremap = true })
     end
 
     -- 跳转 & 诊断 & 格式化（保留你已有的按键映射）
-    map("n", "grd", function() vim.lsp.buf.definition({ loclist = false, reuse_win = true }) end, "[LSP] 转到定义")
-    map("n", "grD", vim.lsp.buf.declaration, "[LSP] 转到声明")
-    map("n", "grt", vim.lsp.buf.type_definition, "[LSP] 转到类型定义")
-    map("n", "gri", vim.lsp.buf.implementation, "[LSP] 转到实现")
-    map("n", "grr", vim.lsp.buf.references, "[LSP] 转到引用")
-    map("n", "gO", vim.lsp.buf.document_symbol, "[LSP] 此 buffer 的所有符号")
-    map("n", "gS", vim.lsp.buf.workspace_symbol, "[LSP] 此项目的所有符号")
+    map("n", "gd", "<CMD>Telescope lsp_definitions<CR>", "[LSP] [d]efinition")
+    map("n", "gD", "<CMD>Telescope diagnostics bufnr=0<CR>", "[LSP] [D]iagnostic")
+    map("n", "grt", "<CMD>Telescope lsp_type_definitions<CR>", "[LSP] [t]ype definition")
+    map("n", "gri", "<CMD>Telescope lsp_inplementations<CR>", "[LSP] [i]mplementation")
+    map("n", "grr", "<CMD>Telescope lsp_references<CR>", "[LSP] [r]eferences")
+    map("n", "grd", function() vim.diagnostic.open_float() end, "[LSP] code [d]iagnostic")
+    map("n", "gra", function() vim.lsp.buf.code_action() end, "[LSP] code [a]ctions")
+    map("n", "grf", function() vim.lsp.buf.format { async = true } end, "[LSP] code [f]ormat")
+    map("n", "grn", vim.lsp.buf.rename, "[LSP] code [r]e[n]me")
 
-    map("n", "grl", vim.diagnostic.open_float, "[LSP] 查看代码诊断")
-    map("n", "gr[", function() vim.diagnostic.jump({ count = -1, float = true }) end, "[LSP] 上一个代码诊断")
-    map("n", "gr]", function() vim.diagnostic.jump({ count = 1, float = true }) end, "[LSP] 下一个代码诊断")
-    map("n", "grn", vim.lsp.buf.rename, "[LSP] 重命名")
-    map("n", "gra", vim.lsp.buf.code_action, "[LSP] 打开 code actions")
-    map("n", "grf", function() vim.lsp.buf.format { async = true } end, "[LSP] 代码格式化")
-    map("n", "K", function() vim.lsp.buf.hover({ max_width = 120, max_height = 32 }) end)
-    map("n", "<leader>th", function () vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, "[LSP] 启用/禁用 inlay hints")
+    map("n", "gO", vim.lsp.buf.document_symbol, "[LSP] document symbols")
+    map("n", "gS", vim.lsp.buf.workspace_symbol, "[LSP] workspace symbols")
 
-    if client.server_capabilities.inlayHintProvider then
-        vim.lsp.inlay_hint.enable(true)
-    end
+    map("n", "K", function() vim.lsp.buf.hover({ max_width = 120, max_height = 32 }) end, "[LSP] show documentation")
+
+    map("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "[LSP] previous diagnose")
+    map("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "[LSP] next diagnose")
+
+
+    map("n", "<leader>th", function()
+        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+    end, "[LSP] [t]oggle inlay [h]ints")
+
+    map("n", "<leader>rs", "<CMD>LspRestart<CR>", "[LSP] [r]estart [s]erver")
 end
 
 ---读取 `file_name` 指定的文件名，将那个文件中的内容当成 **`JSON` 字符串解析**
@@ -135,31 +142,33 @@ local setup_ls = function()
                 [vim.diagnostic.severity.INFO] = " ",
                 [vim.diagnostic.severity.HINT] = "󰌶 ",
             }
-        }
+        },
+        virtual_text = {
+            prefix = " ●"
+        },
+        update_in_insert = true,
     })
 
     vim.o.foldmethod = 'expr'
     vim.o.foldexpr = 'v:lua.vim.lsp.foldexpr()'
     -- 魔法数字
     vim.opt.foldlevel = 99
-
 end
 
 return {
     {
         "mason-org/mason.nvim",
-        config = function(_, opts)
-            require("mason").setup(opts)
-            setup_ls()
+        cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
+        config = function(_, _)
+            require("mason").setup({})
         end,
-        opts = {
-            ui = {
-                icons = {
-                    package_installed = "✓",
-                    package_pending = "➜",
-                    package_uninstalled = "✗"
-                }
-            }
-        }
     },
+
+    {
+        'neovim/nvim-lspconfig',
+        event = "User LazyFilePre",
+        config = function (_, _)
+            setup_ls()
+        end
+    }
 }
