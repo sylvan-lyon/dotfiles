@@ -18,35 +18,31 @@ local presets = {
 ---@param _ any
 ---@param bufnr any
 local on_attach = function(_, bufnr)
-    local map = function(mode, lhs, rhs, desc)
-        vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc, silent = true, noremap = true })
+    local set_keymaps = require("config.keymaps").set_keymaps
+
+    local toggle_inlay_hint = function()
+        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
     end
 
-    -- 跳转 & 诊断 & 格式化（保留你已有的按键映射）
-    map("n", "gd", "<CMD>Telescope lsp_definitions<CR>", "[LSP] [d]efinition")
-    map("n", "gD", "<CMD>Telescope diagnostics bufnr=0<CR>", "[LSP] [D]iagnostic")
-    map("n", "grt", "<CMD>Telescope lsp_type_definitions<CR>", "[LSP] [t]ype definition")
-    map("n", "gri", "<CMD>Telescope lsp_inplementations<CR>", "[LSP] [i]mplementation")
-    map("n", "grr", "<CMD>Telescope lsp_references<CR>", "[LSP] [r]eferences")
-    map("n", "grd", function() vim.diagnostic.open_float() end, "[LSP] code [d]iagnostic")
-    map("n", "gra", function() vim.lsp.buf.code_action() end, "[LSP] code [a]ctions")
-    map("n", "grf", function() vim.lsp.buf.format { async = true } end, "[LSP] code [f]ormat")
-    map("n", "grn", vim.lsp.buf.rename, "[LSP] code [r]e[n]me")
+    local hover = function() vim.lsp.buf.hover({ max_width = 120, max_height = 32 }) end
 
-    map("n", "gO", vim.lsp.buf.document_symbol, "[LSP] document symbols")
-    map("n", "gS", vim.lsp.buf.workspace_symbol, "[LSP] workspace symbols")
+    local jump_back_diagnostic = function() vim.diagnostic.jump({ count = -1, float = true }) end
+    local jump_next_diagnostic = function() vim.diagnostic.jump({ count = 1, float = true }) end
 
-    map("n", "K", function() vim.lsp.buf.hover({ max_width = 120, max_height = 32 }) end, "[LSP] show documentation")
+    set_keymaps({
+        { "grd",        vim.diagnostic.open_float, buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [d]iagnostic" },
+        { "gra",        vim.lsp.buf.code_action,   buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [a]ctions" },
+        { "grf",        vim.lsp.buf.format,        buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [f]ormat" },
+        { "grn",        vim.lsp.buf.rename,        buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [r]e[n]me" },
 
-    map("n", "[d", function() vim.diagnostic.jump({ count = -1, float = true }) end, "[LSP] previous diagnose")
-    map("n", "]d", function() vim.diagnostic.jump({ count = 1, float = true }) end, "[LSP] next diagnose")
+        { "K",          hover,                     buffer = bufnr, silent = true, noremap = true, desc = "[LSP] show documentation" },
 
+        { "[d",         jump_back_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "[LSP] previous diagnose" },
+        { "]d",         jump_next_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "[LSP] next diagnose" },
 
-    map("n", "<leader>th", function()
-        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-    end, "[LSP] [t]oggle inlay [h]ints")
-
-    map("n", "<leader>rs", "<CMD>LspRestart<CR>", "[LSP] [r]estart [s]erver")
+        { "<leader>th", toggle_inlay_hint,         buffer = bufnr, silent = true, noremap = true, desc = "[LSP] [t]oggle inlay [h]ints" },
+        { "<leader>rs", "<CMD>LspRestart<CR>",     buffer = bufnr, silent = true, noremap = true, desc = "[LSP] [r]estart [s]erver" },
+    })
 end
 
 ---读取 `file_name` 指定的文件名，将那个文件中的内容当成 **`JSON` 字符串解析**
@@ -77,7 +73,6 @@ end
 ---@return table<string, table<string, any>>
 local load_project_config = function(file_name)
     if not vim.uv.fs_stat(file_name) then
-        vim.notify(string.format("%s not found in cwd(%s)", file_name, vim.uv.cwd()), vim.log.levels.INFO)
         return {}
     end
 
@@ -91,8 +86,10 @@ local load_project_config = function(file_name)
 
     local json_success, data = pcall(vim.fn.json_decode, content)
     if not json_success or type(data) ~= "table" then
-        vim.notify(string.format("failed to decode %s (json_decode returned nil or non-table)", file_name),
-            vim.log.levels.WARN)
+        vim.notify(
+            string.format("failed to decode %s (json_decode returned nil or non-table)", file_name),
+            vim.log.levels.ERROR
+        )
         vim.notify("raw content (truncated): " .. vim.inspect(content:sub(1, 1024)), vim.log.levels.DEBUG)
         return {}
     else
@@ -167,7 +164,7 @@ return {
     {
         'neovim/nvim-lspconfig',
         event = "User LazyFilePre",
-        config = function (_, _)
+        config = function(_, _)
             setup_ls()
         end
     }

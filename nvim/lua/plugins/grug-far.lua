@@ -1,6 +1,10 @@
 return {
-    'MagicDuck/grug-far.nvim',
+    "MagicDuck/grug-far.nvim",
+    cmd = {
+        "GrugFar",
+        "GrugFarWithin",
+    },
     config = function()
-        require('grug-far').setup({});
+        require("grug-far").setup({});
     end
 }

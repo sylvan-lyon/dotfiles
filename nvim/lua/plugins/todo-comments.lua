@@ -1,6 +1,9 @@
 return {
     "folke/todo-comments.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    dependencies = {
+        "nvim-lua/plenary.nvim",
+        "folke/snacks.nvim"
+    },
     event = "User LazyFilePost",
     config = function()
         require("todo-comments").setup({
@@ -20,6 +23,11 @@ return {
             }
         })
 
-        vim.keymap.set("n",  "<leader>ft", "<CMD>TodoTelescope<CR>", { desc = "[telescope] [f]ind [t]odo-comments" })
+        vim.keymap.set(
+            "n", "<leader>ft",
+            ---@diagnostic disable-next-line: undefined-global
+            function() Snacks.picker.todo_comments() end,
+            { desc = "[snacks] [f]ind [t]odo_comments" }
+        )
     end
 }

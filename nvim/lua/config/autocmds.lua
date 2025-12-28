@@ -12,7 +12,7 @@ vim.api.nvim_create_autocmd(
         desc = [[alias for event { "BufReadPre", "BufWritePre", "BufNewFile" }]],
         group = lazy_file_group,
         once = true,
-        callback = function ()
+        callback = function()
             vim.api.nvim_exec_autocmds(
                 "User",
                 { pattern = "LazyFilePre" }
@@ -29,7 +29,7 @@ vim.api.nvim_create_autocmd(
         desc = [[alias for event { "BufReadPost", "BufWritePost", "BufNewFile" }]],
         group = lazy_file_group,
         once = true,
-        callback = function ()
+        callback = function()
             vim.api.nvim_exec_autocmds(
                 "User",
                 { pattern = "LazyFilePost" }
@@ -43,8 +43,35 @@ vim.api.nvim_create_autocmd(
     {
         desc = "Highlight after yank text",
         group = vim.api.nvim_create_augroup("UserHighlightYank", { clear = true }),
-        callback = function ()
+        callback = function()
             vim.highlight.on_yank()
         end
     }
 )
+
+vim.api.nvim_create_autocmd("LspProgress", {
+    ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+    callback = function(ev)
+        local spinner = {
+            " ", -- new
+            " ", " ", " ", " ", " ", " ", -- waxing crescent
+            " ", -- first quarter
+            " ", " ", " ", " ", " ", " ", -- waxing gibbous
+            " ", -- full
+            " ", " ", " ", " ", " ", " ", -- waning gibbous
+            " ", -- last quarter
+            " ", " ", " ", " ", " ", " ", -- waning crescent
+        }
+        vim.notify(
+            vim.lsp.status():sub(0, 38),
+            vim.log.levels.INFO,
+            {
+                id = "lsp_progress",
+                title = "LSP Progress",
+                opts = function(notif)
+                    notif.icon = ev.data.params.value.kind == "end" and " "
+                        or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+                end,
+            })
+    end,
+})
