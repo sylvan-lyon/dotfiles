@@ -77,7 +77,7 @@ local git_browse = {}
 
 ---@type snacks.image.Config
 local image = {
-    enabled = false
+    enabled = true
 }
 
 ---@type snacks.indent.Config
