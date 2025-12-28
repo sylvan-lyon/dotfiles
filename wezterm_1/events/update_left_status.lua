@@ -1,6 +1,5 @@
 local wezterm = require("wezterm")
 
-
 return {
     apply = function ()
         wezterm.on("update-status", function (window, pane)

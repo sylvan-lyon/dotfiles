@@ -1,5 +1,5 @@
 local wezterm = require("wezterm")
-local palatte = require("palettes").palette.catppuccin_mocha
+local palatte = require("palattes").catppuccin_mocha
 
 local reset = "ResetAttributes"
 local section_spliter = wezterm.format {
@@ -57,9 +57,9 @@ local make_right_status = function(window, pane)
     local cwd, proc = string.match(pane:get_title(), "(.*)> (.*)")
     -- 如果 cwd 和 proc 都有效，那么设置当前进程模块
     if (cwd and proc) then
-        local proc_icon = proc_frames[os.time() * 2 % #proc_frames + 1]
+        local proc_icon = proc_frames[os.time() *2 % #proc_frames + 1]
         right_prompt = right_prompt .. wezterm.format {
-            { Foreground = { Color = palatte.blue } },
+            { Foreground = { Color = palatte.ansi.blue } },
             { Attribute = { Intensity = "Bold" } },
             { Text = proc_icon .. proc },
             reset,
@@ -71,7 +71,7 @@ local make_right_status = function(window, pane)
     local month_txt = month_frames[now.month]
     local day_txt = days:to_string(now.day)
     right_prompt = right_prompt .. wezterm.format {
-        { Foreground = { Color = palatte.teal } },
+        { Foreground = { Color = palatte.ansi.cyan } },
         { Attribute = { Intensity = "Bold" } },
         { Text = "󰸘 " .. month_txt .. " " .. day_txt },
         reset,
