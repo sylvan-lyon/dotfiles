@@ -7,7 +7,7 @@ return {
         "nvim-tree/nvim-web-devicons",
     },
     keys = {
-        { mode = "n", "<leader>e", "<CMD>Neotree position=float toggle=true reveal=true<CR>", desc = "[neotree] file [e]xplorer" }
+        { mode = "n", "<leader>e", "<CMD>Neotree position=float toggle=true reveal=true<CR>", desc = "file [e]xplorer" }
     },
     opts = {
         popup_border_style = "",

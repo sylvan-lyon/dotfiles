@@ -30,18 +30,17 @@ local on_attach = function(_, bufnr)
     local jump_next_diagnostic = function() vim.diagnostic.jump({ count = 1, float = true }) end
 
     set_keymaps({
-        { "grd",        vim.diagnostic.open_float, buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [d]iagnostic" },
-        { "gra",        vim.lsp.buf.code_action,   buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [a]ctions" },
-        { "grf",        vim.lsp.buf.format,        buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [f]ormat" },
-        { "grn",        vim.lsp.buf.rename,        buffer = bufnr, silent = true, noremap = true, desc = "[LSP] code [r]e[n]me" },
+        { "grd",        vim.diagnostic.open_float, buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [d]iagnostic" },
+        { "gra",        vim.lsp.buf.code_action,   buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [a]ctions" },
+        { "grf",        vim.lsp.buf.format,        buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [f]ormat" },
+        { "grn",        vim.lsp.buf.rename,        buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [r]e[n]me" },
 
-        { "K",          hover,                     buffer = bufnr, silent = true, noremap = true, desc = "[LSP] show documentation" },
+        { "K",          hover,                     buffer = bufnr, silent = true, noremap = true, desc = "show documentation" },
 
-        { "[d",         jump_back_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "[LSP] previous diagnose" },
-        { "]d",         jump_next_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "[LSP] next diagnose" },
+        { "[d",         jump_back_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "previous diagnose" },
+        { "]d",         jump_next_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "next diagnose" },
 
-        { "<leader>th", toggle_inlay_hint,         buffer = bufnr, silent = true, noremap = true, desc = "[LSP] [t]oggle inlay [h]ints" },
-        { "<leader>rs", "<CMD>LspRestart<CR>",     buffer = bufnr, silent = true, noremap = true, desc = "[LSP] [r]estart [s]erver" },
+        { "<leader>th", toggle_inlay_hint,         buffer = bufnr, silent = true, noremap = true, desc = "[t]oggle inlay [h]ints" },
     })
 end
 

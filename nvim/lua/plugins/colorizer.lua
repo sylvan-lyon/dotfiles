@@ -1,7 +1,7 @@
 return {
     'norcalli/nvim-colorizer.lua',
     keys = {
-        { "<leader>tc", desc = "[colorizer] [t]oggle [c]olorizer" }
+        { "<leader>tc", desc = "[t]oggle [c]olorizer" }
     },
     cmd = {
         -- "ColorizerAttachToBuffer",
@@ -11,6 +11,6 @@ return {
     },
     config = function ()
         require("colorizer").setup({})
-        vim.keymap.set("n", "<leader>tc", "<CMD>ColorizerToggle<CR>", { desc = "[colorizer] [t]oggle [c]olorizer" })
+        vim.keymap.set("n", "<leader>tc", "<CMD>ColorizerToggle<CR>", { desc = "[t]oggle [c]olorizer" })
     end
 }

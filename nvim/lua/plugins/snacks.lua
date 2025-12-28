@@ -225,15 +225,15 @@ return {
             { "<leader>su", function() Snacks.picker.undo() end,                                 desc = "[s]earch [u]ndo history" },
 
             -- NOTE: LSP stuff
-            { "gd",         function() Snacks.picker.lsp_definitions() end,                      desc = "[LSP] [g]oto definitions" },
-            { "gD",         function() Snacks.picker.lsp_declarations() end,                     desc = "[LSP] [g]oto declarations" },
-            { "gt",         function() Snacks.picker.lsp_type_definitions() end,                 desc = "[LSP] [g]oto [t]ype definitions" },
-            { "gri",        function() Snacks.picker.lsp_implementations() end,                  desc = "[LSP] [g]oto [i]mplementations" },
-            { "grr",        function() Snacks.picker.lsp_references() end,                       desc = "[LSP] [g]oto [r]eferences" },
-            { "gai",        function() Snacks.picker.lsp_incoming_calls() end,                   desc = "[LSP] [g]oto c[a]ll [i]ncoming" },
-            { "gao",        function() Snacks.picker.lsp_outgoing_calls() end,                   desc = "[LSP] [g]oto c[a]ll [o]utgoing" },
-            { "gO",         function() Snacks.picker.lsp_symbols() end,                          desc = "[LSP] d[O]cument symbols" },
-            { "gS",         function() Snacks.picker.lsp_workspace_symbols() end,                desc = "[LSP] work[S]pace symbols" },
+            { "gd",         function() Snacks.picker.lsp_definitions() end,                      desc = "[g]oto definitions" },
+            { "gD",         function() Snacks.picker.lsp_declarations() end,                     desc = "[g]oto declarations" },
+            { "gt",         function() Snacks.picker.lsp_type_definitions() end,                 desc = "[g]oto [t]ype definitions" },
+            { "gri",        function() Snacks.picker.lsp_implementations() end,                  desc = "[g]oto [i]mplementations" },
+            { "grr",        function() Snacks.picker.lsp_references() end,                       desc = "[g]oto [r]eferences" },
+            { "gai",        function() Snacks.picker.lsp_incoming_calls() end,                   desc = "[g]oto c[a]ll [i]ncoming" },
+            { "gao",        function() Snacks.picker.lsp_outgoing_calls() end,                   desc = "[g]oto c[a]ll [o]utgoing" },
+            { "gO",         function() Snacks.picker.lsp_symbols() end,                          desc = "[g]oto d[O]cument symbols" },
+            { "gS",         function() Snacks.picker.lsp_workspace_symbols() end,                desc = "[g]oto work[S]pace symbols" },
 
         })
     end
