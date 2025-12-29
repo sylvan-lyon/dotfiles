@@ -43,6 +43,7 @@ return {
         event = "User LazyFilePost",
         config = function ()
             require("treesitter-context").setup({
+                multiline_threshold = 1,
                 enable = true,
             })
 

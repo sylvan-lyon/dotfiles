@@ -24,7 +24,7 @@ local on_attach = function(_, bufnr)
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
     end
 
-    local hover = function() vim.lsp.buf.hover({ max_width = 120, max_height = 32 }) end
+    local hover = function() vim.lsp.buf.hover({ max_width = 90, max_height = 32 }) end
 
     local jump_back_diagnostic = function() vim.diagnostic.jump({ count = -1, float = true }) end
     local jump_next_diagnostic = function() vim.diagnostic.jump({ count = 1, float = true }) end
@@ -34,12 +34,9 @@ local on_attach = function(_, bufnr)
         { "gra",        vim.lsp.buf.code_action,   buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [a]ctions" },
         { "grf",        vim.lsp.buf.format,        buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [f]ormat" },
         { "grn",        vim.lsp.buf.rename,        buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [r]e[n]me" },
-
         { "K",          hover,                     buffer = bufnr, silent = true, noremap = true, desc = "show documentation" },
-
         { "[d",         jump_back_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "previous diagnose" },
         { "]d",         jump_next_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "next diagnose" },
-
         { "<leader>th", toggle_inlay_hint,         buffer = bufnr, silent = true, noremap = true, desc = "[t]oggle inlay [h]ints" },
     })
 end

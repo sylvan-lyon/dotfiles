@@ -71,6 +71,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
                 opts = function(notif)
                     notif.icon = ev.data.params.value.kind == "end" and " "
                         or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+                    -- 80 * 1e6 ns = 80 ms, so this is 12.5 (1000 / 80) frames per second
                 end,
             })
     end,

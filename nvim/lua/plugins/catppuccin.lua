@@ -12,8 +12,12 @@ return {
             highlight_overrides = {
                 all = function(colors)
                     return {
+                        -- fold text
                         Folded = { fg = colors.flamingo, bg = colors.surface0, style = { "bold" } },
                         FoldColumn = { fg = colors.flamingo, bg = colors.surface0, style = { "bold" } },
+
+                        -- flash.nvim labels
+                        FlashLabel = { fg = colors.mantle, bg = colors.lavender },
                     }
                 end
             },
