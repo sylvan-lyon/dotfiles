@@ -62,12 +62,14 @@ vim.api.nvim_create_autocmd("LspProgress", {
             " ", -- last quarter
             " ", " ", " ", " ", " ", " ", -- waning crescent
         }
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        local title = client and client.name
         vim.notify(
             vim.lsp.status():sub(0, 38),
             vim.log.levels.INFO,
             {
                 id = "lsp_progress",
-                title = "LSP Progress",
+                title = title or "LSP Progress",
                 opts = function(notif)
                     notif.icon = ev.data.params.value.kind == "end" and " "
                         or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
