@@ -49,19 +49,20 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+local spinner = {
+    " ", -- new
+    " ", " ", " ", " ", " ", " ", -- waxing crescent
+    " ", -- first quarter
+    " ", " ", " ", " ", " ", " ", -- waxing gibbous
+    " ", -- full
+    " ", " ", " ", " ", " ", " ", -- waning gibbous
+    " ", -- last quarter
+    " ", " ", " ", " ", " ", " ", -- waning crescent
+}
+
 vim.api.nvim_create_autocmd("LspProgress", {
     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
     callback = function(ev)
-        local spinner = {
-            " ", -- new
-            " ", " ", " ", " ", " ", " ", -- waxing crescent
-            " ", -- first quarter
-            " ", " ", " ", " ", " ", " ", -- waxing gibbous
-            " ", -- full
-            " ", " ", " ", " ", " ", " ", -- waning gibbous
-            " ", -- last quarter
-            " ", " ", " ", " ", " ", " ", -- waning crescent
-        }
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
         local title = client and client.name
         vim.notify(
@@ -77,4 +78,13 @@ vim.api.nvim_create_autocmd("LspProgress", {
                 end,
             })
     end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "gitcommit",
+    -- we usually open COMMIT_MESSAGE by the "git commit", so set `once` should be ok
+    once = true,
+    callback = function ()
+        vim.wo.colorcolumn = "80"
+    end
 })
