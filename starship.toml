@@ -28,7 +28,7 @@ format = """\
 repo_root_style = "bold bright-blue underline"
 repo_root_format = """\
 [$repo_root]($repo_root_style)\
-[$path](blue underline)\
+[$path]($style)\
 [$read_only]($read_only_style)\
 [ ](none)\
 """

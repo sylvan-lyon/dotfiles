@@ -153,7 +153,11 @@ return {
         "mason-org/mason.nvim",
         cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
         config = function(_, _)
-            require("mason").setup({})
+            require("mason").setup({
+                github = {
+                    download_url_template = "https://gh-proxy.org/https://github.com/%s/releases/download/%s/%s"
+                }
+            })
         end,
     },
 

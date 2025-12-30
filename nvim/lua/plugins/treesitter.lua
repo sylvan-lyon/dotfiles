@@ -5,9 +5,8 @@ return {
         build = ':TSUpdate',
         branch = "master",
         config = function()
-            -- 你需要安装的语言解析器
             require("nvim-treesitter.configs").setup {
-                ensure_installed = { "rust", "lua", "json" },
+                ensure_installed = { "rust", "lua", "json", "toml", "regex", "bash" },
 
                 indent = {
                     enable = true,

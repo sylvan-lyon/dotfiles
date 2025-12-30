@@ -196,7 +196,6 @@ return {
 
         keymap({
             { "<leader>td", function() toggle_dim() end,                                         desc = "[t]oggle [d]im" },
-            { "<leader>tn", function() Snacks.notifier.show_history() end,                       desc = "[t]oggle [n]otifier" },
 
             -- NOTE: find stands for "find by name/title of something"
             { "<leader>ff", function() Snacks.picker.files() end,                                desc = "[f]ind [f]iles" },
@@ -212,11 +211,12 @@ return {
             { "<leader>sa", function() Snacks.picker.autocmds() end,                             desc = "[s]earch [a]utocmds" },
             { "<leader>sb", function() Snacks.picker.lines() end,                                desc = "[s]earch [b]uffer lines" },
             { "<leader>sd", function() Snacks.picker.diagnostics() end,                          desc = "[s]earch [d]iagnostics" },
-            { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end,                   desc = "[s]earch buffer [d]iagnostics" },
+            { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end,                   desc = "[s]earch [D]iagnostics(buffer)" },
             { "<leader>sg", function() Snacks.picker.grep() end,                                 desc = "[s]earch [g]reps" },
             { "<leader>sj", function() Snacks.picker.jumps() end,                                desc = "[s]earch [j]umps" },
             { "<leader>sk", function() Snacks.picker.keymaps({ layout = "select" }) end,         desc = "[s]earch [k]eymaps" },
             { "<leader>sl", function() Snacks.picker.loclist() end,                              desc = "[s]earch [l]ocation list" },
+            { "<leader>sn", function() Snacks.picker.notifications() end,                        desc = "[s]earch [n]otifications" },
             { "<leader>sp", function() Snacks.picker.lazy() end,                                 desc = "[s]earch [p]lugin spec" },
             { "<leader>sq", function() Snacks.picker.qflist() end,                               desc = "[s]earch [q]uickfix" },
             { "<leader>sr", function() Snacks.picker.registers() end,                            desc = "[s]earch [r]egisters" },

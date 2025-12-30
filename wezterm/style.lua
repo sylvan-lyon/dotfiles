@@ -43,6 +43,7 @@ M.apply_to = function(config)
     config.hide_tab_bar_if_only_one_tab = false
     config.tab_max_width = 32
     config.show_new_tab_button_in_tab_bar = false
+    config.bold_brightens_ansi_colors = false
 
     config.colors = {
         tab_bar = {

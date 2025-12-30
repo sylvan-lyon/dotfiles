@@ -1,8 +1,6 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
-local all_modes_applied = { "n", "i", "x", "v" }
-
 ---@class Keymap
 ---@field [1] string
 ---@field [2] string|function
@@ -53,7 +51,6 @@ set_keymaps({
     { "<C-l>",      "<C-w>l",           mode = "n",               desc = "[custom] focus on the right split" },
     { "<",          "<gv",              mode = "v",               desc = "[custom] indent and keep visual" },
     { ">",          ">gv",              mode = "v",               desc = "[custom] dedent and keep visual" },
-    { "<A-x>",      "<CMD>bdelete<CR>", mode = all_modes_applied, desc = "[custom] close current buffer" },
     { "<leader>l",  "<CMD>Lazy<CR>",    mode = "n",               desc = "[custom] open up [l]azy" }
 })
 
