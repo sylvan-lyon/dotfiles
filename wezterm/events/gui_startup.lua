@@ -12,9 +12,4 @@ local spwan_centered_window = function(cmd)
     )
 end
 
-local M = {}
-M.apply = function()
-    wezterm.on("gui-startup", spwan_centered_window)
-end
-
-return M
+wezterm.on("gui-startup", spwan_centered_window)

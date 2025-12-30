@@ -1,13 +1,20 @@
-local wezterm = require("wezterm")
-
-
-return {
-    apply = function ()
-        wezterm.on("update-status", function (window, pane)
-            window:set_left_status(wezterm.format {
-                { Foreground = { Color = '#b4befe' } },
-                { Text = '   ' },
-            })
-        end)
-    end
-}
+-- local wezterm = require("wezterm")
+-- local palettes = require("palettes").palette.catppuccin_mocha
+--
+-- ---@param s string
+-- ---@return string
+-- local function base_path(s)
+--     local ret = s:gsub("(.*)/$", "%1")
+--     ret = string.gsub(ret, '(.*[/\\])(.*)', '%2')
+--     return ret
+-- end
+--
+-- wezterm.on("update-status", function(window, pane)
+--     local cwd_uri = pane:get_current_working_dir()
+--     local cwd = base_path((cwd_uri.file_path or "N/A"))
+--
+--     -- window:set_left_status(wezterm.format {
+--     --     { Foreground = { Color = palettes.lavender } },
+--     --     { Text = "   " .. cwd .. " " },
+--     -- })
+-- end)
