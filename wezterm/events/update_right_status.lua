@@ -14,6 +14,9 @@ local days = {}
 
 function days:to_string(number)
     local ret = tostring(number)
+    if number == 11 or number == 12 then
+        return ret .. "th"
+    end
     local tail = number % 10
     if (tail == 1) then
         ret = ret .. "st"
