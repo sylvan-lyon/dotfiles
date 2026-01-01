@@ -60,25 +60,25 @@ local spinner = {
     " ", " ", " ", " ", " ", " ", -- waning crescent
 }
 
-vim.api.nvim_create_autocmd("LspProgress", {
-    ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
-    callback = function(ev)
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        local title = client and client.name
-        vim.notify(
-            vim.lsp.status():sub(0, 38),
-            vim.log.levels.INFO,
-            {
-                id = "lsp_progress",
-                title = title or "LSP Progress",
-                opts = function(notif)
-                    notif.icon = ev.data.params.value.kind == "end" and " "
-                        or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
-                    -- 80 * 1e6 ns = 80 ms, so this is 12.5 (1000 / 80) frames per second
-                end,
-            })
-    end,
-})
+-- vim.api.nvim_create_autocmd("LspProgress", {
+--     ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+--     callback = function(ev)
+--         local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--         local title = client and client.name
+--         vim.notify(
+--             vim.lsp.status():sub(0, 38),
+--             vim.log.levels.INFO,
+--             {
+--                 id = "lsp_progress",
+--                 title = title or "LSP Progress",
+--                 opts = function(notif)
+--                     notif.icon = ev.data.params.value.kind == "end" and " "
+--                         or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+--                     -- 80 * 1e6 ns = 80 ms, so this is 12.5 (1000 / 80) frames per second
+--                 end,
+--             })
+--     end,
+-- })
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "gitcommit",
