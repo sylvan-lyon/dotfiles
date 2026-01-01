@@ -13,11 +13,10 @@ local presets = {
     },
 }
 
----主要是配置按键绑定，没什么其他的
----comment
----@param _ any
----@param bufnr any
-local on_attach = function(_, bufnr)
+---主要是配置按键绑定，看看有内有 code action、fold 之类的功能
+---@param client vim.lsp.Client
+---@param bufnr integer
+local on_attach = function(client, bufnr)
     local set_keymaps = require("config.keymaps").set_keymaps
 
     local toggle_inlay_hint = function()
@@ -29,7 +28,7 @@ local on_attach = function(_, bufnr)
     local jump_back_diagnostic = function() vim.diagnostic.jump({ count = -1, float = true }) end
     local jump_next_diagnostic = function() vim.diagnostic.jump({ count = 1, float = true }) end
 
-    set_keymaps({
+    local keymaps = {
         { "grd",        vim.diagnostic.open_float, buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [d]iagnostic" },
         { "gra",        vim.lsp.buf.code_action,   buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [a]ctions" },
         { "grf",        vim.lsp.buf.format,        buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [f]ormat" },
@@ -38,7 +37,14 @@ local on_attach = function(_, bufnr)
         { "[d",         jump_back_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "previous diagnose" },
         { "]d",         jump_next_diagnostic,      buffer = bufnr, silent = true, noremap = true, desc = "next diagnose" },
         { "<leader>th", toggle_inlay_hint,         buffer = bufnr, silent = true, noremap = true, desc = "[t]oggle inlay [h]ints" },
-    })
+    }
+
+    set_keymaps(keymaps)
+
+    if client:supports_method("textDocument/foldingRange") then
+        vim.wo.foldmethod = 'expr'
+        vim.wo.foldexpr = 'v:lua.vim.lsp.foldexpr()'
+    end
 end
 
 ---读取 `file_name` 指定的文件名，将那个文件中的内容当成 **`JSON` 字符串解析**
@@ -141,11 +147,6 @@ local setup_ls = function()
         },
         update_in_insert = true,
     })
-
-    vim.o.foldmethod = 'expr'
-    vim.o.foldexpr = 'v:lua.vim.lsp.foldexpr()'
-    -- 魔法数字
-    vim.opt.foldlevel = 99
 end
 
 return {

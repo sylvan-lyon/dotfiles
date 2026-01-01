@@ -52,10 +52,12 @@ vim.opt.showmode = false
 _G.custom_fold_text = function()
     local start_line = vim.fn.getline(vim.v.foldstart)
     local line_count = (vim.v.foldend - vim.v.foldstart + 1)
-    local end_text = "    󰁂 " .. line_count .. " lines total"
+    local end_text = "      " .. line_count .. " lines total"
 
     return start_line .. end_text
 end
 
+vim.opt.foldmethod = "indent"
+vim.opt.foldlevel = 99
 vim.opt.foldtext = "v:lua.custom_fold_text()"
 vim.opt.fillchars = { fold = " " }

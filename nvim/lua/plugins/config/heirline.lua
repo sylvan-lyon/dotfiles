@@ -280,6 +280,12 @@ M.diagnostics = {
     },
 }
 
+M.buffer_type = {
+    provider = function ()
+        return vim.bo.buftype
+    end
+}
+
 M.file_type = {
     provider = function()
         return vim.bo.filetype
