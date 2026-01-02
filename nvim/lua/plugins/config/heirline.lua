@@ -488,7 +488,7 @@ local lsp = {
 }
 
 function lsp:get_spinner()
-    return lsp.spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #lsp.spinner + 1]
+    return lsp.spinner[math.floor(vim.uv.hrtime() / (1e6 * 40)) % #lsp.spinner + 1]
 end
 
 vim.api.nvim_create_autocmd(
@@ -499,7 +499,7 @@ vim.api.nvim_create_autocmd(
 
         ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
         callback = function(event)
-            if lsp.updated_at < vim.uv.hrtime() - 1e6 * 80
+            if lsp.updated_at < vim.uv.hrtime() - 1e6 * 40
                 or event.data.params and event.data.params.value.kind == "end" then
                 vim.schedule(function()
                     vim.api.nvim_exec_autocmds("User", { pattern = "LspComp", data = event.data })
@@ -519,7 +519,7 @@ end
 
 local function keep_drawing_if_possible()
     if timer and not timer_started then
-        timer:start(0, 80, function()
+        timer:start(0, 40, function()
             vim.schedule(function()
                 vim.api.nvim_exec_autocmds("User", { pattern = "LspRedraw" })
             end)
