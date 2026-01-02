@@ -519,7 +519,6 @@ end
 
 local function keep_drawing_if_possible()
     if timer and not timer_started then
-        vim.notify("timmer start")
         timer:start(0, 80, function()
             vim.schedule(function()
                 vim.api.nvim_exec_autocmds("User", { pattern = "LspRedraw" })
@@ -533,7 +532,6 @@ end
 
 local function stop_keeping_drawing()
     if timer and timer:is_active() then
-        vim.notify("timer stop")
         timer:stop()
         timer_started = false
     end
