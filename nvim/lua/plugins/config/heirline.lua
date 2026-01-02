@@ -80,6 +80,18 @@ M.right_padding = function(child, num_space)
     return result
 end
 
+M.lazy_update = {
+    condition = function()
+        return require("lazy.status").has_updates()
+    end,
+    provider = function()
+        return require("lazy.status").updates()
+    end,
+    hl = function()
+        return { fg = colors.pink }
+    end
+}
+
 M.ruler = {
     -- %l = current line number
     -- %L = number of lines in the buffer
@@ -139,7 +151,7 @@ M.mode = {
         self.mode_cache = vim.fn.mode()
     end,
     provider = function(self)
-        return  "┃ " .. self.mode_names[self.mode_cache] .. " ┃"
+        return "┃ " .. self.mode_names[self.mode_cache] .. " ┃"
     end,
     hl = function(self)
         local mode = self.mode_cache:sub(1, 1) -- get only the first mode character
@@ -211,11 +223,11 @@ M.git = {
         self.has_changes = self.status_dict.added ~= 0 or self.status_dict.removed ~= 0 or self.status_dict.changed ~= 0
     end,
 
-    hl = function(self)
-        return { fg = self.has_changes and colors.dimmed_red or colors.dimmed_white }
+    hl = function()
+        return { fg = colors.dimmed_red }
     end,
 
-    { -- git branch name
+    {
         provider = function(self)
             if self.has_changes then
                 return " " .. self.status_dict.head .. "*"
@@ -281,7 +293,7 @@ M.diagnostics = {
 }
 
 M.buffer_type = {
-    provider = function ()
+    provider = function()
         return vim.bo.buftype
     end
 }
@@ -458,97 +470,159 @@ M.search_occurrence = {
     end,
 }
 
+local lsp = {
+    ---@type table<integer, { name: string, status: string }>
+    status = {},
+    progress = "",
+    updated_at = 0,
+    spinner = {
+        " ", -- new
+        " ", " ", " ", " ", " ", " ", -- waxing crescent
+        " ", -- first quarter
+        " ", " ", " ", " ", " ", " ", -- waxing gibbous
+        " ", -- full
+        " ", " ", " ", " ", " ", " ", -- waning gibbous
+        " ", -- last quarter
+        " ", " ", " ", " ", " ", " ", -- waning crescent
+    }
+}
+
+function lsp:get_spinner()
+    return lsp.spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #lsp.spinner + 1]
+end
 
 vim.api.nvim_create_autocmd(
     { "LspAttach", "LspDetach", "LspProgress" },
     {
         desc = [[alias for event { "LspAttach", "LspDetach", "LspProgress" }]],
-        group = vim.api.nvim_create_augroup("lsp status change track", { clear = true }),
+        group = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true }),
+
         ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
         callback = function(event)
-            vim.api.nvim_exec_autocmds("User", { pattern = "LspStatusChanged", data = event.data })
+            if lsp.updated_at < vim.uv.hrtime() - 1e6 * 80
+                or event.data.params and event.data.params.value.kind == "end" then
+                vim.schedule(function()
+                    vim.api.nvim_exec_autocmds("User", { pattern = "LspComp", data = event.data })
+                end)
+                lsp.updated_at = vim.uv.hrtime()
+            end
         end
     }
 )
 
-local spinner = {
-    " ", -- new
-    " ", " ", " ", " ", " ", " ", -- waxing crescent
-    " ", -- first quarter
-    " ", " ", " ", " ", " ", " ", -- waxing gibbous
-    " ", -- full
-    " ", " ", " ", " ", " ", " ", -- waning gibbous
-    " ", -- last quarter
-    " ", " ", " ", " ", " ", " ", -- waning crescent
-}
+local timer, err_msg, _ = vim.uv.new_timer()
+local timer_started = false
 
-local function get_spinner()
-    return spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+local function emit_redraw_status()
+    vim.api.nvim_exec_autocmds("User", { pattern = "LspRedraw" })
 end
 
----@type table<string, string>
-local lsp_status = {}
+local function keep_drawing_if_possible()
+    if timer and not timer_started then
+        vim.notify("timmer start")
+        timer:start(0, 80, function()
+            vim.schedule(function()
+                vim.api.nvim_exec_autocmds("User", { pattern = "LspRedraw" })
+            end)
+        end)
+        timer_started = true
+    else
+        emit_redraw_status()
+    end
+end
+
+local function stop_keeping_drawing()
+    if timer and timer:is_active() then
+        vim.notify("timer stop")
+        timer:stop()
+        timer_started = false
+    end
+end
+
+vim.api.nvim_create_autocmd(
+    "User",
+    {
+        desc = [[redrawstatus]],
+        group = vim.api.nvim_create_augroup("redrawstatus of heirline", { clear = true }),
+        pattern = { "LspComp" },
+
+        ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
+        callback = function(event)
+            local client_id, params = event.data.client_id, event.data.params
+            local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+            if client then
+                lsp.status[client_id] = { status = params and params.value.kind or "begin", name = client.name }
+                if params then
+                    if params.value.kind == "report" then
+                        ---@type { token: integer, value: { kind: string?, message: string?, percentage: string?, title: string? }|nil }|nil
+                        local progress = client.progress:pop()
+                        client.progress:clear()
+                        if progress and progress.value then
+                            local percentage = progress.value.percentage and
+                                ("(%2d%%%%)"):format(progress.value.percentage) or ""
+                            local message = progress.value.message or ""
+                            local title = progress.value.title or ""
+                            lsp.progress = ("%s %s %s"):format(percentage, title, message):sub(1, 60)
+                        end
+                        keep_drawing_if_possible()
+                    elseif params.value.kind == "end" then
+                        stop_keeping_drawing()
+                        lsp.progress = "done"
+                        emit_redraw_status()
+                    elseif params.value.kind == "begin" then
+                        lsp.progress = ""
+                        keep_drawing_if_possible()
+                    end
+                end
+            else
+                lsp.status[client_id] = nil
+            end
+        end
+    }
+)
+
 M.lsp_status = {
     condition = conditions.lsp_attached,
-    hl = { fg = colors.white, bold = true },
+    hl = { fg = colors.dimmed_white, bold = true },
     provider = function()
-        local ret = ""
+        local status = ""
 
-        for name, progress in pairs(lsp_status) do
+        for id, data in pairs(lsp.status) do
             local icon
-            if progress == "begin" then
-                icon = "  "
-            elseif progress == "report" then
-                icon = get_spinner()
-            elseif progress == "end" then
-                icon = " "
+            if data.status == "report" then
+                icon = " " .. lsp:get_spinner()
+            elseif data.status == "end" then
+                icon = "  "
+            else
+                icon = "   "
             end
-            ret = name .. " " .. icon
+
+            status = data.name .. icon
         end
 
-        return ret
+        return status
     end,
     update = {
         "User",
-        pattern = "LspStatusChanged",
-        ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
-        callback = function(_, event)
-            local client_id, params = event.data.client_id, event.data.params
-            local client = vim.lsp.get_client_by_id(client_id)
-
-            if client then
-                lsp_status[client.name] = params and params.value.kind or "begin"
-            else
-                vim.notify("lsp id invalid")
-            end
-
-            vim.schedule(function() vim.cmd("redrawstatus") end)
+        pattern = "LspRedraw",
+        callback = function()
+            vim.cmd("redrawstatus")
         end
     }
 }
 
-
-local lsp_progress = ""
 M.lsp_progress = {
     condition = conditions.lsp_attached,
     provider = function(self)
-        return lsp_progress
+        return lsp.progress
     end,
     update = {
-        "LspProgress",
-        ---@param event { data: { client_id: integer, params: lsp.ProgressParams } }
-        callback = function(_, event)
-            local client = vim.lsp.get_client_by_id(event.data.client_id)
-
-            local value = event.data.params.value
-            if value and value.kind == "end" then
-                lsp_progress = ""
-            else
-                lsp_progress = vim.lsp.status()
-            end
-
-            vim.schedule(function() vim.cmd("redrawstatus") end)
-        end,
+        "User",
+        pattern = "LspRedraw",
+        callback = function()
+            vim.cmd("redrawstatus")
+        end
     },
     hl = { fg = colors.dimmed_white, bold = false },
 }

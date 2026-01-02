@@ -1,37 +1,10 @@
 return {
     {
-        'nvim-treesitter/nvim-treesitter',
-        event = "User LazyFilePost",
-        build = ':TSUpdate',
-        branch = "master",
+        "nvim-treesitter/nvim-treesitter",
+        lazy = false,
+        build = ":TSUpdate",
         config = function()
-            require("nvim-treesitter.configs").setup {
-                ensure_installed = { "rust", "lua", "json", "toml", "regex", "bash" },
-
-                indent = {
-                    enable = true,
-                },
-
-                highlight = {
-                    enable = true,
-                    additional_vim_regex_highlighting = false
-                },
-
-                incremental_selection = {
-                    keymaps = {
-                        init_selection = '[x',
-                        node_incremental = '[x',
-                        node_decremental = ']x',
-                        scope_incremental = false,
-                    },
-                    enable = true,
-                },
-
-                auto_install = false,
-                ignore_install = {},
-                sync_install = true,
-                modules = { "highlight", "incremental_selection", "indent" },
-            }
+            require("nvim-treesitter").setup()
         end
     },
     {

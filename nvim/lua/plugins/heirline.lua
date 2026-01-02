@@ -42,6 +42,7 @@ return {
                         components.fill,
                         components.left_padding(components.show_cmd, 0),
                         components.left_padding(components.search_occurrence, 1),
+                        components.left_padding(components.lazy_update, 1),
                         components.left_padding(components.file_type, 1),
                         components.left_padding(components.file_encoding, 1),
                         components.left_padding(components.file_format, 1),
