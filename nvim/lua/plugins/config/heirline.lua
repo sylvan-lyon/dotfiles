@@ -463,10 +463,14 @@ M.search_occurrence = {
     end,
     hl = { fg = colors.dimmed_blue },
     provider = function()
-        local sinfo = vim.fn.searchcount { maxcount = 0 }
-        local search_stat = sinfo.incomplete > 0 and " [?/?]" or
+        local ok, sinfo = pcall(vim.fn.searchcount)
+        if ok and sinfo.total then
+            local search_stat = sinfo.incomplete > 0 and " [?/?]" or
             sinfo.total > 0 and (" [%s/%s]"):format(sinfo.current, sinfo.total) or ""
-        return search_stat
+            return search_stat
+        else
+            return ""
+        end
     end,
 }
 

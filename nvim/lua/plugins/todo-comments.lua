@@ -24,10 +24,10 @@ return {
         })
 
         vim.keymap.set(
-            "n", "<leader>st",
+            "n", "<leader>ft",
             ---@diagnostic disable-next-line: undefined-global
             function() Snacks.picker.todo_comments() end,
-            { desc = "[s]earch [t]odo comments" }
+            { desc = "[f]ind [t]odo comments" }
         )
     end
 }

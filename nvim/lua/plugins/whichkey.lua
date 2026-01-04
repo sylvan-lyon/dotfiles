@@ -18,5 +18,14 @@ return {
             end,
             { desc = "[which-key] show keymaps" }
         )
+
+        local which_key = require("which-key")
+
+        which_key.add({
+            { "<leader>d", group = "debug" },
+            { "<leader>f", group = "find" },
+            { "<leader>t", group = "toggle" },
+            { "gr",        group = "lsp" },
+        })
     end
 }

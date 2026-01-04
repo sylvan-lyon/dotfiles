@@ -7,6 +7,10 @@ return {
                 char = {
                     jump_labels = true,
                 }
+            },
+            jump = {
+                nohlsearch = true,
+                autojump = true
             }
         })
         require("config.keymaps").set_keymaps({

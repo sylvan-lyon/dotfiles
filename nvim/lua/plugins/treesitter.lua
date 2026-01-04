@@ -4,16 +4,20 @@ return {
         lazy = false,
         build = ":TSUpdate",
         config = function()
-            require("nvim-treesitter").setup()
+            local treesitter = require("nvim-treesitter")
+
+            vim.api.nvim_create_autocmd('FileType', {
+                group = vim.api.nvim_create_augroup("auto setup treesitter functionality after filetype detected", { clear = true }),
+                callback = function()
+                    local success = pcall(vim.treesitter.start)
+                end,
+            })
         end
     },
     {
         "nvim-treesitter/nvim-treesitter-context",
-        dependency = {
-
-        },
         event = "User LazyFilePost",
-        config = function ()
+        config = function()
             require("treesitter-context").setup({
                 multiline_threshold = 1,
                 enable = true,
