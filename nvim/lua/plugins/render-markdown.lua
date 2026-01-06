@@ -1,7 +1,7 @@
 return {
-    'MeanderingProgrammer/render-markdown.nvim',
+    "MeanderingProgrammer/render-markdown.nvim",
     ft = "markdown",
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    dependencies = "nvim-tree/nvim-web-devicons", -- if you prefer nvim-web-devicons
     config = function()
         require("render-markdown").setup({
             completions = {
@@ -26,8 +26,8 @@ return {
                 custom = {},
             },
             pipe_table = {
-                alignment_indicator = '─',
-                border = { '╭', '┬', '╮', '├', '┼', '┤', '╰', '┴', '╯', '│', '─' },
+                alignment_indicator = "─",
+                border = { "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯", "│", "─" },
             },
         })
     end
