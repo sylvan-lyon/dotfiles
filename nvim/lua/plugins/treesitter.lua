@@ -1,17 +1,18 @@
 return {
     {
         "nvim-treesitter/nvim-treesitter",
-        lazy = false,
+        -- lazy = false,
+        cmd = {
+            "TSInstall",
+            "TSInstallFromGrammar",
+            "TSUpdate",
+            "TSUpdate",
+            "TSUninstall",
+            "TSLog",
+        },
         build = ":TSUpdate",
         config = function()
-            local treesitter = require("nvim-treesitter")
-
-            vim.api.nvim_create_autocmd('FileType', {
-                group = vim.api.nvim_create_augroup("auto setup treesitter functionality after filetype detected", { clear = true }),
-                callback = function()
-                    local success = pcall(vim.treesitter.start)
-                end,
-            })
+            require("nvim-treesitter").setup()
         end
     },
     {

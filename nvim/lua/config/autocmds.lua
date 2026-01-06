@@ -50,12 +50,20 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+-- NOTE: color column set on git message files
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "gitcommit",
     -- we usually open COMMIT_MESSAGE by the "git commit", so set `once` should be ok
     once = true,
-    callback = function ()
+    callback = function()
         vim.wo.colorcolumn = "80"
     end
 })
 
+-- NOTE:  try auto-enable treesitter on every file type
+vim.api.nvim_create_autocmd('FileType', {
+    group = vim.api.nvim_create_augroup("auto setup treesitter functionality after filetype detected", { clear = true }),
+    callback = function()
+        local success = pcall(vim.treesitter.start)
+    end,
+})

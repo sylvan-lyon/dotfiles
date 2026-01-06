@@ -43,15 +43,15 @@ local function set_keymaps(keymaps)
 end
 
 set_keymaps({
-    { "K",          ":m '<-2<CR>gv=gv", mode = "v",               desc = "[custom] move up selected text" },
-    { "J",          ":m '>+1<CR>gv=gv", mode = "v",               desc = "[custom] move down selected text" },
-    { "<C-h>",      "<C-w>h",           mode = "n",               desc = "[custom] focus on the left split" },
-    { "<C-j>",      "<C-w>j",           mode = "n",               desc = "[custom] focus on the down split" },
-    { "<C-k>",      "<C-w>k",           mode = "n",               desc = "[custom] focus on the upper split" },
-    { "<C-l>",      "<C-w>l",           mode = "n",               desc = "[custom] focus on the right split" },
-    { "<",          "<gv",              mode = "v",               desc = "[custom] indent and keep visual" },
-    { ">",          ">gv",              mode = "v",               desc = "[custom] dedent and keep visual" },
-    { "<leader>l",  "<CMD>Lazy<CR>",    mode = "n",               desc = "[custom] open up [l]azy" }
+    { "K",         ":m '<-2<CR>gv=gv", mode = "v", desc = "[custom] move up selected text" },
+    { "J",         ":m '>+1<CR>gv=gv", mode = "v", desc = "[custom] move down selected text" },
+    { "<C-h>",     "<C-w>h",           mode = "n", desc = "[custom] focus on the left split" },
+    { "<C-j>",     "<C-w>j",           mode = "n", desc = "[custom] focus on the down split" },
+    { "<C-k>",     "<C-w>k",           mode = "n", desc = "[custom] focus on the upper split" },
+    { "<C-l>",     "<C-w>l",           mode = "n", desc = "[custom] focus on the right split" },
+    { "<",         "<gv",              mode = "v", desc = "[custom] indent and keep visual" },
+    { ">",         ">gv",              mode = "v", desc = "[custom] dedent and keep visual" },
+    { "<leader>l", "<CMD>Lazy<CR>",    mode = "n", desc = "[custom] open up [l]azy" }
 })
 
 return {

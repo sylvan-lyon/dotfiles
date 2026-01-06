@@ -4,6 +4,7 @@ return {
         "nvim-tree/nvim-web-devicons",
         "catppuccin/nvim",
     },
+    event = "User LazyFilePost",
     config = function()
         local components = require("plugins.config.heirline")
         local conditions = require("heirline.conditions")

@@ -13,7 +13,6 @@ local presets = {
     },
 }
 
----主要是配置按键绑定，看看有内有 code action、fold 之类的功能
 ---@param client vim.lsp.Client
 ---@param bufnr integer
 local on_attach = function(client, bufnr)
@@ -29,7 +28,7 @@ local on_attach = function(client, bufnr)
     local jump_next_diagnostic = function() vim.diagnostic.jump({ count = 1, float = true }) end
 
     local keymaps = {
-        { "grd",        vim.diagnostic.open_float, buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [d]iagnostic" },
+        { "<c-w>d",     vim.diagnostic.open_float, buffer = bufnr, silent = true, noremap = true, desc = "code [d]iagnostic" },
         { "gra",        vim.lsp.buf.code_action,   buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [a]ctions" },
         { "grf",        vim.lsp.buf.format,        buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [f]ormat" },
         { "grn",        vim.lsp.buf.rename,        buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [r]e[n]me" },
@@ -55,7 +54,8 @@ end
 ---{
 ---    # 上面的 presets 表中的键
 --     "rust-analyzer": {
---         # lsp 的 setting namespace，rust-analyzer 自己接受的所有配置项都在 "rust-analyzer" 下
+--         # lsp 的 setting namespace，
+--         # rust-analyzer 自己接受的所有配置项都在 "rust-analyzer" 下
 --         "rust-analyzer": {
 --             "cargo": {
 --                 "features": [
@@ -101,11 +101,11 @@ local load_project_config = function(file_name)
 end
 
 local setup_ls = function()
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    local cmp_available, cmp = pcall(require, "blink.cmp")
-    if cmp_available and type(cmp.get_lsp_capabilities) == "function" then
-        capabilities = cmp.get_lsp_capabilities(capabilities)
-    end
+    -- local capabilities = vim.lsp.protocol.make_client_capabilities()
+    -- local cmp_available, cmp = pcall(require, "blink.cmp")
+    -- if cmp_available and type(cmp.get_lsp_capabilities) == "function" then
+    --     capabilities = cmp.get_lsp_capabilities(capabilities)
+    -- end
 
     local project_level = load_project_config(config_file_name)
 
@@ -113,7 +113,7 @@ local setup_ls = function()
     for name, preset in pairs(presets) do
         ---@type vim.lsp.Config
         local final_config = vim.tbl_deep_extend("force", {
-            capabilities = capabilities,
+            -- capabilities = capabilities,
             on_attach = on_attach,
         }, preset or {})
 
@@ -123,14 +123,8 @@ local setup_ls = function()
         end
 
 
-        -- 使用现代 API 启动/注册 LSP
-        if vim.lsp.config then
-            vim.lsp.config(name, final_config)
-            vim.lsp.enable(name)
-        else
-            final_config.name = name
-            vim.lsp.start(final_config)
-        end
+        vim.lsp.config(name, final_config)
+        vim.lsp.enable(name)
     end
 
     vim.diagnostic.config({

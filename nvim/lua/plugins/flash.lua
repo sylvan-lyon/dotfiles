@@ -1,6 +1,14 @@
 return {
     "folke/flash.nvim",
-    event = "VeryLazy",
+    -- event = "VeryLazy",
+    -- keys = {
+    --     { "s",     mode = { "n", "x", "o" }, desc = "Flash" },
+    --     { "S",     mode = { "n", "x", "o" }, desc = "Flash Treesitter" },
+    --     { "r",     mode = "o",               desc = "Remote Flash" },
+    --     { "R",     mode = { "o", "x" },      desc = "Treesitter Search" },
+    --     { "<c-s>", mode = { "c" },           desc = "Toggle Flash Search" },
+    -- },
+    event = "User LazyFilePost",
     config = function()
         require("flash").setup({
             modes = {
