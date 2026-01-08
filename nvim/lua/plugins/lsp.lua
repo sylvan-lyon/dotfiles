@@ -1,18 +1,5 @@
 local config_file_name = ".nvim-lsp.json"
 
-local presets = {
-    ["lua_ls"] = {
-        cmd = { "lua-language-server" },
-        filetypes = { "lua" },
-        root_markers = { ".nvim-lsp.json", "stylua.toml", ".stylua.toml", ".git" },
-    },
-    ["rust-analyzer"] = {
-        cmd = { "rust-analyzer" },
-        root_markers = { "Cargo.toml", "Cargo.lock", ".nvim-lsp.json", ".git" },
-        filetypes = { "rust" },
-    },
-}
-
 ---@param client vim.lsp.Client
 ---@param bufnr integer
 local on_attach = function(client, bufnr)
@@ -101,29 +88,36 @@ local load_project_config = function(file_name)
 end
 
 local setup_ls = function()
-    -- local capabilities = vim.lsp.protocol.make_client_capabilities()
-    -- local cmp_available, cmp = pcall(require, "blink.cmp")
-    -- if cmp_available and type(cmp.get_lsp_capabilities) == "function" then
-    --     capabilities = cmp.get_lsp_capabilities(capabilities)
-    -- end
+    local presets = {
+        ["rust-analyzer"] = vim.lsp.config["rust_analyzer"],
+        ["lua_ls"] = vim.lsp.config["lua_ls"],
+        ["json"] = vim.lsp.config["jsonls"],
+        ["toml"] = vim.lsp.config["taplo"],
+    }
 
     local project_level = load_project_config(config_file_name)
 
-
     for name, preset in pairs(presets) do
-        ---@type vim.lsp.Config
-        local final_config = vim.tbl_deep_extend("force", {
-            -- capabilities = capabilities,
-            on_attach = on_attach,
-        }, preset or {})
+        -- ---@type vim.lsp.Config
+        -- local final_config = vim.tbl_deep_extend("force", {
+        --     on_attach = on_attach,
+        -- }, preset or {})
+        --
+        -- local proj_conf = project_level[name]
+        -- if proj_conf and type(proj_conf) == "table" then
+        --     final_config.settings = vim.tbl_deep_extend("force", final_config.settings or {}, proj_conf)
+        -- end
+        --
 
-        local proj_conf = project_level[name]
-        if proj_conf and type(proj_conf) == "table" then
-            final_config.settings = vim.tbl_deep_extend("force", final_config.settings or {}, proj_conf)
+        local preset_on_attach = preset.on_attach
+        preset.on_attach = function(client, bufnr)
+            if preset_on_attach ~= nil then
+                preset_on_attach(client, bufnr)
+            end
+            on_attach(client, bufnr)
         end
 
-
-        vim.lsp.config(name, final_config)
+        vim.lsp.config(name, preset)
         vim.lsp.enable(name)
     end
 
