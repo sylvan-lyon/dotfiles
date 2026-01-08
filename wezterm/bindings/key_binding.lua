@@ -9,7 +9,7 @@ local normal_key_bindings = {
         action = act.ActivateKeyTable({
             name = "tmux mode",
             one_shot = false,
-            timeout_milliseconds = 2000,
+            timeout_milliseconds = 800,
             until_unknown = false,
         })
     },
