@@ -38,7 +38,7 @@ alias tree = eza --tree --icons=auto --color=auto
 alias sudo = gsudo
 alias "su root" = gsudo
 alias nginx = nginx -p $env.NGINX_HOME
-
+alias cat = bat --plain
 
 # 创建硬链接
 def --env ln [origin: string, target: string] {

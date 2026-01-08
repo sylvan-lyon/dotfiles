@@ -1,0 +1,68 @@
+[opener]
+# Vim 作为文本文件的默认编辑器
+nvim = [
+  { run = 'nvim "%s1"', block = true, orphan = false, desc = "Edit with nvim", for = "windows" }
+]
+
+# VSCode 作为可选编辑器
+vscode = [
+  { run = 'code "%s1"', block = false, orphan = true, desc = "Open with VSCode", for = "windows" }
+]
+
+# 解压缩
+extract = [
+  { run = 'nu C:/Users/sylvan/.config/nushell/scripts/smart-extract.nu "%s1"', block = false, orphan = false, desc = "Smart extract archived file", for = "windows" },
+]
+
+# 压缩到 tar.gz 格式
+compress_tgz = [
+  { run = 'nu C:/Users/sylvan/.config/nushell/scripts/smart-archive.nu tar.gz %s', block = false, orphan = false, desc = "Smart compress in .tar.gz file", for = "windows" }
+]
+
+# 压缩到 zip 格式
+compress_zip = [
+  { run = 'nu C:/Users/sylvan/.config/nushell/scripts/smart-archive.nu zip %s', block = false, orphan = false, desc = "Smart compress in .zip file", for = "windows" }
+]
+
+# 系统默认应用打开
+open = [
+  { run = 'start "" %s', block = false, orphan = true, desc = "Open with system default", for = "windows" }
+]
+
+# 使用 explorer 查看
+explorer = [
+  { run = 'explorer /select,"%s1"', block = false, orphan = true, desc = "Reveal in file explorer", for = "windows" }
+]
+
+[open]
+rules = [
+  # 文本文件使用 vim 默认打开
+  { name = "*.toml", use = ["nvim", "vscode", "open", "explorer"] },
+  { name = "*.nu"  , use = ["nvim", "vscode", "open", "explorer"] },
+  { name = "*.lua" , use = ["nvim", "vscode", "open", "explorer"] },
+  { mime = "text/*", use = ["nvim", "vscode", "open", "explorer"] },
+    
+  # 压缩文件解压
+  { name = "*.zip", use = ["extract", "open", "explorer"] },
+  { name = "*.7z", use = ["extract", "open", "explorer"] },
+  { name = "*.rar", use = ["extract", "open", "explorer"] },
+  { name = "*.tar", use = ["extract", "open", "explorer"] },
+  { name = "*.tar.gz", use = ["extract", "open", "explorer"] },
+  { name = "*.tar.xz", use = ["extract", "open", "explorer"] },
+  { name = "*.tgz", use = ["extract", "open", "explorer"] },
+  { name = "*.gz", use = ["extract", "open", "explorer"] },
+  { name = "*.bz2", use = ["extract", "open", "explorer"] },
+  
+  # 其他文件使用系统默认应用
+  { url = "*", use = ["open", "nvim", "vscode", "extract", "compress_tgz", "compress_zip"] }
+]
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*"
+run  = "git"
+
+[[plugin.prepend_fetchers]]
+id   = "git"
+name = "*/"
+run  = "git"
