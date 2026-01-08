@@ -1,8 +1,8 @@
-local config_file_name = ".nvim-lsp.json"
+local config_name = "/.lsp.lua"
 
 ---@param client vim.lsp.Client
 ---@param bufnr integer
-local on_attach = function(client, bufnr)
+local general_on_attach = function(client, bufnr)
     local set_keymaps = require("config.keymaps").set_keymaps
 
     local toggle_inlay_hint = function()
@@ -33,92 +33,100 @@ local on_attach = function(client, bufnr)
     end
 end
 
----读取 `file_name` 指定的文件名，将那个文件中的内容当成 **`JSON` 字符串解析**
----然后返回一个表，键为**服务器名称**，对应的值为**额外的配置项**
----
----## 实例
----```jsonc
----{
----    # 上面的 presets 表中的键
---     "rust-analyzer": {
---         # lsp 的 setting namespace，
---         # rust-analyzer 自己接受的所有配置项都在 "rust-analyzer" 下
---         "rust-analyzer": {
---             "cargo": {
---                 "features": [
---                     "release"
---                 ]
---             }
---         }
---     },
---     "lua_ls": {
---         "Lua": null
---     }
--- }
----```
----
----当然啊，vim 的函数实现并**不支持 `jsonc`**，上面的代码只是演示
----@param file_name string
----@return table<string, table<string, any>>
-local load_project_config = function(file_name)
-    if not vim.uv.fs_stat(file_name) then
-        return {}
+---@return table<string, table>|nil
+local function load_lsp_config()
+    -- get file path and see if we can read this file
+    local config_file = vim.fn.getcwd() .. config_name
+    if vim.fn.filereadable(config_file) == 0 then
+        return nil
     end
 
-    local file_success, lines = pcall(vim.fn.readfile, file_name)
-    if not file_success then
-        vim.notify(string.format("error while reading %s", file_name), vim.log.levels.ERROR)
-        return {}
+    -- execute this file
+    local success, result = pcall(dofile, config_file)
+    if not success then
+        vim.notify("Failed to execute file `" .. config_name .. "`", vim.log.levels.ERROR)
+        return nil
     end
 
-    local content = table.concat(lines, "\n")
-
-    local json_success, data = pcall(vim.fn.json_decode, content)
-    if not json_success or type(data) ~= "table" then
-        vim.notify(
-            string.format("failed to decode %s (json_decode returned nil or non-table)", file_name),
-            vim.log.levels.ERROR
-        )
-        vim.notify("raw content (truncated): " .. vim.inspect(content:sub(1, 1024)), vim.log.levels.DEBUG)
-        return {}
-    else
-        vim.notify("Loaded project config: " .. vim.json.encode(data), vim.log.levels.INFO)
-        return data
+    -- check the result
+    if not type(result) == "table" then
+        vim.notify("Type returned from `" .. config_name .. "` should be table<string, vim.lsp.Config>")
+        return nil
     end
+
+    for k, v in pairs(result) do
+        if not (type(k) == "string" and type(v) == "table") then
+            vim.notify(
+                ("The type of `%s` should be `vim.lsp.Config`, not `%s`, skipping..."):format(k, type(v)),
+                vim.log.levels.WARN
+            )
+            return nil
+        end
+    end
+
+    return result
 end
 
 local setup_ls = function()
-    local presets = {
-        ["rust-analyzer"] = vim.lsp.config["rust_analyzer"],
-        ["lua_ls"] = vim.lsp.config["lua_ls"],
-        ["json"] = vim.lsp.config["jsonls"],
-        ["toml"] = vim.lsp.config["taplo"],
+    ---@type string[]
+    local default_enabled = {
+        "rust_analyzer",
+        "lua_ls",
+        "jsonls",
+        "taplo"
     }
 
-    local project_level = load_project_config(config_file_name)
+    for _, name in ipairs(default_enabled) do
+        local preset_on_attach = vim.lsp.config[name].on_attach
 
-    for name, preset in pairs(presets) do
-        -- ---@type vim.lsp.Config
-        -- local final_config = vim.tbl_deep_extend("force", {
-        --     on_attach = on_attach,
-        -- }, preset or {})
-        --
-        -- local proj_conf = project_level[name]
-        -- if proj_conf and type(proj_conf) == "table" then
-        --     final_config.settings = vim.tbl_deep_extend("force", final_config.settings or {}, proj_conf)
-        -- end
-        --
-
-        local preset_on_attach = preset.on_attach
-        preset.on_attach = function(client, bufnr)
-            if preset_on_attach ~= nil then
-                preset_on_attach(client, bufnr)
+        vim.lsp.config(name, {
+            on_attach = function(client, bufnr)
+                if preset_on_attach ~= nil then
+                    preset_on_attach(client, bufnr)
+                end
+                general_on_attach(client, bufnr)
             end
-            on_attach(client, bufnr)
-        end
+        })
 
-        vim.lsp.config(name, preset)
         vim.lsp.enable(name)
+    end
+
+    local result = load_lsp_config()
+    if result then
+        for name, config in pairs(result) do
+            local preset_on_attach = vim.lsp.config[name] and vim.lsp.config[name].on_attach
+            local proj_on_attach = config.on_attach
+
+            local trues = 0
+            if preset_on_attach then
+                trues = trues + 1
+            end
+            if proj_on_attach then
+                if type(proj_on_attach) == "function" then
+                    trues = trues + 2
+                else
+                    vim.notify(
+                        ("The `on_attach` of client %s should be\n"):format(name) ..
+                        "  either `nil` or `fun(client: vim.lsp.Client, bufnr: integer)`\n" ..
+                        "  refer to https://neovim.io/doc/user/lsp.html#vim.lsp.Config.\n" ..
+                        "It's suggested to notate return type `table<string, vim.lsp.Config>`.\n"
+                    )
+                end
+            end
+
+            if trues == 0 then
+                config.on_attach = nil
+            elseif trues == 1 then
+                config.on_attach = preset_on_attach
+            elseif trues == 2 then
+                config.on_attach = proj_on_attach
+            elseif trues == 3 then
+                config.on_attach = { preset_on_attach, proj_on_attach }
+            end
+
+            vim.lsp.config(name, config)
+            vim.lsp.enable(name)
+        end
     end
 
     vim.diagnostic.config({
