@@ -6,19 +6,15 @@ local normal_key_bindings = {
         -- tmux mod for multiplexing
         key = "`",
         mods = "CTRL",
-        action = act.ActivateKeyTable {
+        action = act.ActivateKeyTable({
             name = "tmux mode",
             one_shot = false,
             timeout_milliseconds = 2000,
             until_unknown = false,
-        }
+        })
     },
 
     { key = "D",         mods = "CTRL|SHIFT", action = act.ShowDebugOverlay },
-
-    -- 标签页快捷键
-    { key = "[",         mods = "CTRL",       action = act.ActivateTabRelative(-1) },
-    { key = "]",         mods = "CTRL",       action = act.ActivateTabRelative(1) },
 
     -- 复制/粘贴
     { key = "C",         mods = "CTRL|SHIFT", action = act.CopyTo("Clipboard") },
@@ -35,37 +31,36 @@ local normal_key_bindings = {
     { key = "-",         mods = "CTRL",       action = act.DecreaseFontSize },
     { key = "=",         mods = "CTRL",       action = act.IncreaseFontSize },
 
-    {
-        key = "UpArrow",
-        mods = "SUPER",
-        action = wezterm.action_callback(function(window, _)
-            window:maximize()         -- 最大化窗口
-        end),
-    },
-    {
-        key = "DownArrow",
-        mods = "SUPER",
-        action = wezterm.action_callback(function(window, _)
-            window:restore()         -- 恢复原始大小
-        end),
-    },
+    -- {
+    --     key = "UpArrow",
+    --     mods = "SUPER",
+    --     action = wezterm.action_callback(function(window, _)
+    --         window:maximize()         -- 最大化窗口
+    --     end),
+    -- },
+    -- {
+    --     key = "DownArrow",
+    --     mods = "SUPER",
+    --     action = wezterm.action_callback(function(window, _)
+    --         window:restore()         -- 恢复原始大小
+    --     end),
+    -- },
+    --
 
     {
         key = "~",
         mods = "CTRL|SHIFT",
-        action = act.CloseCurrentTab { confirm = true },
+        action = act.SpawnTab("CurrentPaneDomain"),
     },
     {
         key = "!",
         mods = "CTRL|SHIFT",
-        action = act.SpawnTab "DefaultDomain",
+        action = act.SpawnTab("DefaultDomain"),
     },
     {
         key = '@',
         mods = 'CTRL|SHIFT',
-        action = act.SpawnTab {
-            DomainName = "wsl:fedora",
-        },
+        action = act.SpawnTab({ DomainName = "wsl:fedora" }),
     },
     {
         key = '#',

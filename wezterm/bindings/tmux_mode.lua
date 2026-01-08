@@ -15,29 +15,32 @@ return {
     { key = "l",      action = act.ActivatePaneDirection("Right") },
 
     -- 调整窗格大小 (vim 风格)
-    { key = "H",      mods = "SHIFT",                                    action = act.AdjustPaneSize({ "Up", 1 }) },
-    { key = "J",      mods = "SHIFT",                                    action = act.AdjustPaneSize({ "Down", 1 }) },
-    { key = "H",      mods = "SHIFT",                                    action = act.AdjustPaneSize({ "Left", 1 }) },
-    { key = "L",      mods = "SHIFT",                                    action = act.AdjustPaneSize({ "Right", 1 }) },
+    { key = "H",      action = act.AdjustPaneSize({ "Up", 1 }),                      mods = "SHIFT" },
+    { key = "J",      action = act.AdjustPaneSize({ "Down", 1 }),                    mods = "SHIFT" },
+    { key = "H",      action = act.AdjustPaneSize({ "Left", 1 }),                    mods = "SHIFT" },
+    { key = "L",      action = act.AdjustPaneSize({ "Right", 1 }),                   mods = "SHIFT" },
 
     -- 快速调整窗格大小
-    { key = "k",      mods = "ALT",                                      action = act.AdjustPaneSize({ "Up", 5 }) },
-    { key = "j",      mods = "ALT",                                      action = act.AdjustPaneSize({ "Down", 5 }) },
-    { key = "h",      mods = "ALT",                                      action = act.AdjustPaneSize({ "Left", 5 }) },
-    { key = "l",      mods = "ALT",                                      action = act.AdjustPaneSize({ "Right", 5 }) },
+    { key = "k",      action = act.AdjustPaneSize({ "Up", 5 }),                      mods = "ALT" },
+    { key = "j",      action = act.AdjustPaneSize({ "Down", 5 }),                    mods = "ALT" },
+    { key = "h",      action = act.AdjustPaneSize({ "Left", 5 }),                    mods = "ALT" },
+    { key = "l",      action = act.AdjustPaneSize({ "Right", 5 }),                   mods = "ALT" },
 
     -- 标签页管理
     { key = "c",      action = act.SpawnTab("CurrentPaneDomain") },
     { key = "p",      action = act.ActivateTabRelative(-1) },
     { key = "n",      action = act.ActivateTabRelative(1) },
-    { key = "&",      mods = "SHIFT",                                    action = act.CloseCurrentTab({ confirm = true }) },
+    { key = "&",      action = act.CloseCurrentTab({ confirm = true }),              mods = "SHIFT" },
 
-    -- 复制模式
-    { key = "[",      action = act.ActivateCopyMode },
-    { key = "]",      action = act.PasteFrom("Clipboard") },
+    -- 标签页快捷键
+    { key = "[",      action = act.ActivateTabRelative(-1), },
+    { key = "]",      action = act.ActivateTabRelative(1), },
+
+    -- 复制
+    { key = " ",      action = act.ActivateCopyMode,                                 mods = "SHIFT" },
     { key = " ",      action = act.QuickSelect },
 
     -- 退出键表（再按一次前缀键或ESC）
-    { key = "`",      mods = "CTRL",                                     action = "PopKeyTable" },
-    { key = "Escape", mods = "CTRL",                                     action = "PopKeyTable" },
+    { key = "`",      action = "PopKeyTable",                                        mods = "CTRL" },
+    { key = "Escape", action = "PopKeyTable" },
 }
