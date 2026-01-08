@@ -1,5 +1,5 @@
+"$schema" = 'https://starship.rs/config-schema.json'
 format = "$time$directory$git_branch$git_state$git_status$cmd_duration$line_break$character"
-
 add_newline = true
 scan_timeout = 30
 
@@ -13,7 +13,7 @@ time_format = '%T'
 truncation_length = 5
 truncation_symbol = "…/"
 truncate_to_repo = true
-use_os_path_sep = false # 在 Windows 下也是 "/" 作为分隔符
+use_os_path_sep = false  # 在 Windows 下也是 "/" 作为分隔符
 read_only = " "
 
 # 普通的路径
