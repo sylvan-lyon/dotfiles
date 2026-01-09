@@ -22,13 +22,13 @@ $env.config.show_banner = false
 
 # yazi 的 wrapper
 def --env y [...args] {
-	let tmp = (mktemp -t "yazi-cwd.XXXXXX")
-	yazi ...$args --cwd-file $tmp
-	let cwd = (open $tmp)
-	if $cwd != "" and $cwd != $env.PWD {
-		cd $cwd
-	}
-	rm -fp $tmp
+    let tmp = (mktemp -t "yazi-cwd.XXXXXX")
+    yazi ...$args --cwd-file $tmp
+    let cwd = (open $tmp)
+    if $cwd != "" and $cwd != $env.PWD {
+        cd $cwd
+    }
+    rm -fp $tmp
 }
 
 # 智能解压 / 智能压缩
@@ -42,12 +42,12 @@ alias cat = bat --plain
 
 # 创建硬链接
 def --env ln [origin: string, target: string] {
-	mklink "/H" $target $origin
+    mklink "/H" $target $origin
 }
 
 # 创建符号链接
 def --env "ln -s" [origin: string, target: string] {
-	mklink "/J" $target $origin
+    mklink "/J" $target $origin
 }
 
 # rust 配置
