@@ -73,7 +73,8 @@ local setup_ls = function()
         "rust_analyzer",
         "lua_ls",
         "jsonls",
-        "taplo"
+        "taplo",
+        "nushell",
     }
 
     for _, name in ipairs(default_enabled) do
