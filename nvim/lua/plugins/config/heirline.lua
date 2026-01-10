@@ -466,7 +466,7 @@ M.search_occurrence = {
         local ok, sinfo = pcall(vim.fn.searchcount)
         if ok and sinfo.total then
             local search_stat = sinfo.incomplete > 0 and " [?/?]" or
-            sinfo.total > 0 and (" [%s/%s]"):format(sinfo.current, sinfo.total) or ""
+                sinfo.total > 0 and (" [%s/%s]"):format(sinfo.current, sinfo.total) or ""
             return search_stat
         else
             return ""
@@ -503,10 +503,13 @@ vim.api.nvim_create_autocmd(
 
         ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
         callback = function(event)
+            -- update interval: 40ms
             if lsp.updated_at < vim.uv.hrtime() - 1e6 * 40
+                -- If it's LspProgress who triggered this autocmd, and progress kind is end,
+                -- then we force update to draw nice ``.
                 or event.data.params and event.data.params.value.kind == "end" then
                 vim.schedule(function()
-                    vim.api.nvim_exec_autocmds("User", { pattern = "LspComp", data = event.data })
+                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
                 end)
                 lsp.updated_at = vim.uv.hrtime()
             end
@@ -514,6 +517,7 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+-- This timer keeps triggering LspRedraw event every 40 ms
 local timer, err_msg, _ = vim.uv.new_timer()
 local timer_started = false
 
@@ -521,13 +525,12 @@ local function emit_redraw_status()
     vim.api.nvim_exec_autocmds("User", { pattern = "LspRedraw" })
 end
 
+-- If possible ( the timer is not poisoned ),
+--     start timer and keeps emit redraw event
+-- else, triggers LspRedraw once.
 local function keep_drawing_if_possible()
     if timer and not timer_started then
-        timer:start(0, 40, function()
-            vim.schedule(function()
-                vim.api.nvim_exec_autocmds("User", { pattern = "LspRedraw" })
-            end)
-        end)
+        timer:start(0, 40, vim.schedule_wrap(emit_redraw_status))
         timer_started = true
     else
         emit_redraw_status()
@@ -544,9 +547,9 @@ end
 vim.api.nvim_create_autocmd(
     "User",
     {
-        desc = [[redrawstatus]],
-        group = vim.api.nvim_create_augroup("redrawstatus of heirline", { clear = true }),
-        pattern = { "LspComp" },
+        desc = [[redraw lsp status]],
+        group = vim.api.nvim_create_augroup("redraw lsp status of heirline", { clear = true }),
+        pattern = { "LspUpdate" },
 
         ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
         callback = function(event)
@@ -557,11 +560,13 @@ vim.api.nvim_create_autocmd(
                 lsp.status[client_id] = { status = params and params.value.kind or "begin", name = client.name }
                 if params then
                     if params.value.kind == "report" then
+                        -- get most recent progress and cleanup the progress ring
                         ---@type { token: integer, value: { kind: string?, message: string?, percentage: string?, title: string? }|nil }|nil
                         local progress = client.progress:pop()
                         client.progress:clear()
                         if progress and progress.value then
                             local percentage = progress.value.percentage and
+                                -- %%%% >-- stirng.format --> %% >-- status of neovim --> %
                                 ("(%2d%%%%)"):format(progress.value.percentage) or ""
                             local message = progress.value.message or ""
                             local title = progress.value.title or ""

@@ -5,7 +5,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     if vim.v.shell_error ~= 0 then
         vim.api.nvim_echo({
                 { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-                { out, "WarningMsg" },
+                { out,                            "WarningMsg" },
                 { "\nPress any key to exit..." },
             },
             true,
@@ -16,6 +16,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     end
 end
 
+-- runtime path
 vim.opt.rtp:prepend(lazypath)
 
 require("config.options")
@@ -28,20 +29,24 @@ require("lazy").setup({
         { import = "plugins" },
     },
     install = { missing = true, colorscheme = { "catppuccin" } },
-    checker = { enabled = true },
+    checker = {
+        enabled = true,
+        frequency = 3600 * 24,
+    },
     ui = {
         border = "rounded",
         backdrop = 100,
-        pills = true,
+        pills = false,
+        title = " Lazy ",
+        title_pos = "center"
     },
     throttle = 60,
     git = {
         timeout = 600, -- 把超时限制改大一点，避免什么都直接爆炸了
-        log = { "-4" },
+        log = { "-8" },
         url_format = "https://gh-proxy.org/https://github.com/%s.git",
     },
     change_detection = {
         enabled = false,
     }
 })
-

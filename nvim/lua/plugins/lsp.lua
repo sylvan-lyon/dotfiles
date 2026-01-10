@@ -75,6 +75,7 @@ local setup_ls = function()
         "jsonls",
         "taplo",
         "nushell",
+        "markdown_oxide",
     }
 
     for _, name in ipairs(default_enabled) do
