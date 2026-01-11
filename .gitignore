@@ -1,5 +1,12 @@
-/nushell/history.txt
-/yazi/state/
-/scoop/config.json
-/brain/
-/crab-vault/
+/*
+
+!/fastfetch/
+!/fish/
+!/ghostty/
+!/lazygit/
+!/nushell/
+!/nvim/
+!/wezterm/
+!/yazi/
+!starship.toml
+!.gitignore

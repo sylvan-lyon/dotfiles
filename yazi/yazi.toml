@@ -1,12 +1,12 @@
 [opener]
 # Vim 作为文本文件的默认编辑器
 nvim = [
-  { run = 'nvim "%s1"', block = true, orphan = false, desc = "Edit with nvim", for = "windows" }
+  { run = 'nvim "%s1"', block = true, orphan = false, desc = "Edit with nvim" },
 ]
 
 # VSCode 作为可选编辑器
 vscode = [
-  { run = 'code "%s1"', block = false, orphan = true, desc = "Open with VSCode", for = "windows" }
+  { run = 'code "%s1"', block = false, orphan = true, desc = "Open with VSCode" }
 ]
 
 # 解压缩
@@ -26,12 +26,14 @@ compress_zip = [
 
 # 系统默认应用打开
 open = [
-  { run = 'start "" %s', block = false, orphan = true, desc = "Open with system default", for = "windows" }
+  { run = 'start "" %s', block = false, orphan = true, desc = "Open with system default", for = "windows" },
+  { run = 'xdg-open "%s"', block = false, orphan = true, desc= "Open with system default", for = "linux" },
 ]
 
 # 使用 explorer 查看
 explorer = [
-  { run = 'explorer /select,"%s1"', block = false, orphan = true, desc = "Reveal in file explorer", for = "windows" }
+  { run = 'explorer /select,"%s1"', block = false, orphan = true, desc = "Reveal in file explorer", for = "windows" },
+  { run = 'nautilus "%s1"', block = false, orphan = true, desc = "Reveal in file explorer", for = "linux" },
 ]
 
 [open]
