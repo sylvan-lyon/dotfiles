@@ -14,7 +14,7 @@ truncation_length = 5
 truncation_symbol = "…/"
 truncate_to_repo = true
 use_os_path_sep = false  # 在 Windows 下也是 "/" 作为分隔符
-read_only = " "
+read_only = "  "
 
 # 普通的路径
 style = "bold blue underline"

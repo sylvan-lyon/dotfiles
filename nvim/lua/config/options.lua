@@ -43,8 +43,8 @@ vim.opt.swapfile = false
 -- 但是创建 undo file 以持续化 undo history
 vim.opt.undofile = true
 
--- 启用终端颜色支持
 vim.opt.termguicolors = true
+vim.opt.clipboard = "unnamedplus"
 
 -- 关闭自带的 mode 显示
 vim.opt.showmode = false

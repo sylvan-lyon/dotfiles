@@ -151,6 +151,7 @@ return {
     {
         "mason-org/mason.nvim",
         cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
+        event = "User LazyFilePre",
         config = function(_, _)
             require("mason").setup({
                 github = {
