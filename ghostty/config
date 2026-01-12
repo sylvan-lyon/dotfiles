@@ -46,8 +46,8 @@ mouse-hide-while-typing = true
 # background = #123abc
 theme = Catppuccin Mocha
 window-theme = ghostty
-window-height = 40
-window-width = 120
+window-subtitle = false
+window-show-tab-bar = never
 
 #
 # # Empty values are used to reset config keys to default.

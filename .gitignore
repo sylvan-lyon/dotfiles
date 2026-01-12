@@ -6,6 +6,7 @@
 !/lazygit/
 !/nushell/
 !/nvim/
+!/tmux/
 !/wezterm/
 !/yazi/
 !starship.toml
