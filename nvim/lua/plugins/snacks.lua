@@ -164,6 +164,11 @@ local scroll = {
     animate_repeat = {},
 }
 
+local toggle = {
+    enabled = true,
+    notify = true,
+}
+
 return {
     "folke/snacks.nvim",
     priority = 1000,
@@ -187,6 +192,7 @@ return {
             scratch = scratch,
             scroll = scroll,
             statuscolumn = { enabled = true },
+            toggle = toggle,
             words = { enabled = true },
         })
 
@@ -208,6 +214,8 @@ return {
             { "<leader>td", function() toggle_dim() end,                                         desc = "[t]oggle [d]im" },
             { "<leader>ti", function() Snacks.image.hover() end,                                 desc = "[t]oggle [i]mage under cursor" },
             { "<leader>tn", function() Snacks.notifier.hide() end,                               desc = "[t]oggle [n]otices" },
+            { "<leader>tt", function() Snacks.terminal.toggle() end,                             desc = "[t]oggle [t]terminal" },
+            { "<leader>tz", function() Snacks.zen.zoom() end,                                    desc = "[t]oggle [z]oom" },
 
             { "<leader>fa", function() Snacks.picker.autocmds() end,                             desc = "[f]ind [a]utocmds" },
             { "<leader>fb", function() Snacks.picker.buffers() end,                              desc = "[f]ind [b]uffers" },
