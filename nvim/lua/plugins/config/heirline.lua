@@ -544,6 +544,16 @@ local function stop_keeping_drawing()
     end
 end
 
+---The lsp progress function
+---@param progress_value { kind: string?, message: string?, percentage: integer?, title: string? }
+---@return string
+local function format_lsp_progress(progress_value)
+    local percent = progress_value.percentage and
+        -- %%%% >-- stirng.format --> %% >-- status of neovim --> %
+        ("(%2d%%%%)"):format(progress_value.percentage) or ""
+    return ("%s %s"):format(percent, progress_value.title or "")
+end
+
 vim.api.nvim_create_autocmd(
     "User",
     {
@@ -561,16 +571,11 @@ vim.api.nvim_create_autocmd(
                 if params then
                     if params.value.kind == "report" then
                         -- get most recent progress and cleanup the progress ring
-                        ---@type { token: integer, value: { kind: string?, message: string?, percentage: string?, title: string? }|nil }|nil
+                        ---@type { token: integer, value: { kind: string?, message: string?, percentage: integer?, title: string? }|nil }|nil
                         local progress = client.progress:pop()
                         client.progress:clear()
                         if progress and progress.value then
-                            local percentage = progress.value.percentage and
-                                -- %%%% >-- stirng.format --> %% >-- status of neovim --> %
-                                ("(%2d%%%%)"):format(progress.value.percentage) or ""
-                            local message = progress.value.message or ""
-                            local title = progress.value.title or ""
-                            lsp.progress = ("%s %s %s"):format(percentage, title, message):sub(1, 60)
+                            lsp.progress = format_lsp_progress(progress.value)
                         end
                         keep_drawing_if_possible()
                     elseif params.value.kind == "end" then

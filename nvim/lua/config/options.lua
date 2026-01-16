@@ -40,11 +40,10 @@ vim.opt.backup = false
 vim.opt.writebackup = false
 vim.opt.swapfile = false
 
--- 但是创建 undo file 以持续化 undo history
 vim.opt.undofile = true
 
 vim.opt.termguicolors = true
-vim.opt.clipboard = "unnamedplus"
+-- vim.opt.clipboard = "unnamed"
 
 -- 关闭自带的 mode 显示
 vim.opt.showmode = false

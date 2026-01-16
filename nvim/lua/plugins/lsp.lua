@@ -153,11 +153,7 @@ return {
         cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
         event = "User LazyFilePre",
         config = function(_, _)
-            require("mason").setup({
-                github = {
-                    download_url_template = "https://gh-proxy.org/https://github.com/%s/releases/download/%s/%s"
-                }
-            })
+            require("mason").setup({})
         end,
     },
 
