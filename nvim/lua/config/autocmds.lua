@@ -1,4 +1,4 @@
--- UserLazyFileGroup
+--#region
 local lazy_file_group = vim.api.nvim_create_augroup(
     "UserLazyFileGroup",
     { clear = true }
@@ -37,6 +37,7 @@ vim.api.nvim_create_autocmd(
         end
     }
 )
+--#endregion
 
 -- NOTE: highlight upon yank some text
 vim.api.nvim_create_autocmd(
@@ -50,9 +51,13 @@ vim.api.nvim_create_autocmd(
     }
 )
 
+--#region
+local filetype_group = vim.api.nvim_create_augroup("UserFileType", { clear = true })
 -- NOTE: color column set on git message files
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "gitcommit",
+    group = filetype_group,
+    desc = "auto setup colorcolumn for `gitcommit`",
     -- we usually open COMMIT_MESSAGE by the "git commit", so set `once` should be ok
     once = true,
     callback = function()
@@ -62,8 +67,48 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- NOTE:  try auto-enable treesitter on every file type
 vim.api.nvim_create_autocmd('FileType', {
-    group = vim.api.nvim_create_augroup("auto setup treesitter functionality after filetype detected", { clear = true }),
+    group = filetype_group,
+    desc = "auto setup treesitter functionality after filetype detected",
     callback = function()
         local success = pcall(vim.treesitter.start)
     end,
 })
+
+-- NOTE: auto tab options
+vim.api.nvim_create_autocmd("FileType", {
+    group = filetype_group,
+    desc = "auto change tab options",
+    callback = function(event)
+        ---@class TabOpt
+        ---@field expandtab boolean
+        ---@field tabstop integer
+        ---@field shiftwidth integer
+        ---@field softtabstop integer
+
+        ---Get tab option of a certain file type
+        ---@param filetype string
+        ---@return TabOpt
+        local tab_opt_of   = function(filetype)
+            ---@type table<string, TabOpt>
+            local preset = {
+                ["2spaces"] = { expandtab = true, tabstop = 2, shiftwidth = 2, softtabstop = 2 },
+                ["default"] = { expandtab = true, tabstop = 4, shiftwidth = 4, softtabstop = 4 },
+            }
+
+            ---@type table<string, TabOpt>
+            local tab_opt = {
+                ["javascript"] = preset["2spaces"],
+                ["yaml"]       = preset["2spaces"],
+            }
+
+            return tab_opt[filetype] or preset["default"]
+        end
+
+        local option       = tab_opt_of(event.match)
+        vim.bo.tabstop     = option.tabstop
+        vim.bo.expandtab   = option.expandtab
+        vim.bo.shiftwidth  = option.shiftwidth
+        vim.bo.softtabstop = option.softtabstop
+    end
+})
+--#endregion
