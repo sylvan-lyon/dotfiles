@@ -26,8 +26,8 @@ compress_zip = [
 
 # 系统默认应用打开
 open = [
-  { run = 'start "" %s', block = false, orphan = true, desc = "Open with system default", for = "windows" },
-  { run = 'xdg-open "%s"', block = false, orphan = true, desc= "Open with system default", for = "linux" },
+  { run = 'start "" %s1', block = false, orphan = true, desc = "Open with system default", for = "windows" },
+  { run = 'xdg-open %s1', block = false, orphan = true, desc= "Open with system default", for = "linux" },
 ]
 
 # 使用 explorer 查看
