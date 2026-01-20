@@ -167,24 +167,18 @@ function proxy() {
     esac
 }
 
-
 # =================================================================
 # Initialization
 # =================================================================
-# add `~/.local/bin/` to `PATH`
-export PATH=$PATH:'~/.local/bin/'
-# homebrew --------------------------------------------------------
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
-# cargo home ------------------------------------------------------
-. "$HOME/.cargo/env"
-# nvm -------------------------------------------------------------
-export NVM_DIR="$HOME/.nvm"
-[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+export PATH=$PATH:"${HOME}/.local/bin/"
+. "${HOME}/.cargo/env"
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(fzf --zsh)"
+
+alias ls='eza'
+alias ll='eza -l'
 
 # =================================================================
 # Startup
