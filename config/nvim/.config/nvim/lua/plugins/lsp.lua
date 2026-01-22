@@ -1,4 +1,16 @@
 local config_name = "/.lsp.lua"
+---@type string[]
+local default_enabled = {
+    "rust_analyzer",
+    "lua_ls",
+    "jsonls",
+    "taplo",
+    "nushell",
+    "markdown_oxide",
+    "clangd",
+    "bashls",
+    "powershell_es",
+}
 
 ---@param client vim.lsp.Client
 ---@param bufnr integer
@@ -68,17 +80,6 @@ local function load_lsp_config()
 end
 
 local setup_ls = function()
-    ---@type string[]
-    local default_enabled = {
-        "rust_analyzer",
-        "lua_ls",
-        "jsonls",
-        "taplo",
-        "nushell",
-        "markdown_oxide",
-        "clangd",
-    }
-
     for _, name in ipairs(default_enabled) do
         local preset_on_attach = vim.lsp.config[name].on_attach
 
