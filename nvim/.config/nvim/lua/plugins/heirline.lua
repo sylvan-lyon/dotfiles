@@ -16,16 +16,16 @@ return {
                     {
                         components.right_padding(components.mode, 1),
                         components.right_padding(components.file_name_block, 1),
-                        components.right_padding(components.git, 1),
                         components.right_padding(components.diagnostics, 1),
                         components.right_padding(components.lsp_status, 0),
                         components.right_padding(components.lsp_progress, 0),
                         components.fill,
                         components.left_padding(components.search_occurrence, 1),
                         components.left_padding(components.file_type, 1),
+                        components.left_padding(components.git, 1),
                         components.left_padding(components.file_encoding, 1),
                         components.left_padding(components.file_format, 1),
-                        components.left_padding(components.scroll_bar, 2),
+                        components.left_padding(components.scroll_bar, 0),
                         components.left_padding(components.ruler, 0),
                     }
                 },
@@ -34,7 +34,6 @@ return {
                     {
                         components.right_padding(components.mode, 1),
                         components.right_padding(components.file_name_block, 1),
-                        components.right_padding(components.git, 1),
                         components.right_padding(components.diagnostics, 1),
                         components.right_padding(components.lsp_status, 0),
                         components.right_padding(components.lsp_progress, 0),
@@ -44,10 +43,11 @@ return {
                         components.left_padding(components.show_cmd, 0),
                         components.left_padding(components.search_occurrence, 1),
                         components.left_padding(components.lazy_update, 1),
-                        components.left_padding(components.file_type, 1),
+                        components.left_padding(components.git, 1),
+                        components.left_padding(components.file_type, 2),
                         components.left_padding(components.file_encoding, 1),
                         components.left_padding(components.file_format, 1),
-                        components.left_padding(components.scroll_bar, 2),
+                        components.left_padding(components.scroll_bar, 0),
                         components.left_padding(components.ruler, 0),
                     }
                 }

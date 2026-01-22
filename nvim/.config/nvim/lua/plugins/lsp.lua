@@ -76,6 +76,7 @@ local setup_ls = function()
         "taplo",
         "nushell",
         "markdown_oxide",
+        "clangd",
     }
 
     for _, name in ipairs(default_enabled) do

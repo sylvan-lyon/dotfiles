@@ -170,7 +170,7 @@ function proxy() {
 # =================================================================
 # Initialization
 # =================================================================
-export PATH=$PATH:"${HOME}/.local/bin/"
+export PATH="${HOME}/.local/bin/":$PATH
 . "${HOME}/.cargo/env"
 
 eval "$(starship init zsh)"
