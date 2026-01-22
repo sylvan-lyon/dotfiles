@@ -86,7 +86,6 @@ local normal_key_bindings = {
     },
 }
 
-local smart_splits = wezterm.plugin.require('https://github.com/mrjones2014/smart-splits.nvim')
 
 return {
     apply_to = function(wezterm_config)
@@ -94,6 +93,8 @@ return {
         wezterm_config.key_tables = {
             ["tmux mode"] = require("bindings.tmux_mode")
         }
+
+        local smart_splits = wezterm.plugin.require('https://github.com/mrjones2014/smart-splits.nvim')
         smart_splits.apply_to_config(wezterm_config, {
             -- the default config is here, if you'd like to use the default keys,
             -- you can omit this configuration table parameter and just use

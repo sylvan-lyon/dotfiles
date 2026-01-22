@@ -5,7 +5,7 @@ local config = wezterm.config_builder()
 
 
 ------------ 设置默认的启动shell ----------------
--- config.default_prog = { "nu" }
+config.default_prog = { "nu" }
 config.wsl_domains = domains.wsl_domains
 config.disable_default_key_bindings = true
 config.disable_default_mouse_bindings = true
