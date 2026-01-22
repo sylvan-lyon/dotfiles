@@ -61,7 +61,7 @@ vim.api.nvim_create_autocmd("FileType", {
     -- we usually open COMMIT_MESSAGE by the "git commit", so set `once` should be ok
     once = true,
     callback = function()
-        vim.wo.colorcolumn = "80"
+        vim.wo.colorcolumn = "75"
     end
 })
 
@@ -70,7 +70,7 @@ vim.api.nvim_create_autocmd('FileType', {
     group = filetype_group,
     desc = "auto setup treesitter functionality after filetype detected",
     callback = function()
-        local success = pcall(vim.treesitter.start)
+        pcall(vim.treesitter.start)
     end,
 })
 
