@@ -184,6 +184,7 @@ return {
             image = image,
             indent = indent,
             input = input,
+            lazygit = lazigit,
             notifier = notifier,
             picker = picker,
             profiler = profiler,

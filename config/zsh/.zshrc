@@ -178,8 +178,12 @@ eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(fzf --zsh)"
 
+# eza alias
 alias ls='eza'
 alias ll='eza -l'
+
+# cat alias
+alias cat='bat --plain'
 
 # =================================================================
 # Startup
