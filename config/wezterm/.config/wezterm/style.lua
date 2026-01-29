@@ -16,7 +16,7 @@ M.apply_to = function(config)
     }
 
     config.font = wezterm.font_with_fallback(regular_sized_font)
-    config.font_size = 10
+    config.font_size = 11
     config.font_rules = {
         {
             intensity = "Bold",
