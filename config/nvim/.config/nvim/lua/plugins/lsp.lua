@@ -10,6 +10,7 @@ local default_enabled = {
     "clangd",
     "bashls",
     "powershell_es",
+    "gopls",
 }
 
 ---@param client vim.lsp.Client

@@ -92,6 +92,7 @@ vim.api.nvim_create_autocmd("FileType", {
             ---@type table<string, TabOpt>
             local preset = {
                 ["2spaces"] = { expandtab = true, tabstop = 2, shiftwidth = 2, softtabstop = 2 },
+                ["hardtab"] = { expandtab = false, tabstop = 4, shiftwidth = 4, softtabstop = 4 },
                 ["default"] = { expandtab = true, tabstop = 4, shiftwidth = 4, softtabstop = 4 },
             }
 
@@ -99,6 +100,7 @@ vim.api.nvim_create_autocmd("FileType", {
             local tab_opt = {
                 ["javascript"] = preset["2spaces"],
                 ["yaml"]       = preset["2spaces"],
+                ["go"]         = preset["hardtab"],
             }
 
             return tab_opt[filetype] or preset["default"]
