@@ -52,8 +52,8 @@ def --env "ln -s" [origin: string, target: string] {
 
 # rust 配置
 $env.PATH = ($env.PATH | append ~/.cargo/bin)
-$env.RUSTUP_DIST_SERVER = "https://rsproxy.cn"
-$env.RUSTUP_UPDATE_ROOT = "https://rsproxy.cn/rustup"
+$env.HTTP_PROXY = "http://localhost:7890"
+$env.HTTPS_PROXY = "http://localhost:7890"
 
 $env.EDITOR = "nvim"
 
