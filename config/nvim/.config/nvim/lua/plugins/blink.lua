@@ -51,6 +51,7 @@ return {
 
                 completion = {
                     menu = {
+                        min_width = 25,
                         max_height = 16,
                         auto_show = true,
                     },
