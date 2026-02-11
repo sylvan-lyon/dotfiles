@@ -62,7 +62,7 @@ return {
                         auto_show_delay_ms = 500,
                         window = {
                             max_height = 32,
-                            max_width = 120,
+                            max_width = 80,
                         }
                     },
                     ghost_text = {

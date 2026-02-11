@@ -181,6 +181,7 @@ eval "$(fzf --zsh)"
 # eza alias
 alias ls='eza'
 alias ll='eza -l'
+alias tree='eza --tree'
 
 # cat alias
 alias cat='bat --plain'

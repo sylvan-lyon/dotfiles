@@ -69,7 +69,7 @@ end
 
 return {
     "rcarriga/nvim-dap-ui",
-    ft = { "lua", "rust" },
+    ft = { "lua", "rust", "go" },
     dependencies = {
         { "mfussenegger/nvim-dap", config = dap_setup },
         "theHamsta/nvim-dap-virtual-text",

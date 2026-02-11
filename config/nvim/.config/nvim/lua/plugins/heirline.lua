@@ -8,11 +8,18 @@ return {
     config = function()
         local components = require("plugins.config.heirline")
         local conditions = require("heirline.conditions")
+
+        local is_dap_related_buffer = function()
+            return vim.bo.filetype:match("dap") ~= nil
+        end
+
         require("heirline").setup({
             ---@diagnostic disable-next-line: missing-fields
             statusline = {
                 {
-                    condition = conditions.is_not_active,
+                    condition = function()
+                        return conditions.is_active() and not is_dap_related_buffer()
+                    end,
                     {
                         components.right_padding(components.mode, 1),
                         components.right_padding(components.file_name_block, 1),
@@ -30,7 +37,9 @@ return {
                     }
                 },
                 {
-                    condition = conditions.is_active,
+                    condition = function()
+                        return not conditions.is_active() and not is_dap_related_buffer()
+                    end,
                     {
                         components.right_padding(components.mode, 1),
                         components.right_padding(components.file_name_block, 1),
@@ -50,7 +59,18 @@ return {
                         components.left_padding(components.scroll_bar, 0),
                         components.left_padding(components.ruler, 0),
                     }
-                }
+                },
+                {
+                    condition = function()
+                        return is_dap_related_buffer()
+                    end,
+                    {
+                        components.right_padding(components.mode, 1),
+                        components.fill,
+                        components.file_type,
+                        components.left_padding(components.scroll_bar, 1),
+                    },
+                },
             },
             ---@diagnostic disable-next-line: missing-fields
             winbar = {
