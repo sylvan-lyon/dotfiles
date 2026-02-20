@@ -1,0 +1,27 @@
+return {
+    "mikavilpas/yazi.nvim",
+    version = "*", -- use the latest stable version
+    event = "VeryLazy",
+    dependencies = {
+        { "nvim-lua/plenary.nvim", lazy = true },
+    },
+    config = function()
+        -- mark netrw as loaded so it's not loaded at all.
+        --
+        -- More details: https://github.com/mikavilpas/yazi.nvim/issues/802
+        vim.g.loaded_netrwPlugin = 1
+        require("yazi").setup({
+            -- if you want to open yazi instead of netrw, see below for more info
+            open_for_directories = true,
+            keymaps = {
+                show_help = "<f1>",
+            },
+            floating_window_scaling_factor = 0.8,
+            yazi_floating_window_border = "none",
+        })
+
+        require("config.keymaps").set_keymaps({
+            { "<leader>e", "<cmd>Yazi toggle<cr>", desc = "[e]xplorer" },
+        })
+    end
+}

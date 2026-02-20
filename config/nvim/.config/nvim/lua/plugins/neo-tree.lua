@@ -10,6 +10,7 @@ return {
         { mode = "n", "<leader>e", "<CMD>Neotree position=float toggle=true reveal=true<CR>", desc = "file [e]xplorer" }
     },
     cmd = { "Neotree" },
+    enabled = false,
     config = function()
         require("neo-tree").setup({
             popup_border_style = "",
