@@ -53,7 +53,7 @@ M.spacer = { provider = " " }
 M.fill = { provider = "%=" }
 
 -- padding spaces on left, main part will be on right
-M.left_padding = function(child, num_space)
+M.left_pad = function(child, num_space)
     local result = {
         condition = child.condition,
     }
@@ -67,7 +67,7 @@ M.left_padding = function(child, num_space)
 end
 
 -- padding spaces on right, main part will be on left
-M.right_padding = function(child, num_space)
+M.right_pad = function(child, num_space)
     local result = {
         condition = child.condition,
         child,
@@ -232,7 +232,7 @@ M.git = {
             if self.has_changes then
                 return " " .. self.status_dict.head .. "*"
             else
-                return "  " .. self.status_dict.head
+                return " " .. self.status_dict.head
             end
         end,
     },
@@ -443,10 +443,10 @@ M.overseer = {
             ["RUNNING"] = "  ",
         },
     },
-    M.right_padding(overseer_task_for_status "CANCELED"),
-    M.right_padding(overseer_task_for_status "RUNNING"),
-    M.right_padding(overseer_task_for_status "SUCCESS"),
-    M.right_padding(overseer_task_for_status "FAILURE"),
+    M.right_pad(overseer_task_for_status "CANCELED"),
+    M.right_pad(overseer_task_for_status "RUNNING"),
+    M.right_pad(overseer_task_for_status "SUCCESS"),
+    M.right_pad(overseer_task_for_status "FAILURE"),
 }
 
 vim.opt.showcmdloc = "statusline"
@@ -489,10 +489,14 @@ local lsp = {
         " ", -- last quarter
         " ", " ", " ", " ", " ", " ", -- waning crescent
     }
+    -- spinner = { " ", " ", " ", " ", " ", " " }
 }
 
 function lsp:get_spinner()
-    return lsp.spinner[math.floor(vim.uv.hrtime() / (1e6 * 40)) % #lsp.spinner + 1]
+    local second = vim.uv.hrtime() / 1e9
+    local fps = 25
+
+    return lsp.spinner[math.floor(fps * second) % #lsp.spinner + 1]
 end
 
 vim.api.nvim_create_autocmd(
