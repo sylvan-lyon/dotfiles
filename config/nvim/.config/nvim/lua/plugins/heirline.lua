@@ -4,9 +4,8 @@ return {
         "nvim-tree/nvim-web-devicons",
         "catppuccin/nvim",
     },
-    event = "User LazyFilePost",
     config = function()
-        local components = require("plugins.config.heirline")
+        local lib = require("plugins.config.heirline")
         local conditions = require("heirline.conditions")
 
         local is_dap_related_buffer = function()
@@ -21,19 +20,21 @@ return {
                         return conditions.is_active() and not is_dap_related_buffer()
                     end,
                     {
-                        components.right_padding(components.mode, 1),
-                        components.right_padding(components.file_name_block, 1),
-                        components.right_padding(components.diagnostics, 1),
-                        components.right_padding(components.lsp_status, 0),
-                        components.right_padding(components.lsp_progress, 0),
-                        components.fill,
-                        components.left_padding(components.search_occurrence, 1),
-                        components.left_padding(components.file_type, 1),
-                        components.left_padding(components.git, 1),
-                        components.left_padding(components.file_encoding, 1),
-                        components.left_padding(components.file_format, 1),
-                        components.left_padding(components.scroll_bar, 0),
-                        components.left_padding(components.ruler, 0),
+                        lib.right_pad(lib.mode, 1),
+                        lib.right_pad(lib.file_name_block, 1),
+                        lib.right_pad(lib.diagnostics, 1),
+                        lib.right_pad(lib.lsp_status, 0),
+                        lib.right_pad(lib.lsp_progress, 0),
+                        lib.fill,
+                        lib.macro_recording,
+                        lib.fill,
+                        lib.left_pad(lib.search_occurrence, 1),
+                        lib.left_pad(lib.file_type, 1),
+                        lib.left_pad(lib.git, 1),
+                        lib.left_pad(lib.file_encoding, 1),
+                        lib.left_pad(lib.file_format, 1),
+                        lib.left_pad(lib.scroll_bar, 0),
+                        lib.left_pad(lib.ruler, 0),
                     }
                 },
                 {
@@ -41,23 +42,23 @@ return {
                         return not conditions.is_active() and not is_dap_related_buffer()
                     end,
                     {
-                        components.right_padding(components.mode, 1),
-                        components.right_padding(components.file_name_block, 1),
-                        components.right_padding(components.diagnostics, 1),
-                        components.right_padding(components.lsp_status, 0),
-                        components.right_padding(components.lsp_progress, 0),
-                        components.fill,
-                        components.macro_recording,
-                        components.fill,
-                        components.left_padding(components.show_cmd, 0),
-                        components.left_padding(components.search_occurrence, 1),
-                        components.left_padding(components.lazy_update, 1),
-                        components.left_padding(components.git, 1),
-                        components.left_padding(components.file_type, 2),
-                        components.left_padding(components.file_encoding, 1),
-                        components.left_padding(components.file_format, 1),
-                        components.left_padding(components.scroll_bar, 0),
-                        components.left_padding(components.ruler, 0),
+                        lib.right_pad(lib.mode, 1),
+                        lib.right_pad(lib.file_name_block, 1),
+                        lib.right_pad(lib.diagnostics, 1),
+                        lib.right_pad(lib.lsp_status, 0),
+                        lib.right_pad(lib.lsp_progress, 0),
+                        lib.fill,
+                        lib.macro_recording,
+                        lib.fill,
+                        lib.left_pad(lib.show_cmd, 0),
+                        lib.left_pad(lib.search_occurrence, 1),
+                        lib.left_pad(lib.lazy_update, 1),
+                        lib.left_pad(lib.git, 1),
+                        lib.left_pad(lib.file_type, 2),
+                        lib.left_pad(lib.file_encoding, 1),
+                        lib.left_pad(lib.file_format, 1),
+                        lib.left_pad(lib.scroll_bar, 0),
+                        lib.left_pad(lib.ruler, 0),
                     }
                 },
                 {
@@ -65,19 +66,19 @@ return {
                         return is_dap_related_buffer()
                     end,
                     {
-                        components.right_padding(components.mode, 1),
-                        components.fill,
-                        components.file_type,
-                        components.left_padding(components.scroll_bar, 1),
+                        lib.right_pad(lib.mode, 1),
+                        lib.fill,
+                        lib.file_type,
+                        lib.left_pad(lib.scroll_bar, 1),
                     },
                 },
             },
             ---@diagnostic disable-next-line: missing-fields
             winbar = {
                 {
-                    components.fill,
-                    components.buffer_type,
-                    components.file_path_block,
+                    lib.fill,
+                    lib.buffer_type,
+                    lib.file_path_block,
                 }
             },
             opts = {
