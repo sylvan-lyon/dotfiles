@@ -28,13 +28,15 @@ return {
                         lib.fill,
                         lib.macro_recording,
                         lib.fill,
+                        lib.left_pad(lib.show_cmd, 0),
                         lib.left_pad(lib.search_occurrence, 1),
-                        lib.left_pad(lib.file_type, 1),
+                        lib.left_pad(lib.lazy_update, 1),
                         lib.left_pad(lib.git, 1),
+                        lib.left_pad(lib.file_type, 1),
                         lib.left_pad(lib.file_encoding, 1),
+                        lib.left_pad(lib.scroll_bar, 1),
+                        lib.left_pad(lib.ruler, 1),
                         lib.left_pad(lib.file_format, 1),
-                        lib.left_pad(lib.scroll_bar, 0),
-                        lib.left_pad(lib.ruler, 0),
                     }
                 },
                 {
@@ -54,11 +56,11 @@ return {
                         lib.left_pad(lib.search_occurrence, 1),
                         lib.left_pad(lib.lazy_update, 1),
                         lib.left_pad(lib.git, 1),
-                        lib.left_pad(lib.file_type, 2),
+                        lib.left_pad(lib.file_type, 1),
                         lib.left_pad(lib.file_encoding, 1),
+                        lib.left_pad(lib.scroll_bar, 1),
+                        lib.left_pad(lib.ruler, 1),
                         lib.left_pad(lib.file_format, 1),
-                        lib.left_pad(lib.scroll_bar, 0),
-                        lib.left_pad(lib.ruler, 0),
                     }
                 },
                 {

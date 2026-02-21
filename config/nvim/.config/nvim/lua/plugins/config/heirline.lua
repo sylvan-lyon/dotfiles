@@ -29,6 +29,8 @@ local colors = {
     dimmed_yellow = palette.yellow,
 
     green = palette.green,
+    dimmed_green = palette.teal,
+
     orange = palette.peach,
 }
 
@@ -315,7 +317,19 @@ M.file_encoding = {
 M.file_format = {
     provider = function()
         local fmt = vim.bo.fileformat
-        return fmt ~= 'unix' and fmt:upper()
+        if fmt == "unix" then
+            return ""
+        elseif fmt == "dos" then
+            return " "
+        elseif fmt == "mac" then
+            return " "
+        end
+    end,
+    hl = function()
+        local fmt = vim.bo.fileformat
+        if fmt ~= "unix" then
+            return { fg = colors.blue }
+        end
     end
 }
 
