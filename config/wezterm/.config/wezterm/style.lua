@@ -24,14 +24,14 @@ M.apply_to = function(config)
         }
     }
     -- 修改线的粗细比如说字母下划线的粗细、还有分隔符的渲染
-    config.underline_thickness = "200%"
+    config.underline_thickness = "150%"
 
     -------------------- 颜色配置 --------------------
     config.color_schemes = {
         ["custom_catppuccin"] = require("palettes").catppuccin_mocha,
     }
-    -- config.color_scheme = 'Catppuccin Mocha'
-    config.color_scheme = 'custom_catppuccin'
+    config.color_scheme = "Catppuccin Mocha"
+    -- config.color_scheme = 'custom_catppuccin'
 
     -------------------- 窗口样式 --------------------
     config.window_decorations = "RESIZE"
