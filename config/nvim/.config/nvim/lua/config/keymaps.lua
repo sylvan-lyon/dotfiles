@@ -43,14 +43,23 @@ local function set_keymaps(keymaps)
 end
 
 set_keymaps({
+    -- move text
     { "K",         ":m '<-2<CR>gv=gv", mode = "v", desc = "[custom] move up selected text" },
     { "J",         ":m '>+1<CR>gv=gv", mode = "v", desc = "[custom] move down selected text" },
+    -- move cursor
+    { "<C-h>",     "<C-w>h",           mode = "i", desc = "[custom] move cursor left" },
+    { "<C-j>",     "<C-w>j",           mode = "i", desc = "[custom] move cursor down" },
+    { "<C-k>",     "<C-w>k",           mode = "i", desc = "[custom] move cursor upper" },
+    { "<C-l>",     "<C-w>l",           mode = "i", desc = "[custom] move cursor right" },
+    -- split focus
     { "<C-h>",     "<C-w>h",           mode = "n", desc = "[custom] focus on the left split" },
     { "<C-j>",     "<C-w>j",           mode = "n", desc = "[custom] focus on the down split" },
     { "<C-k>",     "<C-w>k",           mode = "n", desc = "[custom] focus on the upper split" },
     { "<C-l>",     "<C-w>l",           mode = "n", desc = "[custom] focus on the right split" },
+    -- indentation
     { "<",         "<gv",              mode = "v", desc = "[custom] indent and keep visual" },
     { ">",         ">gv",              mode = "v", desc = "[custom] dedent and keep visual" },
+    -- lazy plugin manager
     { "<leader>l", "<CMD>Lazy<CR>",    mode = "n", desc = "[custom] open up [l]azy" }
 })
 
