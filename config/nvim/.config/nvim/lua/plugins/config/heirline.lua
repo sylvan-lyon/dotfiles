@@ -493,22 +493,22 @@ local lsp = {
     status = {},
     progress = "",
     updated_at = 0,
-    spinner = {
-        " ", -- new
-        " ", " ", " ", " ", " ", " ", -- waxing crescent
-        " ", -- first quarter
-        " ", " ", " ", " ", " ", " ", -- waxing gibbous
-        " ", -- full
-        " ", " ", " ", " ", " ", " ", -- waning gibbous
-        " ", -- last quarter
-        " ", " ", " ", " ", " ", " ", -- waning crescent
-    }
-    -- spinner = { " ", " ", " ", " ", " ", " " }
+    -- spinner = {
+    --     " ", -- new
+    --     " ", " ", " ", " ", " ", " ", -- waxing crescent
+    --     " ", -- first quarter
+    --     " ", " ", " ", " ", " ", " ", -- waxing gibbous
+    --     " ", -- full
+    --     " ", " ", " ", " ", " ", " ", -- waning gibbous
+    --     " ", -- last quarter
+    --     " ", " ", " ", " ", " ", " ", -- waning crescent
+    -- }
+    spinner = { " ", " ", " ", " ", " ", " " }
 }
 
 function lsp:get_spinner()
     local second = vim.uv.hrtime() / 1e9
-    local fps = 25
+    local fps = 10
 
     return lsp.spinner[math.floor(fps * second) % #lsp.spinner + 1]
 end
