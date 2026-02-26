@@ -53,7 +53,8 @@ local dashboard = {
         { section = 'header' },
         {
             pane = 2,
-            { title = 'ヾ(≧▽≦*)o  Now coding!', padding = 1 },
+            -- { title = 'ヾ(≧▽≦*)o  Now coding!', padding = 1 },
+            { title = 'ᓚᘏᗢ Now coding!', padding = 1 },
             { section = 'keys', gap = 1, padding = 1 },
             { section = 'startup' },
         },

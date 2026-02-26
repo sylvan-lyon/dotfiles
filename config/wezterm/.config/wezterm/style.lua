@@ -57,12 +57,12 @@ M.apply_to = function(config)
         brightness = 0.618,
     }
 
-    config.window_padding = {
-        left = "2.3cell",
-        right = "2.3cell",
-        top = "0.8cell",
-        bottom = "0.25cell",
-    }
+    -- config.window_padding = {
+    --     left = "2.3cell",
+    --     right = "2.3cell",
+    --     top = "0.8cell",
+    --     bottom = "0.25cell",
+    -- }
 
     ------------------ 光标样式 ---------------------
     config.default_cursor_style = "BlinkingBlock"
