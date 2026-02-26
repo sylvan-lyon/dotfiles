@@ -1,9 +1,19 @@
+local cppdbg = function()
+    local sysname = vim.uv.os_uname().sysname
+    if sysname == "Windows_NT" then
+        return "OpenDebugAD7.cmd"
+    elseif sysname == "Linux" then
+        return "codelldb"
+    else
+        vim.notify(("Unkown OS to cppdbg: %s"):format(sysname))
+    end
+end
+
 local dap = require("dap")
 dap.adapters.cppdbg = {
     id = "cppdbg",
     type = "executable",
-    -- command = "OpenDebugAD7.cmd",
-    command = "codelldb",
+    command = cppdbg(),
     options = {
         detached = false
     }
