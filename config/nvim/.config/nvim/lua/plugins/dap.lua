@@ -71,12 +71,13 @@ end
 
 return {
     "rcarriga/nvim-dap-ui",
-    ft = { "lua", "rust", "go" },
+    ft = { "rust", "go" },
     dependencies = {
         { "mfussenegger/nvim-dap", config = dap_setup },
         -- { "theHamsta/nvim-dap-virtual-text", config = function ()
         --     require("nvim-dap-virtual-text").setup({})
         -- end },
+        "mason-org/mason.nvim",
         "nvim-neotest/nvim-nio"
     },
     config = dapui_setup

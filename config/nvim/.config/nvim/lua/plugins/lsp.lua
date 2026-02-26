@@ -81,99 +81,77 @@ local function load_lsp_config()
     return result
 end
 
-local setup_ls = function()
-    for _, name in ipairs(default_enabled) do
-        local preset_on_attach = vim.lsp.config[name].on_attach
+return {
+    "neovim/nvim-lspconfig",
+    dependencies = "mason-org/mason.nvim",
+    event = "User LazyFilePre",
+    config = function(_, _)
+        for _, name in ipairs(default_enabled) do
+            local preset_on_attach = vim.lsp.config[name].on_attach
 
-        vim.lsp.config(name, {
-            on_attach = function(client, bufnr)
-                if preset_on_attach ~= nil then
-                    preset_on_attach(client, bufnr)
+            vim.lsp.config(name, {
+                on_attach = function(client, bufnr)
+                    if preset_on_attach ~= nil then
+                        preset_on_attach(client, bufnr)
+                    end
+                    general_on_attach(client, bufnr)
                 end
-                general_on_attach(client, bufnr)
-            end
-        })
+            })
 
-        vim.lsp.enable(name)
-    end
-
-    local result = load_lsp_config()
-    if result then
-        for name, config in pairs(result) do
-            local preset_on_attach = vim.lsp.config[name] and vim.lsp.config[name].on_attach
-            local proj_on_attach = config.on_attach
-
-            local trues = 0
-            if preset_on_attach then
-                trues = trues + 1
-            end
-            if proj_on_attach then
-                if type(proj_on_attach) == "function" then
-                    trues = trues + 2
-                else
-                    vim.notify(
-                        ("The `on_attach` of client %s should be\n"):format(name) ..
-                        "  either `nil` or `fun(client: vim.lsp.Client, bufnr: integer)`\n" ..
-                        "  refer to https://neovim.io/doc/user/lsp.html#vim.lsp.Config.\n" ..
-                        "It's suggested to notate return type `table<string, vim.lsp.Config>`.\n"
-                    )
-                end
-            end
-
-            if trues == 0 then
-                config.on_attach = nil
-            elseif trues == 1 then
-                config.on_attach = preset_on_attach
-            elseif trues == 2 then
-                config.on_attach = proj_on_attach
-            elseif trues == 3 then
-                config.on_attach = { preset_on_attach, proj_on_attach }
-            end
-
-            vim.lsp.config(name, config)
             vim.lsp.enable(name)
         end
-    end
 
-    vim.diagnostic.config({
-        signs = {
-            text = {
-                [vim.diagnostic.severity.ERROR] = " ",
-                [vim.diagnostic.severity.WARN] = " ",
-                [vim.diagnostic.severity.INFO] = " ",
-                [vim.diagnostic.severity.HINT] = "󰌶 ",
-            }
-        },
-        virtual_text = {
-            prefix = " ●"
-        },
-        update_in_insert = true,
-    })
-end
+        local result = load_lsp_config()
+        if result then
+            for name, config in pairs(result) do
+                local preset_on_attach = vim.lsp.config[name] and vim.lsp.config[name].on_attach
+                local proj_on_attach = config.on_attach
 
-return {
-    {
-        "mason-org/mason.nvim",
-        cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
-        event = "User LazyFilePre",
-        config = function(_, _)
-            require("mason").setup({
-                ui = {
-                    icons = {
-                        package_installed = "✓",
-                        package_pending = "➜",
-                        package_uninstalled = "✗"
-                    }
-                }
-            })
-        end,
-    },
+                local trues = 0
+                if preset_on_attach then
+                    trues = trues + 1
+                end
+                if proj_on_attach then
+                    if type(proj_on_attach) == "function" then
+                        trues = trues + 2
+                    else
+                        vim.notify(
+                            ("The `on_attach` of client %s should be\n"):format(name) ..
+                            "  either `nil` or `fun(client: vim.lsp.Client, bufnr: integer)`\n" ..
+                            "  refer to https://neovim.io/doc/user/lsp.html#vim.lsp.Config.\n" ..
+                            "It's suggested to notate return type `table<string, vim.lsp.Config>`.\n"
+                        )
+                    end
+                end
 
-    {
-        'neovim/nvim-lspconfig',
-        event = "User LazyFilePre",
-        config = function(_, _)
-            setup_ls()
+                if trues == 0 then
+                    config.on_attach = nil
+                elseif trues == 1 then
+                    config.on_attach = preset_on_attach
+                elseif trues == 2 then
+                    config.on_attach = proj_on_attach
+                elseif trues == 3 then
+                    config.on_attach = { preset_on_attach, proj_on_attach }
+                end
+
+                vim.lsp.config(name, config)
+                vim.lsp.enable(name)
+            end
         end
-    }
+
+        vim.diagnostic.config({
+            signs = {
+                text = {
+                    [vim.diagnostic.severity.ERROR] = " ",
+                    [vim.diagnostic.severity.WARN] = " ",
+                    [vim.diagnostic.severity.INFO] = " ",
+                    [vim.diagnostic.severity.HINT] = "󰌶 ",
+                }
+            },
+            virtual_text = {
+                prefix = " ●"
+            },
+            update_in_insert = true,
+        })
+    end
 }
