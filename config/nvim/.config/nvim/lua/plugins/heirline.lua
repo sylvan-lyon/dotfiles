@@ -64,15 +64,9 @@ return {
                     }
                 },
                 {
-                    condition = function()
-                        return is_dap_related_buffer()
-                    end,
-                    {
-                        lib.right_pad(lib.mode, 1),
-                        lib.fill,
-                        lib.file_type,
-                        lib.left_pad(lib.scroll_bar, 1),
-                    },
+                    condition = is_dap_related_buffer,
+                    lib.fill,
+                    lib.dap_buffers
                 },
             },
             ---@diagnostic disable-next-line: missing-fields

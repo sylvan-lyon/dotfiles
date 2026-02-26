@@ -55,30 +55,56 @@ M.spacer = { provider = " " }
 M.fill = { provider = "%=" }
 
 -- padding spaces on left, main part will be on right
-M.left_pad = function(child, num_space)
-    local result = {
-        condition = child.condition,
-    }
-    if num_space ~= nil then
-        for _ = 1, num_space do
-            table.insert(result, M.spacer)
-        end
+---@param child StatusLine
+---@param num integer|fun(): integer
+---@param char string|nil
+---@return table
+M.left_pad = function(child, num, char)
+    local result = { condition = child.condition }
+
+    char = char or " "
+
+    if type(num) == "number" then
+        num = num
+    elseif type(num) == "function" then
+        num = num()
+    else
+        num = 0
     end
+
+    local pad = string.rep(char, num / vim.fn.strdisplaywidth(char))
+    pad = pad .. string.rep(" ", num % vim.fn.strdisplaywidth(char))
+
+    table.insert(result, { provider = pad })
     table.insert(result, child)
+
     return result
 end
 
--- padding spaces on right, main part will be on left
-M.right_pad = function(child, num_space)
-    local result = {
-        condition = child.condition,
-        child,
-    }
-    if num_space ~= nil then
-        for _ = 1, num_space do
-            table.insert(result, M.spacer)
-        end
+--- padding spaces on right, main part will be on left
+---@param child StatusLine
+---@param num integer|fun(): integer
+---@param char string|nil
+---@return table
+M.right_pad = function(child, num, char)
+    local result = { condition = child.condition }
+
+    char = char or " "
+
+    if type(num) == "number" then
+        num = num
+    elseif type(num) == "function" then
+        num = num()
+    else
+        num = 0
     end
+
+    local pad = string.rep(char, num / vim.fn.strdisplaywidth(char))
+    pad = pad .. string.rep(" ", num % vim.fn.strdisplaywidth(char))
+
+    table.insert(result, child)
+    table.insert(result, { provider = pad })
+
     return result
 end
 
@@ -103,15 +129,13 @@ M.ruler = {
     provider = "%4l, %-3c",
 }
 
+local sbar = { " ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" }
 M.scroll_bar = {
-    static = {
-        sbar = { " ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" },
-    },
-    provider = function(self)
+    provider = function()
         local curr_line = vim.api.nvim_win_get_cursor(0)[1]
         local lines = vim.api.nvim_buf_line_count(0)
-        local i = math.floor((lines - curr_line) / lines * #self.sbar) + 1
-        return string.rep(self.sbar[i], 2)
+        local i = math.floor((lines - curr_line) / lines * #sbar) + 1
+        return string.rep(sbar[i], 2)
     end,
     hl = { fg = colors.dimmed_white, bg = colors.yellow },
 }
@@ -457,10 +481,10 @@ M.overseer = {
             ["RUNNING"] = "  ",
         },
     },
-    M.right_pad(overseer_task_for_status "CANCELED"),
-    M.right_pad(overseer_task_for_status "RUNNING"),
-    M.right_pad(overseer_task_for_status "SUCCESS"),
-    M.right_pad(overseer_task_for_status "FAILURE"),
+    M.right_pad(overseer_task_for_status "CANCELED", 1),
+    M.right_pad(overseer_task_for_status "RUNNING", 2),
+    M.right_pad(overseer_task_for_status "SUCCESS", 3),
+    M.right_pad(overseer_task_for_status "FAILURE", 4),
 }
 
 vim.opt.showcmdloc = "statusline"
@@ -488,6 +512,29 @@ M.search_occurrence = {
     end,
 }
 
+M.dap_buffers = {
+    provider = function()
+        local ft = vim.bo.filetype
+        if ft == "dapui_scopes" then
+            return "scopes"
+        elseif ft == "dapui_breakpoints" then
+            return "breakpoints"
+        elseif ft == "dapui_stacks" then
+            return "stacks"
+        elseif ft == "dapui_watches" then
+            return "watches"
+        elseif ft == "dapui_console" then
+            return "console"
+        elseif ft == "dap-repl" then
+            return "repl"
+        else
+            return ft
+        end
+    end,
+    hl = { fg = utils.get_highlight("Type").fg, bold = true },
+}
+
+--#region
 local lsp = {
     ---@type table<integer, { name: string, status: string }>
     status = {},
@@ -536,7 +583,7 @@ vim.api.nvim_create_autocmd(
 )
 
 -- This timer keeps triggering LspRedraw event every 40 ms
-local timer, err_msg, _ = vim.uv.new_timer()
+local timer, _, _ = vim.uv.new_timer()
 local timer_started = false
 
 local function emit_redraw_status()
@@ -611,6 +658,7 @@ vim.api.nvim_create_autocmd(
         end
     }
 )
+--#endregion
 
 M.lsp_status = {
     condition = conditions.lsp_attached,
