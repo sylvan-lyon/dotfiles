@@ -157,7 +157,15 @@ return {
         cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
         event = "User LazyFilePre",
         config = function(_, _)
-            require("mason").setup({})
+            require("mason").setup({
+                ui = {
+                    icons = {
+                        package_installed = "✓",
+                        package_pending = "➜",
+                        package_uninstalled = "✗"
+                    }
+                }
+            })
         end,
     },
 
