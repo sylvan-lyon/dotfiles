@@ -3,28 +3,17 @@ local M = {}
 
 M.apply_to = function(config)
     ------------------ 设置字体 ---------------------
-    local regular_sized_font = {
+    local font = {
         { family = "Maple Mono NF CN", weight = "Regular" },
         { family = "JetBrainsMono Nerd Font", weight = "Regular" },
         { family = "consolas", weight = "Regular" },
     }
 
-    local bold_sized_font = {
-        { family = "Maple Mono NF CN", weight = "Bold" },
-        { family = "JetBrainsMono Nerd Font", weight = "Bold" },
-        { family = "consolas", weight = "Bold" },
-    }
-
-    config.font = wezterm.font_with_fallback(regular_sized_font)
+    config.font = wezterm.font_with_fallback(font)
     config.font_size = 11
-    config.font_rules = {
-        {
-            intensity = "Bold",
-            font = wezterm.font_with_fallback(bold_sized_font)
-        }
-    }
+
     -- 修改线的粗细比如说字母下划线的粗细、还有分隔符的渲染
-    config.underline_thickness = "150%"
+    config.underline_thickness = "125%"
 
     -------------------- 颜色配置 --------------------
     config.color_schemes = {
