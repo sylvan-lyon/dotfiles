@@ -1,5 +1,5 @@
 local function set_keymaps()
-    local dap, dapui = require("dap"), require("dapui")
+    local dap, dapui, dapwidgets = require("dap"), require("dapui"), require("dap.ui.widgets")
     require("config.keymaps").set_keymaps({
         { "<leader>dR", function() dap.repl.toggle() end,       desc = "[d]ebug [R]EPL toggle" },
 
@@ -21,7 +21,7 @@ local function set_keymaps()
         { "<leader>dD", function() dap.clear_breakpoints() end, desc = "[d]ebug [D]elete all breakpoints" },
 
         -- dapui
-        { "<leader>de", function() dapui.eval() end,            desc = "[d]ebug [e]valuate",              mode = { "n", "x" } },
+        { "<leader>de", function() dapwidgets.hover() end,      desc = "[d]ebug [e]valuate",              mode = { "n", "x" } },
         { "<leader>du", function() dapui.toggle() end,          desc = "[d]ebug [u]i" },
         {
             "<leader>dB",
@@ -80,7 +80,7 @@ return {
 
 
         local open_dap = function() dapui.open() end
-        local close_dap = function() dapui.close() end
+        -- local close_dap = function() dapui.close() end
 
         dap.listeners.before.attach.dapui_config = open_dap
         dap.listeners.before.launch.dapui_config = open_dap

@@ -1,31 +1,39 @@
 local cppdbg = function()
-    local sysname = vim.uv.os_uname().sysname
-    if sysname == "Windows_NT" then
-        return "OpenDebugAD7.cmd"
-    elseif sysname == "Linux" then
+    local utils = require("utils")
+    if utils.is_windows then
+        -- MasonInstall cpptools
+        -- return "OpenDebugAD7.cmd"
+        return "codelldb.cmd"
+    elseif utils.is_unix_like then
+        -- MasonInstall codelldb
         return "codelldb"
     else
-        vim.notify(("Unkown OS to cppdbg: %s"):format(sysname))
+        vim.notify(("Unkown OS to cppdbg: %s"):format(utils.sysname))
     end
 end
 
 local dap = require("dap")
 dap.adapters.cppdbg = {
-    id = "cppdbg",
-    type = "executable",
-    command = cppdbg(),
-    options = {
-        detached = false
+    type = "server",
+    port = "${port}",
+    executable = {
+        command = cppdbg(),
+        args = {"--port", "${port}"},
     }
 }
 
 dap.configurations.rust = {
     {
-        name = "Launch rust",
+        name = "Choose a rust executable file to debug.",
         type = "cppdbg",
         request = "launch",
         program = function()
-            return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. '/', 'file')
+            local utils = require("utils")
+            if utils.is_windows then
+                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "\\target\\debug\\", "file")
+            elseif utils.is_unix_like then
+                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+            end
         end,
         cwd = "${workspaceFolder}",
         stopOnEntry = false,
