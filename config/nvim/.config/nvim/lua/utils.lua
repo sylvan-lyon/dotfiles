@@ -44,6 +44,7 @@ local function set_keymaps(keymaps)
         })
     end
 end
+
 return {
     ---@type boolean
     is_windows = is_windows,
