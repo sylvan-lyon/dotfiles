@@ -20,7 +20,7 @@ return {
             yazi_floating_window_border = "none",
         })
 
-        require("config.keymaps").set_keymaps({
+        require("utils").set_keymaps({
             { "<leader>e", "<cmd>Yazi toggle<cr>", desc = "[e]xplorer" },
         })
     end

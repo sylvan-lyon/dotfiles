@@ -16,7 +16,7 @@ local default_enabled = {
 ---@param client vim.lsp.Client
 ---@param bufnr integer
 local general_on_attach = function(client, bufnr)
-    local set_keymaps = require("config.keymaps").set_keymaps
+    local set_keymaps = require("utils").set_keymaps
 
     local toggle_inlay_hint = function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())

@@ -1,6 +1,6 @@
 local function set_keymaps()
     local dap, dapui, dapwidgets = require("dap"), require("dapui"), require("dap.ui.widgets")
-    require("config.keymaps").set_keymaps({
+    require("utils").set_keymaps({
         { "<leader>dR", function() dap.repl.toggle() end,       desc = "[d]ebug [R]EPL toggle" },
 
         -- during session

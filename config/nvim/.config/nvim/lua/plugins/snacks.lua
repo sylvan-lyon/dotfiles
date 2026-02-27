@@ -210,7 +210,7 @@ return {
             words = { enabled = true },
         })
 
-        local keymap = require("config.keymaps").set_keymaps
+        local keymap = require("utils").set_keymaps
 
         local toggle_dim = function()
             if Snacks.dim.enabled then
