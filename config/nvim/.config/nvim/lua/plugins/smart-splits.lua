@@ -4,7 +4,7 @@ return {
         ---@diagnostic disable-next-line: missing-fields
         require("smart-splits").setup({})
 
-        require("utils").set_keymaps({
+        require("utils").keyset({
             -- resizing
             { '<A-h>',             require('smart-splits').resize_left },
             { '<A-j>',             require('smart-splits').resize_down },

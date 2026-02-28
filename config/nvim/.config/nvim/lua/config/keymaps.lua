@@ -1,7 +1,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
-require("utils").set_keymaps({
+require("utils").keyset({
     -- move text
     { "K",         ":m '<-2<CR>gv=gv", mode = "v", desc = "[custom] move up selected text" },
     { "J",         ":m '>+1<CR>gv=gv", mode = "v", desc = "[custom] move down selected text" },

@@ -66,7 +66,9 @@ return {
                 {
                     condition = is_dap_related_buffer,
                     lib.fill,
-                    lib.dap_buffers
+                    { provider = function() return "──── " end },
+                    lib.dap_buffers,
+                    { provider = function() return " ────" end },
                 },
             },
             ---@diagnostic disable-next-line: missing-fields
