@@ -49,3 +49,7 @@ vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 99
 vim.opt.foldtext = "v:lua.custom_fold_text()"
 vim.opt.fillchars = { fold = " " }
+
+if require("utils") then
+    vim.opt.shell = "nu"
+end
