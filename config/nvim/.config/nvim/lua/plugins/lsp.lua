@@ -16,7 +16,7 @@ local default_enabled = {
 ---@param client vim.lsp.Client
 ---@param bufnr integer
 local general_on_attach = function(client, bufnr)
-    local set_keymaps = require("utils").set_keymaps
+    local keyset = require("utils").keyset
 
     local toggle_inlay_hint = function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
@@ -39,7 +39,7 @@ local general_on_attach = function(client, bufnr)
         { "<leader>th", toggle_inlay_hint,       buffer = bufnr, silent = true, noremap = true, desc = "[t]oggle inlay [h]ints" },
     }
 
-    set_keymaps(keymaps)
+    keyset(keymaps)
 
     if client:supports_method("textDocument/foldingRange") then
         vim.wo.foldmethod = 'expr'

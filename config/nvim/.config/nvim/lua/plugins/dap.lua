@@ -1,6 +1,6 @@
-local function set_keymaps()
+local function keyset()
     local dap, dapui, dapwidgets = require("dap"), require("dapui"), require("dap.ui.widgets")
-    require("utils").set_keymaps({
+    require("utils").keyset({
         { "<leader>dR", function() dap.repl.toggle() end,       desc = "[d]ebug [R]EPL toggle" },
 
         -- during session
@@ -87,7 +87,7 @@ return {
         -- dap.listeners.before.event_terminated.dapui_config = close_dap
         -- dap.listeners.before.event_exited.dapui_config = close_dap
 
-        set_keymaps()
+        keyset()
         sign_define()
 
         require("dapui").setup()
