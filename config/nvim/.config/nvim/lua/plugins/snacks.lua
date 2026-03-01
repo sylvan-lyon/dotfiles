@@ -177,6 +177,17 @@ local scroll = {
     animate_repeat = {},
 }
 
+---@type snacks.terminal.Config
+local terminal = {
+    win = {
+        position = "float",
+        border = "rounded",
+        width = 0.75,
+        height = 0.75,
+    },
+    shell = require("utils").is_windows and "nu.exe" or nil,
+}
+
 local toggle = {
     enabled = true,
     notify = true,
@@ -206,6 +217,7 @@ return {
             scratch = scratch,
             scroll = scroll,
             statuscolumn = { enabled = true },
+            terminal = terminal,
             toggle = toggle,
             words = { enabled = true },
         })

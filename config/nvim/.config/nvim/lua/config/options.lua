@@ -49,15 +49,3 @@ vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 99
 vim.opt.foldtext = "v:lua.custom_fold_text()"
 vim.opt.fillchars = { fold = " " }
-
-if require("utils").is_windows then
-    if vim.fn.executable("nu.exe") == 1 then
-        vim.opt.shell = "nu.exe"
-    elseif vim.fn.executable("pwsh.exe") == 1 then
-        vim.opt.shell = "pwsh.exe"
-    elseif vim.fn.executable("powershell.exe") == 1 then
-        vim.opt.shell = "powershell.exe"
-    elseif vim.fn.executable("cmd.exe") == 1 then
-        vim.opt.shell = "cmd.exe"
-    end
-end

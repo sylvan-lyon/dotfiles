@@ -1,11 +1,8 @@
-local cppdbg = function()
+local lldb = function()
     local utils = require("utils")
     if utils.is_windows then
-        -- MasonInstall cpptools
-        -- return "OpenDebugAD7.cmd"
         return "codelldb.cmd"
     elseif utils.is_unix_like then
-        -- MasonInstall codelldb
         return "codelldb"
     else
         vim.notify(("Unkown OS to cppdbg: %s"):format(utils.sysname))
@@ -13,11 +10,11 @@ local cppdbg = function()
 end
 
 local dap = require("dap")
-dap.adapters.cppdbg = {
+dap.adapters.lldb = {
     type = "server",
     port = "${port}",
     executable = {
-        command = cppdbg(),
+        command = lldb(),
         args = {"--port", "${port}"},
     }
 }
@@ -25,7 +22,7 @@ dap.adapters.cppdbg = {
 dap.configurations.rust = {
     {
         name = "Choose a rust executable file to debug.",
-        type = "cppdbg",
+        type = "lldb",
         request = "launch",
         program = function()
             local utils = require("utils")
