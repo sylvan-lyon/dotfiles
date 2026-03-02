@@ -298,7 +298,6 @@ M.diagnostics = {
 
     {
         provider = function(self)
-            -- 0 is just another output, we can decide to print it or not!
             return self.errors > 0 and (self.error_icon .. self.errors .. " ")
         end,
         hl = { fg = colors.diag_error },
