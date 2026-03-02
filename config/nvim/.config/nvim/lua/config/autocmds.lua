@@ -114,3 +114,29 @@ vim.api.nvim_create_autocmd("FileType", {
     end
 })
 --#endregion
+
+--#region lsp
+local updated_at = 0
+vim.api.nvim_create_autocmd(
+    { "LspAttach", "LspDetach", "LspProgress" },
+    {
+        desc = [[alias for event { "LspAttach", "LspDetach", "LspProgress" }]],
+        group = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true }),
+
+        ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
+        callback = function(event)
+            -- update interval: 40ms
+            if updated_at < vim.uv.hrtime() - 1e6 * 40
+                -- If it's LspProgress who triggered this autocmd,
+                -- and progress kind is end,
+                -- then we force update to announce the end of progress.
+                or event.data.params and event.data.params.value.kind == "end" then
+                vim.schedule(function()
+                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
+                end)
+                updated_at = vim.uv.hrtime()
+            end
+        end
+    }
+)
+--#endregion

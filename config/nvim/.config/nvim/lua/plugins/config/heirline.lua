@@ -2,6 +2,12 @@ local palette = require("catppuccin.palettes").get_palette("mocha")
 local utils = require("heirline.utils")
 local conditions = require("heirline.conditions")
 
+local schedule_redraw = function ()
+    vim.schedule(function ()
+        vim.cmd("redrawstatus")
+    end)
+end
+
 local colors = {
     diag_warn = utils.get_highlight("DiagnosticWarn").fg,
     diag_error = utils.get_highlight("DiagnosticError").fg,
@@ -189,9 +195,7 @@ M.mode = {
     end,
     update = {
         "ModeChanged",
-        callback = vim.schedule_wrap(function(_, _)
-            vim.cmd("redrawstatus")
-        end),
+        callback = schedule_redraw,
     },
 }
 
@@ -283,11 +287,12 @@ M.diagnostics = {
 
     update = {
         "DiagnosticChanged",
-        callback = function(self, args)
+        callback = function(self)
             self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
             self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
             self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
             self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+            schedule_redraw()
         end
     },
 
@@ -380,7 +385,7 @@ M.file_name = {
         end
         return file_name:gsub("\\", "/")
     end,
-    hl = function(self)
+    hl = function()
         return { fg = utils.get_highlight("Directory").fg }
     end,
 }
@@ -538,8 +543,7 @@ M.dap_buffers = {
 local lsp = {
     ---@type table<integer, { name: string, status: string }>
     status = {},
-    progress = "",
-    updated_at = 0,
+    progress_string = "",
     -- spinner = {
     --     " ", -- new
     --     " ", " ", " ", " ", " ", " ", -- waxing crescent
@@ -560,45 +564,19 @@ function lsp:get_spinner()
     return lsp.spinner[math.floor(fps * second) % #lsp.spinner + 1]
 end
 
-vim.api.nvim_create_autocmd(
-    { "LspAttach", "LspDetach", "LspProgress" },
-    {
-        desc = [[alias for event { "LspAttach", "LspDetach", "LspProgress" }]],
-        group = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true }),
-
-        ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
-        callback = function(event)
-            -- update interval: 40ms
-            if lsp.updated_at < vim.uv.hrtime() - 1e6 * 40
-                -- If it's LspProgress who triggered this autocmd, and progress kind is end,
-                -- then we force update to draw nice ``.
-                or event.data.params and event.data.params.value.kind == "end" then
-                vim.schedule(function()
-                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
-                end)
-                lsp.updated_at = vim.uv.hrtime()
-            end
-        end
-    }
-)
-
--- This timer keeps triggering LspRedraw event every 40 ms
+-- This timer keeps redrawing every 40 ms
 local timer, _, _ = vim.uv.new_timer()
 local timer_started = false
 
-local function emit_redraw_status()
-    vim.api.nvim_exec_autocmds("User", { pattern = "LspRedraw" })
-end
-
 -- If possible ( the timer is not poisoned ),
 --     start timer and keeps emit redraw event
--- else, triggers LspRedraw once.
+-- else, triggers redraw once.
 local function keep_drawing_if_possible()
     if timer and not timer_started then
-        timer:start(0, 40, vim.schedule_wrap(emit_redraw_status))
+        timer:start(0, 40, schedule_redraw)
         timer_started = true
     else
-        emit_redraw_status()
+        schedule_redraw()
     end
 end
 
@@ -634,21 +612,23 @@ vim.api.nvim_create_autocmd(
             if client then
                 lsp.status[client_id] = { status = params and params.value.kind or "begin", name = client.name }
                 if params then
-                    if params.value.kind == "report" then
-                        -- get most recent progress and cleanup the progress ring
-                        ---@type { token: integer, value: { kind: string?, message: string?, percentage: integer?, title: string? }|nil }|nil
-                        local progress = client.progress:pop()
-                        client.progress:clear()
-                        if progress and progress.value then
-                            lsp.progress = format_lsp_progress(progress.value)
-                        end
+                    if params.value.kind == "begin" then
+                        lsp.progress_string = ""
                         keep_drawing_if_possible()
                     elseif params.value.kind == "end" then
                         stop_keeping_drawing()
-                        lsp.progress = "done"
-                        emit_redraw_status()
-                    elseif params.value.kind == "begin" then
-                        lsp.progress = ""
+                        lsp.progress_string = "done"
+                        schedule_redraw()
+                    elseif params.value.kind == "report" then
+                        -- get most recent progress and cleanup the progress ring
+                        -- so that each call to client.progress:pop() will get most recent progress
+                        -- client.progress is not a stack but a queue
+                        ---@type nil|{ token: integer, value: nil|{ kind: string?, message: string?, percentage: integer?, title: string? } }
+                        local progress = client.progress:pop()
+                        client.progress:clear()
+                        if progress and progress.value then
+                            lsp.progress_string = format_lsp_progress(progress.value)
+                        end
                         keep_drawing_if_possible()
                     end
                 end
@@ -666,7 +646,7 @@ M.lsp_status = {
     provider = function()
         local status = ""
 
-        for id, data in pairs(lsp.status) do
+        for _, data in ipairs(lsp.status) do
             local icon
             if data.status == "report" then
                 icon = " " .. lsp:get_spinner()
@@ -683,24 +663,20 @@ M.lsp_status = {
     end,
     update = {
         "User",
-        pattern = "LspRedraw",
-        callback = function()
-            vim.cmd("redrawstatus")
-        end
+        pattern = "LspUpdate",
+        callback = schedule_redraw,
     }
 }
 
 M.lsp_progress = {
     condition = conditions.lsp_attached,
-    provider = function(self)
-        return lsp.progress
+    provider = function()
+        return lsp.progress_string
     end,
     update = {
         "User",
-        pattern = "LspRedraw",
-        callback = function()
-            vim.cmd("redrawstatus")
-        end
+        pattern = "LspUpdate",
+        callback = schedule_redraw,
     },
     hl = { fg = colors.dimmed_white, bold = false },
 }
