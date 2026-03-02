@@ -2,8 +2,8 @@ local palette = require("catppuccin.palettes").get_palette("mocha")
 local utils = require("heirline.utils")
 local conditions = require("heirline.conditions")
 
-local schedule_redraw = function ()
-    vim.schedule(function ()
+local schedule_redraw = function()
+    vim.schedule(function()
         vim.cmd("redrawstatus")
     end)
 end
@@ -543,17 +543,20 @@ local lsp = {
     ---@type table<integer, { name: string, status: string }>
     status = {},
     progress_string = "",
-    -- spinner = {
-    --     " ", -- new
-    --     " ", " ", " ", " ", " ", " ", -- waxing crescent
-    --     " ", -- first quarter
-    --     " ", " ", " ", " ", " ", " ", -- waxing gibbous
-    --     " ", -- full
-    --     " ", " ", " ", " ", " ", " ", -- waning gibbous
-    --     " ", -- last quarter
-    --     " ", " ", " ", " ", " ", " ", -- waning crescent
-    -- }
-    spinner = { " ", " ", " ", " ", " ", " " }
+    spinner = {
+        " ", -- new
+        " ", " ", " ", " ", " ", " ", -- waxing crescent
+        " ", -- first quarter
+        " ", " ", " ", " ", " ", " ", -- waxing gibbous
+        " ", -- full
+        " ", " ", " ", " ", " ", " ", -- waning gibbous
+        " ", -- last quarter
+        " ", " ", " ", " ", " ", " ", -- waning crescent
+    },
+    -- spinner = { " ", " ", " ", " ", " ", " " },
+    -- This timer keeps redrawing every 40 ms
+    timer = vim.uv.new_timer(),
+    timer_started = false
 }
 
 function lsp:get_spinner()
@@ -563,44 +566,39 @@ function lsp:get_spinner()
     return lsp.spinner[math.floor(fps * second) % #lsp.spinner + 1]
 end
 
--- This timer keeps redrawing every 40 ms
-local timer, _, _ = vim.uv.new_timer()
-local timer_started = false
-
 -- If possible ( the timer is not poisoned ),
 --     start timer and keeps emit redraw event
 -- else, triggers redraw once.
-local function keep_drawing_if_possible()
-    if timer and not timer_started then
-        timer:start(0, 40, schedule_redraw)
-        timer_started = true
+function lsp:keep_drawing_if_possible()
+    if self.timer and not self.timer_started then
+        self.timer:start(0, 40, schedule_redraw)
+        self.timer_started = true
     else
         schedule_redraw()
     end
 end
 
-local function stop_keeping_drawing()
-    if timer and timer:is_active() then
-        timer:stop()
-        timer_started = false
+function lsp:stop_keeping_drawing()
+    if self.timer and self.timer:is_active() then
+        self.timer:stop()
+        self.timer_started = false
     end
 end
 
 ---The lsp progress function
 ---@param progress_value { kind: string?, message: string?, percentage: integer?, title: string? }
----@return string
-local function format_lsp_progress(progress_value)
+function lsp:format_lsp_progress(progress_value)
     local percent = progress_value.percentage and
         -- %%%% >-- stirng.format --> %% >-- status of neovim --> %
         ("(%2d%%%%)"):format(progress_value.percentage) or ""
-    return ("%s %s"):format(percent, progress_value.title or "")
+    self.progress_string = ("%s %s"):format(percent, progress_value.title or "")
 end
 
 vim.api.nvim_create_autocmd(
     "User",
     {
-        desc = [[redraw lsp status]],
-        group = vim.api.nvim_create_augroup("redraw lsp status of heirline", { clear = true }),
+        desc = [[update lsp status]],
+        group = vim.api.nvim_create_augroup("update lsp status of heirline", { clear = true }),
         pattern = { "LspUpdate" },
 
         ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
@@ -609,15 +607,11 @@ vim.api.nvim_create_autocmd(
             local client = vim.lsp.get_client_by_id(event.data.client_id)
 
             if client then
-                lsp.status[client_id] = { status = params and params.value.kind or "begin", name = client.name }
+                lsp.status[client_id] = { status = params and params.value.kind or "end", name = client.name }
                 if params then
                     if params.value.kind == "begin" then
                         lsp.progress_string = ""
-                        keep_drawing_if_possible()
-                    elseif params.value.kind == "end" then
-                        stop_keeping_drawing()
-                        lsp.progress_string = "done"
-                        schedule_redraw()
+                        lsp:keep_drawing_if_possible()
                     elseif params.value.kind == "report" then
                         -- get most recent progress and cleanup the progress ring
                         -- so that each call to client.progress:pop() will get most recent progress
@@ -626,9 +620,13 @@ vim.api.nvim_create_autocmd(
                         local progress = client.progress:pop()
                         client.progress:clear()
                         if progress and progress.value then
-                            lsp.progress_string = format_lsp_progress(progress.value)
+                            lsp:format_lsp_progress(progress.value)
                         end
-                        keep_drawing_if_possible()
+                        lsp:keep_drawing_if_possible()
+                    elseif params.value.kind == "end" then
+                        lsp:stop_keeping_drawing()
+                        lsp.progress_string = "done"
+                        schedule_redraw()
                     end
                 end
             else
@@ -646,14 +644,9 @@ M.lsp_status = {
         local status = ""
 
         for _, data in ipairs(lsp.status) do
-            local icon
-            if data.status == "report" then
-                icon = " " .. lsp:get_spinner()
-            elseif data.status == "end" then
-                icon = "  "
-            else
-                icon = "   "
-            end
+            local icon =
+                data.status == "end" and "  " or
+                " " .. lsp:get_spinner()
 
             status = data.name .. icon
         end
