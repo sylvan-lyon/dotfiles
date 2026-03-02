@@ -75,31 +75,42 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 -- NOTE: auto tab options
+
+---@class TabOpt
+---@field expandtab boolean
+---@field tabstop integer
+---@field shiftwidth integer
+---@field softtabstop integer
 vim.api.nvim_create_autocmd("FileType", {
     group = filetype_group,
     desc = "auto change tab options",
     callback = function(event)
-        ---@class TabOpt
-        ---@field expandtab boolean
-        ---@field tabstop integer
-        ---@field shiftwidth integer
-        ---@field softtabstop integer
-
         ---Get tab option of a certain file type
         ---@param filetype string
         ---@return TabOpt
         local tab_opt_of   = function(filetype)
             ---@type table<string, TabOpt>
             local preset = {
-                ["2spaces"] = { expandtab = true, tabstop = 2, shiftwidth = 2, softtabstop = 2 },
-                ["hardtab"] = { expandtab = false, tabstop = 4, shiftwidth = 4, softtabstop = 4 },
-                ["default"] = { expandtab = true, tabstop = 4, shiftwidth = 4, softtabstop = 4 },
+                ["2spaces"] = { tabstop = 2, shiftwidth = 2, softtabstop = 2, expandtab = true },
+                ["4spaces"] = { tabstop = 4, shiftwidth = 4, softtabstop = 4, expandtab = true },
+                ["hardtab"] = { tabstop = 4, shiftwidth = 4, softtabstop = 4, expandtab = false },
+
+                -- default to 4spaces
+                ["default"] = { tabstop = 4, shiftwidth = 4, softtabstop = 4, expandtab = true },
             }
 
             ---@type table<string, TabOpt>
             local tab_opt = {
                 ["javascript"] = preset["2spaces"],
                 ["yaml"]       = preset["2spaces"],
+                ["xml"]        = preset["2spaces"],
+                ["toml"]       = preset["2spaces"],
+                ["html"]       = preset["2spaces"],
+
+                ["rust"]       = preset["4spaces"],
+                ["cpp"]        = preset["4spaces"],
+                ["c"]          = preset["4spaces"],
+
                 ["go"]         = preset["hardtab"],
             }
 

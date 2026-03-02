@@ -26,7 +26,6 @@
 # # The config file consists of simple key-value pairs,
 # # separated by equals signs.
 # font-family = Iosevka
-font-family = ""
 font-family = "Maple Mono NF CN"
 cursor-style = block
 cursor-style-blink = true

@@ -1,3 +1,2 @@
-export MOZ_DISABLE_RDD_SANDBOX=1
-export NVD_BACKEND=direct
-export LIBVA_DRIVER_NAME=nvidia
+# export NVD_BACKEND=direct
+# export LIBVA_DRIVER_NAME=nvidia
