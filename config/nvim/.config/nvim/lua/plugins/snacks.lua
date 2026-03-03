@@ -182,8 +182,8 @@ local terminal = {
     win = {
         position = "float",
         border = "rounded",
-        width = 0.75,
-        height = 0.75,
+        width = 0.8,
+        height = 0.8,
     },
     shell = require("utils").is_windows and "nu.exe" or nil,
 }
