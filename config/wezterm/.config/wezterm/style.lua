@@ -10,7 +10,7 @@ M.apply_to = function(config)
     }
 
     config.font = wezterm.font_with_fallback(font)
-    config.font_size = 11
+    config.font_size = 10
 
     -- 修改线的粗细比如说字母下划线的粗细、还有分隔符的渲染
     config.underline_thickness = "125%"
