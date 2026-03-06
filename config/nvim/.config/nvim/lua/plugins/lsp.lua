@@ -11,6 +11,7 @@ local default_enabled = {
     "bashls",
     "powershell_es",
     "gopls",
+    "pyrefly",
 }
 
 ---@param client vim.lsp.Client
