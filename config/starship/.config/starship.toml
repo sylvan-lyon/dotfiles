@@ -57,49 +57,13 @@
 '$schema' = 'https://starship.rs/config-schema.json'
 
 format = """
-[╭╴](cyan)\
-$username\
-$hostname\
-$directory\
-$git_branch\
-$git_commit\
-$git_state\
-$git_status\
-$jobs\
-$status\
-$cmd_duration\
-\n\
-[│ ](cyan)\
-[\
-[\\(=^・・^=\\)](cyan dimmed) \
-$direnv\
-$nix_shell\
-$mise\
-$package\
-$c\
-$cpp\
-$cmake\
-$rust\
-$zig\
-$haskell\
-$golang\
-$nodejs\
-$deno\
-$java\
-$kotlin\
-$gradle\
-$ruby\
-$python\
-$lua\
-$custom\
-](dimmed)\
-\n\
-[╰┄](cyan)\
-$character"""
+[╭╴](cyan)$username$hostname$directory$git_branch$git_commit$git_state$git_status$jobs$status$cmd_duration
+[│ ](cyan)[[\\(=^・・^=\\)](cyan dimmed) $direnv$nix_shell$mise$package$c$cpp$cmake$rust$zig$haskell$golang$nodejs$deno$java$kotlin$gradle$ruby$python$lua$custom](dimmed)
+[╰─](cyan)$character"""
 
 [character]
 disabled = false
-success_symbol = '[➜](bold green)'
+success_symbol = '[→](bold cyan)'
 error_symbol = '[➜](bold red)'
 
 [username]
