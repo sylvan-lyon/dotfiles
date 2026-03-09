@@ -37,6 +37,8 @@ vim.opt.termguicolors = true
 -- remove default mode bar, because we have a nice heirline config
 vim.opt.showmode = false
 
+vim.opt.fixendofline = true
+
 _G.custom_fold_text = function()
     local start_line = vim.fn.getline(vim.v.foldstart)
     local line_count = (vim.v.foldend - vim.v.foldstart + 1)

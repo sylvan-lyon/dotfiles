@@ -45,6 +45,44 @@ local function keyset(keymaps)
     end
 end
 
+
+---@param str string
+---@return table
+local function shell_split(str)
+    local args = {}
+    local current = ""
+    local quote = nil
+
+    for i = 1, #str do
+        local c = str:sub(i, i)
+
+        if quote then
+            if c == quote then
+                quote = nil
+            else
+                current = current .. c
+            end
+        else
+            if c == '"' or c == "'" then
+                quote = c
+            elseif c == " " then
+                if current ~= "" then
+                    table.insert(args, current)
+                    current = ""
+                end
+            else
+                current = current .. c
+            end
+        end
+    end
+
+    if current ~= "" then
+        table.insert(args, current)
+    end
+
+    return args
+end
+
 return {
     ---@type boolean
     is_windows = is_windows,
@@ -57,4 +95,5 @@ return {
     ---@type string
     sysname = sysinfo.sysname,
     keyset = keyset,
+    shell_split = shell_split,
 }

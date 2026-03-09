@@ -1,28 +1,28 @@
 local function keyset()
     local dap, dapui, dapwidgets = require("dap"), require("dapui"), require("dap.ui.widgets")
     require("utils").keyset({
-        { "<leader>dR", function() dap.repl.toggle() end,       desc = "[d]ebug [R]EPL toggle" },
+        { "<leader>dR", function() dap.repl.toggle() end,            desc = "[d]ebug [R]EPL toggle" },
 
         -- during session
-        { "<leader>di", function() dap.step_into() end,         desc = "[d]ebug step [i]nto" },
-        { "<leader>do", function() dap.step_over() end,         desc = "[d]ebug step [o]ver" },
-        { "<leader>dO", function() dap.step_out() end,          desc = "[d]ebug step [O]ut" },
-        { "<leader>dc", function() dap.continue() end,          desc = "[d]ebug [c]ontinue" },
-        { "<leader>dC", function() dap.run_to_cursor() end,     desc = "[d]ebug run to [C]ursor" },
+        { "<leader>di", function() dap.step_into() end,              desc = "[d]ebug step [i]nto" },
+        { "<leader>do", function() dap.step_over() end,              desc = "[d]ebug step [o]ver" },
+        { "<leader>dO", function() dap.step_out() end,               desc = "[d]ebug step [O]ut" },
+        { "<leader>dc", function() dap.continue() end,               desc = "[d]ebug [c]ontinue" },
+        { "<leader>dC", function() dap.run_to_cursor() end,          desc = "[d]ebug run to [C]ursor" },
 
         -- session manage
-        { "<leader>ds", function() dap.continue() end,          desc = "[d]ebug [s]tart" },
-        { "<leader>dq", function() dap.close() end,             desc = "[d]ebug [q]uit" },
-        { "<leader>dQ", function() dap.terminate() end,         desc = "[d]ebug terminate" },
-        { "<leader>dr", function() dap.restart() end,           desc = "[d]ebug [r]estart" },
+        { "<leader>ds", function() dap.continue({ new = true }) end, desc = "[d]ebug [s]tart" },
+        { "<leader>dq", function() dap.close() end,                  desc = "[d]ebug [q]uit" },
+        { "<leader>dQ", function() dap.terminate() end,              desc = "[d]ebug terminate" },
+        { "<leader>dr", function() dap.restart() end,                desc = "[d]ebug [r]estart" },
 
         -- breakpoints
-        { "<leader>db", function() dap.toggle_breakpoint() end, desc = "[d]ebug [b]reakpoint toggle" },
-        { "<leader>dD", function() dap.clear_breakpoints() end, desc = "[d]ebug [D]elete all breakpoints" },
+        { "<leader>db", function() dap.toggle_breakpoint() end,      desc = "[d]ebug [b]reakpoint toggle" },
+        { "<leader>dD", function() dap.clear_breakpoints() end,      desc = "[d]ebug [D]elete all breakpoints" },
 
         -- dapui
-        { "<leader>de", function() dapwidgets.hover() end,      desc = "[d]ebug [e]valuate",              mode = { "n", "x" } },
-        { "<leader>du", function() dapui.toggle() end,          desc = "[d]ebug [u]i" },
+        { "<leader>de", function() dapwidgets.hover() end,           desc = "[d]ebug [e]valuate",              mode = { "n", "x" } },
+        { "<leader>du", function() dapui.toggle() end,               desc = "[d]ebug [u]i" },
         {
             "<leader>dB",
             function()
