@@ -95,32 +95,14 @@
             ],
             "left": [
                 {
-                    "colorizeSystemIcon": "none",
-                    "customIconPath": "",
-                    "enableColorization": false,
-                    "icon": "rocket",
-                    "iconColor": "none",
-                    "id": "Launcher",
-                    "useDistroLogo": false
-                },
-                {
-                    "defaultSettings": {
-                        "audioCodec": "opus",
-                        "audioSource": "default_output",
-                        "colorRange": "limited",
-                        "copyToClipboard": false,
-                        "directory": "",
-                        "filenamePattern": "recording_yyyyMMdd_HHmmss",
-                        "frameRate": "60",
-                        "hideInactive": false,
-                        "iconColor": "none",
-                        "quality": "very_high",
-                        "resolution": "original",
-                        "showCursor": true,
-                        "videoCodec": "h264",
-                        "videoSource": "portal"
-                    },
-                    "id": "plugin:screen-recorder"
+                    "capsLockIcon": "square-rounded-letter-c-filled",
+                    "hideWhenOff": true,
+                    "id": "LockKeys",
+                    "numLockIcon": "square-rounded-letter-n-filled",
+                    "scrollLockIcon": "square-rounded-letter-s-filled",
+                    "showCapsLock": true,
+                    "showNumLock": true,
+                    "showScrollLock": true
                 },
                 {
                     "defaultSettings": {
@@ -165,7 +147,7 @@
                     "useFixedWidth": false
                 },
                 {
-                    "compactMode": false,
+                    "compactMode": true,
                     "hideMode": "hidden",
                     "hideWhenIdle": false,
                     "id": "MediaMini",
@@ -173,18 +155,12 @@
                     "panelShowAlbumArt": true,
                     "scrollingMode": "hover",
                     "showAlbumArt": true,
-                    "showArtistFirst": true,
+                    "showArtistFirst": false,
                     "showProgressRing": true,
-                    "showVisualizer": false,
+                    "showVisualizer": true,
                     "textColor": "none",
                     "useFixedWidth": false,
                     "visualizerType": "linear"
-                },
-                {
-                    "colorName": "primary",
-                    "hideWhenIdle": true,
-                    "id": "AudioVisualizer",
-                    "width": 100
                 }
             ],
             "right": [
@@ -202,18 +178,9 @@
                         "OBS Studio",
                         "Infinite - Valence",
                         "Tie Me Down - Gryffin/Elley Duhé",
-                        "Lightning Moment feat.fox capture plan - DJ Okawari/fox capture plan"
+                        "Lightning Moment feat.fox capture plan - DJ Okawari/fox capture plan",
+                        "Waiting For - Joakim Lundell"
                     ]
-                },
-                {
-                    "capsLockIcon": "square-rounded-letter-c-filled",
-                    "hideWhenOff": true,
-                    "id": "LockKeys",
-                    "numLockIcon": "square-rounded-letter-n-filled",
-                    "scrollLockIcon": "square-rounded-letter-s-filled",
-                    "showCapsLock": true,
-                    "showNumLock": true,
-                    "showScrollLock": true
                 },
                 {
                     "compactMode": false,
@@ -236,6 +203,32 @@
                     "textColor": "none",
                     "useMonospaceFont": false,
                     "usePadding": false
+                },
+                {
+                    "displayMode": "onhover",
+                    "iconColor": "none",
+                    "id": "Volume",
+                    "middleClickCommand": "pwvucontrol || pavucontrol",
+                    "textColor": "none"
+                },
+                {
+                    "defaultSettings": {
+                        "audioCodec": "opus",
+                        "audioSource": "default_output",
+                        "colorRange": "limited",
+                        "copyToClipboard": false,
+                        "directory": "",
+                        "filenamePattern": "recording_yyyyMMdd_HHmmss",
+                        "frameRate": "60",
+                        "hideInactive": false,
+                        "iconColor": "none",
+                        "quality": "very_high",
+                        "resolution": "original",
+                        "showCursor": true,
+                        "videoCodec": "h264",
+                        "videoSource": "portal"
+                    },
+                    "id": "plugin:screen-recorder"
                 },
                 {
                     "hideWhenZero": false,
