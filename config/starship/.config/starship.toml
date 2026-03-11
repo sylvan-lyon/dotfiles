@@ -64,7 +64,7 @@ format = """
 [character]
 disabled = false
 success_symbol = '[ ](bold cyan)'
-error_symbol = '[ ](bold red)'
+error_symbol = '[ ](bold red)'
 
 [username]
 disabled = false

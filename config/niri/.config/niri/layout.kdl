@@ -1,0 +1,50 @@
+layout {
+    focus-ring {
+        off
+        width 1.5
+        active-color   "#89b4fa"
+        inactive-color "#6c7086"
+        urgent-color   "#f38ba8"
+    }
+
+    border {
+        on
+        width 3
+        active-color   "#89b4fa"
+        inactive-color "#6c7086"
+        urgent-color   "#f38ba8"
+    }
+
+    insert-hint {
+        color "#89b4fa80"
+    }
+
+    // default-column-display "tabbed"
+    tab-indicator {
+        active-color   "#89b4fa"
+        inactive-color "#6c7086"
+        urgent-color   "#f38ba8"
+        corner-radius 12
+    }
+
+
+    background-color "transparent"
+    center-focused-column "never"
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+    default-column-width { proportion 0.66667; }
+
+    gaps 24
+    // margin
+    struts {
+        left 5
+        right 5
+        bottom 2
+        top 5
+    }
+}
+
