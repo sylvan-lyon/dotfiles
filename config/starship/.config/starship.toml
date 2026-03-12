@@ -68,7 +68,7 @@ error_symbol = '[ ](bold red)'
 vimcmd_symbol = '[ ](bold blue)'
 vimcmd_replace_one_symbol = '[ ](bold yellow)'
 vimcmd_replace_symbol = '[ ](bold yellow)'
-vimcmd_visual_symbo = '[ ](bold purple)'
+vimcmd_visual_symbol = '[ ](bold purple)'
 
 [username]
 disabled = false

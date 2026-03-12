@@ -391,7 +391,7 @@ M.file_name = {
 
 M.file_path = {
     provider = function(self)
-        local file_name = vim.fn.fnamemodify(self.file_name, ":.")
+        local file_name = vim.fn.fnamemodify(self.file_name, ":~:.")
         if file_name == "" then
             return vim.bo.filetype ~= "" and vim.bo.filetype or vim.bo.buftype
         end
