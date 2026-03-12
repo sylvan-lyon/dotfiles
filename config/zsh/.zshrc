@@ -176,13 +176,6 @@ export PATH="${HOME}/go/bin/":$PATH
 
 . "$HOME/.local/bin/env"
 
-# fnm
-FNM_PATH="/home/sylvan/.local/share/fnm"
-if [ -d "$FNM_PATH" ]; then
-    export PATH="$FNM_PATH:$PATH"
-    eval "`fnm env`"
-fi
-
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(fzf --zsh)"
