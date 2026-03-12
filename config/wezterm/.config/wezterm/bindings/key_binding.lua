@@ -4,7 +4,7 @@ local act = wezterm.action
 local normal_key_bindings = {
     {
         -- tmux mod for multiplexing
-        key = "b",
+        key = "Space",
         mods = "CTRL",
         action = act.ActivateKeyTable({
             name = "tmux mode",

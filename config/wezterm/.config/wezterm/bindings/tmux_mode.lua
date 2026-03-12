@@ -29,6 +29,6 @@ return {
     { key = " ",      action = act.QuickSelect },
 
     -- 退出键表（再按一次前缀键或ESC）
-    { key = "b",      action = "PopKeyTable",                                         mods = "CTRL" },
+    { key = "Space",  action = "PopKeyTable",                                         mods = "CTRL" },
     { key = "Escape", action = "PopKeyTable" },
 }
