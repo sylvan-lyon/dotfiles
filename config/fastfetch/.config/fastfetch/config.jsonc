@@ -7,7 +7,7 @@
     "source": "~/.config/fastfetch/ascii-creeper.txt",
     "padding": {
       "left": 4,
-      "right": 4,
+      "right": 1,
       "top": 4
     } 
   },
