@@ -2,6 +2,7 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     ft = "markdown",
     dependencies = "nvim-tree/nvim-web-devicons", -- if you prefer nvim-web-devicons
+    cond = false,
     config = function()
         require("render-markdown").setup({
             completions = {
