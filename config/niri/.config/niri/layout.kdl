@@ -40,11 +40,11 @@ layout {
 
     gaps 24
     // margin
-    struts {
-        left 5
-        right 5
-        bottom 2
-        top 5
-    }
+    // struts {
+    //     left 5
+    //     right 5
+    //     bottom 2
+    //     top 5
+    // }
 }
 
