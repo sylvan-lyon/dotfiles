@@ -61,7 +61,7 @@ vim.api.nvim_create_autocmd("FileType", {
     -- we usually open COMMIT_MESSAGE by the "git commit", so set `once` should be ok
     once = true,
     callback = function()
-        vim.wo.colorcolumn = "75"
+        vim.wo.colorcolumn = "50"
     end
 })
 
