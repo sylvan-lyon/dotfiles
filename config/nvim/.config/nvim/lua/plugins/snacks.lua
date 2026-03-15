@@ -220,7 +220,7 @@ return {
             words = { enabled = true },
         })
 
-        local keymap = require("utils").keyset
+        local pick = Snacks.picker
 
         local toggle_dim = function()
             if Snacks.dim.enabled then
@@ -234,51 +234,51 @@ return {
             Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
         end
 
-        keymap({
-            -- preview
-            { "<leader>pi", function() Snacks.image.hover() end,                                 desc = "[p]review [i]mage under cursor" },
+        local select_layout = { layout = "select" }
 
-            -- toggles
-            { "<leader>td", function() toggle_dim() end,                                         desc = "[t]oggle [d]im" },
-            { "<leader>tn", function() Snacks.notifier.hide() end,                               desc = "[t]oggle [n]otices" },
-            { "<leader>tt", function() Snacks.terminal.toggle() end,                             desc = "[t]oggle [t]terminal" },
-            { "<leader>tz", function() Snacks.zen.zoom() end,                                    desc = "[t]oggle [z]oom" },
+        require("utils").keyset({
+            -- view
+            { "<leader>vi", icon = " ", function() Snacks.image.hover() end, desc = "[v]iew [i]mage", },
+            -- toggles                ,
+            { "<leader>td", icon = " ", function() toggle_dim() end, desc = "[t]oggle [d]im", },
+            { "<leader>tn", icon = " ", function() Snacks.notifier.hide() end, desc = "[t]oggle [n]otices", },
+            { "<leader>tt", icon = " ", function() Snacks.terminal.toggle() end, desc = "[t]oggle [t]terminal", },
+            { "<leader>tz", icon = " ", function() Snacks.zen.zoom() end, desc = "[t]oggle [z]oom", },
 
             -- finds
-            { "<leader>fa", function() Snacks.picker.autocmds() end,                             desc = "[f]ind [a]utocmds" },
-            { "<leader>fb", function() Snacks.picker.buffers() end,                              desc = "[f]ind [b]uffers" },
-            { "<leader>fB", function() Snacks.picker.lines() end,                                desc = "[f]ind [B]uffer lines" },
-            { "<leader>fc", function() Snacks.picker.command_history({ layout = "select" }) end, desc = "[f]ind [c]ommand history" },
-            { "<leader>fC", function() pick_config_files() end,                                  desc = "[f]ind [C]onfig files" },
-            { "<leader>fd", function() Snacks.picker.diagnostics() end,                          desc = "[f]ind [d]iagnostics" },
-            { "<leader>fD", function() Snacks.picker.diagnostics_buffer() end,                   desc = "[f]ind [D]iagnostics(buffer)" },
-            { "<leader>ff", function() Snacks.picker.files() end,                                desc = "[f]ind [f]iles" },
-            { "<leader>fg", function() Snacks.picker.grep() end,                                 desc = "[f]ind [g]reps" },
-            { "<leader>fh", function() Snacks.picker.help() end,                                 desc = "[f]ind [h]elp" },
-            { "<leader>fH", function() Snacks.picker.highlights() end,                           desc = "[f]ind [H]ighlights" },
-            { "<leader>fi", function() Snacks.picker.icons({ layout = "select" }) end,           desc = "[f]ind [i]cons" },
-            { "<leader>fj", function() Snacks.picker.jumps() end,                                desc = "[f]ind [j]umps" },
-            { "<leader>fk", function() Snacks.picker.keymaps({ layout = "select" }) end,         desc = "[f]ind [k]eymaps" },
-            { "<leader>fl", function() Snacks.picker.loclist() end,                              desc = "[f]ind [l]ocation list" },
-            { "<leader>fn", function() Snacks.picker.notifications() end,                        desc = "[f]ind [n]otifications" },
-            { "<leader>fp", function() Snacks.picker.lazy() end,                                 desc = "[f]ind [p]lugin spec" },
-            { "<leader>fq", function() Snacks.picker.qflist() end,                               desc = "[f]ind [q]uickfix" },
-            { "<leader>fr", function() Snacks.picker.registers() end,                            desc = "[f]ind [r]egisters" },
-            { "<leader>fR", function() Snacks.picker.resume() end,                               desc = "[f]ind [R]esume" },
-            { "<leader>fs", function() Snacks.picker.search_history({ layout = "select" }) end,  desc = "[f]ind [s]earch history" },
-            { "<leader>fu", function() Snacks.picker.undo() end,                                 desc = "[f]ind [u]ndo history" },
+            { "<leader>fa", icon = " ", function() pick.autocmds() end, desc = "[f]ind [a]utocmds", },
+            { "<leader>fb", icon = "󱔗 ", function() pick.buffers() end, desc = "[f]ind [b]uffers", },
+            { "<leader>fB", icon = "󰈙 ", function() pick.lines() end, desc = "[f]ind [B]uffer lines", },
+            { "<leader>fc", icon = " ", function() pick.command_history(select_layout) end, desc = "[f]ind [c]ommand history", },
+            { "<leader>fC", icon = " ", function() pick_config_files() end, desc = "[f]ind [C]onfig files", },
+            { "<leader>fd", icon = " ", function() pick.diagnostics() end, desc = "[f]ind [d]iagnostics", },
+            { "<leader>fD", icon = " ", function() pick.diagnostics_buffer() end, desc = "[f]ind [D]iagnostics(buf)", },
+            { "<leader>ff", icon = " ", function() pick.files() end, desc = "[f]ind [f]iles", },
+            { "<leader>fg", icon = "󰈞 ", function() pick.grep() end, desc = "[f]ind [g]reps", },
+            { "<leader>fh", icon = "󰋖 ", function() pick.help() end, desc = "[f]ind [h]elp", },
+            { "<leader>fH", icon = " ", function() pick.highlights() end, desc = "[f]ind [H]ighlights", },
+            { "<leader>fi", icon = " ", function() pick.icons(select_layout) end, desc = "[f]ind [i]cons", },
+            { "<leader>fj", icon = " ", function() pick.jumps() end, desc = "[f]ind [j]umps", },
+            { "<leader>fk", icon = " ", function() pick.keymaps(select_layout) end, desc = "[f]ind [k]eymaps", },
+            { "<leader>fl", icon = " ", function() pick.loclist() end, desc = "[f]ind [l]ocation list", },
+            { "<leader>fn", icon = " ", function() pick.notifications() end, desc = "[f]ind [n]otifications", },
+            { "<leader>fp", icon = " ", function() pick.lazy() end, desc = "[f]ind [p]lugin spec", },
+            { "<leader>fq", icon = "󰁨 ", function() pick.qflist() end, desc = "[f]ind [q]uickfix", },
+            { "<leader>fr", icon = " ", function() pick.registers() end, desc = "[f]ind [r]egisters", },
+            { "<leader>fR", icon = nil, function() pick.resume() end, desc = "[f]ind [R]esume", },
+            { "<leader>fs", icon = " ", function() pick.search_history(select_layout) end, desc = "[f]ind [s]earch history", },
+            { "<leader>fu", icon = " ", function() pick.undo() end, desc = "[f]ind [u]ndo history", },
 
             -- NOTE: LSP stuff
-            { "gd",         function() Snacks.picker.lsp_definitions() end,                      desc = "[g]oto definitions" },
-            { "gD",         function() Snacks.picker.lsp_declarations() end,                     desc = "[g]oto declarations" },
-            { "gt",         function() Snacks.picker.lsp_type_definitions() end,                 desc = "[g]oto [t]ype definitions" },
-            { "gri",        function() Snacks.picker.lsp_implementations() end,                  desc = "[g]oto [i]mplementations" },
-            { "grr",        function() Snacks.picker.lsp_references() end,                       desc = "[g]oto [r]eferences" },
-            { "gai",        function() Snacks.picker.lsp_incoming_calls() end,                   desc = "[g]oto c[a]ll [i]ncoming" },
-            { "gao",        function() Snacks.picker.lsp_outgoing_calls() end,                   desc = "[g]oto c[a]ll [o]utgoing" },
-            { "gO",         function() Snacks.picker.lsp_symbols() end,                          desc = "[g]oto d[O]cument symbols" },
-            { "gS",         function() Snacks.picker.lsp_workspace_symbols() end,                desc = "[g]oto work[S]pace symbols" },
-
+            { "gd", function() pick.lsp_definitions() end, desc = "[g]oto definitions" },
+            { "gD", function() pick.lsp_declarations() end, desc = "[g]oto declarations" },
+            { "gt", function() pick.lsp_type_definitions() end, desc = "[g]oto [t]ype definitions" },
+            { "gri", function() pick.lsp_implementations() end, desc = "[g]oto [i]mplementations" },
+            { "grr", function() pick.lsp_references() end, desc = "[g]oto [r]eferences" },
+            { "gai", function() pick.lsp_incoming_calls() end, desc = "[g]oto c[a]ll [i]ncoming" },
+            { "gao", function() pick.lsp_outgoing_calls() end, desc = "[g]oto c[a]ll [o]utgoing" },
+            { "gO", function() pick.lsp_symbols() end, desc = "[g]oto d[O]cument symbols" },
+            { "gS", function() pick.lsp_workspace_symbols() end, desc = "[g]oto work[S]pace symbols" },
         })
     end
 }

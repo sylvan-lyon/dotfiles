@@ -25,26 +25,6 @@ local is_unix_like = is_linux or is_macos
 ---@field callback? function
 ---@field replace_keycodes? boolean
 
----Set a key map, uses `vim.keymap.set` function under the hood.
----@param keymaps Keymap[]
-local function keyset(keymaps)
-    for _, keymap in ipairs(keymaps) do
-        vim.keymap.set(keymap.mode or "n", keymap[1], keymap[2], {
-            desc = keymap.desc,
-            noremap = keymap.noremap,
-            buffer = keymap.buffer,
-            remap = keymap.remap,
-            nowait = keymap.nowait,
-            silent = keymap.silent,
-            script = keymap.script,
-            expr = keymap.expr,
-            unique = keymap.unique,
-            callback = keymap.callback,
-            replace_keycodes = keymap.replace_keycodes,
-        })
-    end
-end
-
 
 ---@param str string
 ---@return table
@@ -81,6 +61,37 @@ local function shell_split(str)
     end
 
     return args
+end
+
+---Set a key map, uses `vim.keymap.set` function under the hood.
+---@param keymaps Keymap[]
+local keyset_inner = function(keymaps)
+    for _, keymap in ipairs(keymaps) do
+        vim.keymap.set(keymap.mode or "n", keymap[1], keymap[2], {
+            desc = keymap.desc,
+            noremap = keymap.noremap,
+            buffer = keymap.buffer,
+            remap = keymap.remap,
+            nowait = keymap.nowait,
+            silent = keymap.silent,
+            script = keymap.script,
+            expr = keymap.expr,
+            unique = keymap.unique,
+            callback = keymap.callback,
+            replace_keycodes = keymap.replace_keycodes,
+        })
+    end
+end
+
+---Set a key map, uses `vim.keymap.set` function under the hood.
+---@param keymaps Keymap[]|wk.Mapping[]
+local keyset = function(keymaps)
+    local ok, which_key = pcall(require, "which-key")
+    if ok and which_key and which_key.add then
+        which_key.add(keymaps)
+    else
+        keyset_inner(keymaps)
+    end
 end
 
 return {

@@ -25,7 +25,7 @@ return {
             { "<leader>d", group = "debug" },
             { "<leader>f", group = "find" },
             { "<leader>t", group = "toggle" },
-            { "<leader>p", group = "preview", desc = "preview", icon = " " },
+            { "<leader>v", group = "view", desc = "view", icon = " " },
             { "gr", group = "lsp" },
         })
     end

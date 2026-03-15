@@ -4,7 +4,7 @@ local default_enabled = {
     "rust_analyzer",
     "lua_ls",
     "jsonls",
-    "taplo",
+    "tombi",
     "nushell",
     "markdown_oxide",
     "clangd",
@@ -17,8 +17,6 @@ local default_enabled = {
 ---@param client vim.lsp.Client
 ---@param bufnr integer
 local general_on_attach = function(client, bufnr)
-    local keyset = require("utils").keyset
-
     local toggle_inlay_hint = function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
     end
@@ -29,7 +27,7 @@ local general_on_attach = function(client, bufnr)
     local jump_next_diagnostic = function() vim.diagnostic.jump({ count = 1, float = true }) end
     local open_float_diagnostic = function() vim.diagnostic.open_float({ max_width = 80, max_height = 32 }) end
 
-    local keymaps = {
+    require("utils").keyset({
         { "<c-w>d",     open_float_diagnostic,   buffer = bufnr, silent = true, noremap = true, desc = "code [d]iagnostic" },
         { "gra",        vim.lsp.buf.code_action, buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [a]ctions" },
         { "grf",        vim.lsp.buf.format,      buffer = bufnr, silent = true, noremap = true, desc = "[g]oto code [f]ormat" },
@@ -38,9 +36,7 @@ local general_on_attach = function(client, bufnr)
         { "[d",         jump_back_diagnostic,    buffer = bufnr, silent = true, noremap = true, desc = "previous diagnose" },
         { "]d",         jump_next_diagnostic,    buffer = bufnr, silent = true, noremap = true, desc = "next diagnose" },
         { "<leader>th", toggle_inlay_hint,       buffer = bufnr, silent = true, noremap = true, desc = "[t]oggle inlay [h]ints" },
-    }
-
-    keyset(keymaps)
+    })
 
     if client:supports_method("textDocument/foldingRange") then
         vim.wo.foldmethod = 'expr'
