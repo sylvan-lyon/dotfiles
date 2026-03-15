@@ -11,7 +11,7 @@ return {
                 solid = false
             },
             background = {
-                light = "frappe",
+                light = "latte",
                 dark = "mocha",
             },
             no_bold = false,

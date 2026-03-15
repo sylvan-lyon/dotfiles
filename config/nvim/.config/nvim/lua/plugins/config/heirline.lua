@@ -1,4 +1,4 @@
-local palette = require("catppuccin.palettes").get_palette("mocha")
+local palette = require("catppuccin.palettes").get_palette()
 local utils = require("heirline.utils")
 local conditions = require("heirline.conditions")
 

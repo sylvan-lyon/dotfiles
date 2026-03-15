@@ -30,7 +30,6 @@ font-family = "Maple Mono NF CN"
 cursor-style = block
 cursor-style-blink = true
 mouse-hide-while-typing = true
-custom-shader = "./cursor_smear_fade.glsl"
 # window-padding-x = 2
 #
 # # Spacing around the equals sign does not matter.
