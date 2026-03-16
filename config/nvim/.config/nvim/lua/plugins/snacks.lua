@@ -262,7 +262,7 @@ return {
             { "<leader>fk", icon = " ", function() pick.keymaps(select_layout) end, desc = "[f]ind [k]eymaps", },
             { "<leader>fl", icon = " ", function() pick.loclist() end, desc = "[f]ind [l]ocation list", },
             { "<leader>fn", icon = " ", function() pick.notifications() end, desc = "[f]ind [n]otifications", },
-            { "<leader>fp", icon = " ", function() pick.lazy() end, desc = "[f]ind [p]lugin spec", },
+            { "<leader>fp", icon = " ", function() pick.projects() end, desc = "[f]ind [p]rojects", },
             { "<leader>fq", icon = "󰁨 ", function() pick.qflist() end, desc = "[f]ind [q]uickfix", },
             { "<leader>fr", icon = " ", function() pick.registers() end, desc = "[f]ind [r]egisters", },
             { "<leader>fR", icon = nil, function() pick.resume() end, desc = "[f]ind [R]esume", },

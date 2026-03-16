@@ -7,7 +7,6 @@ window-rule {
 
 window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
 }
 
 window-rule {
@@ -66,7 +65,7 @@ window-rule {
     open-floating true
 }
 
-// SPlayer ( 最好的 linux 网易云客户端！ )
+// SPlayer 桌面歌词 ( 最好的 linux 网易云客户端！ )
 window-rule {
     match title="SPlayer - 桌面歌词" app-id="SPlayer"
     open-floating true

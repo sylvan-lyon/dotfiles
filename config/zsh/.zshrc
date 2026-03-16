@@ -170,12 +170,6 @@ function proxy() {
 # =================================================================
 # Initialization
 # =================================================================
-export PATH="${HOME}/.local/bin/":$PATH
-export PATH="${HOME}/go/bin/":$PATH
-. "${HOME}/.cargo/env"
-
-. "$HOME/.local/bin/env"
-
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(fzf --zsh)"
