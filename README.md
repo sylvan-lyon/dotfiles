@@ -6,8 +6,8 @@
 > stow installed on your path
 
 ```bash
-git clone https://github.com/sylvan-lyon/dotfiles.git ~/.dotfiles \
-    cd ~/.dotfiles && ./deploy/linux.sh
+git clone https://github.com/sylvan-lyon/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles && ./deploy/linux.sh
 ```
 
 ### For Windows
