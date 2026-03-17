@@ -2,7 +2,6 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     ft = "markdown",
     dependencies = "nvim-tree/nvim-web-devicons", -- if you prefer nvim-web-devicons
-    cond = false,
     config = function()
         require("render-markdown").setup({
             completions = {
@@ -16,6 +15,7 @@ return {
             heading = {
                 border = true,
                 render_modes = true,
+                icons = { "󰲠  ", "󰲢  ", "󰲤  ", "󰲦  ", "󰲨  ", "󰲪  " },
             },
             checkbox = {
                 checked = {
@@ -30,6 +30,22 @@ return {
                 alignment_indicator = "─",
                 border = { "╭", "┬", "╮", "├", "┼", "┤", "╰", "┴", "╯", "│", "─" },
             },
+            anti_conceal = {
+                disabled_modes = { "n" },
+                ignore = {
+                    bullet = true,
+                    head_border = true,
+                    head_background = true,
+                    link = true,
+                }
+            },
+            -- overrides = {
+            --     buftype = {
+            --         nofile = {
+            --             enabled = false,
+            --         },
+            --     },
+            -- },
         })
     end
 }

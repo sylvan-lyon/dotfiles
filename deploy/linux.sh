@@ -7,7 +7,8 @@ fi
 cd config
 echo 'depolying configuration...'
 
-for folder in `ls` do
+for folder in `ls`
+do
     stow $folder -t $HOME
 done
 
