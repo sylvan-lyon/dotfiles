@@ -10,7 +10,9 @@ input {
         natural-scroll
     }
 
-    mouse {}
+    mouse {
+        accel-profile "flat"
+    }
 
     trackpoint {}
 }

@@ -13,7 +13,8 @@ dap.providers.configs[".dap.lua"] = function()
         vim.notify("Unkown system for .dap.lua", vim.log.levels.ERROR, { title = "NVIM DAP" })
     end
 
-    return dofile(dap_file)
+    local ok, res = pcall(dofile, dap_file)
+    return ok and res or {}
 end
 
 local lldb = function()
