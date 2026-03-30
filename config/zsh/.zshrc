@@ -178,6 +178,7 @@ eval "$(fzf --zsh)"
 alias ls='eza'
 alias ll='eza -l'
 alias tree='eza --tree'
+alias docker='podman'
 
 # cat alias
 alias cat='bat --plain'

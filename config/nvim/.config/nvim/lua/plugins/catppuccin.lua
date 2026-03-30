@@ -34,7 +34,7 @@ return {
                 numbers = {},
                 booleans = {},
                 properties = {},
-                types = {},
+                types = { "bold" },
                 operators = {},
                 -- miscs = {}, -- Uncomment to turn off hard-coded styles
             },
