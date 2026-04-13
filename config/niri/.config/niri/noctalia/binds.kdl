@@ -8,10 +8,8 @@ binds {
 
     // Core Noctalia binds
     Mod+Alt+Space { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
-    Mod+S { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
-    Mod+I { spawn-sh "qs -c noctalia-shell ipc call settings toggle"; }
-    Mod+X { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
-
-
-    Mod+V { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
+    Mod+S hotkey-overlay-title="Open ControlCenter" { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
+    Mod+I hotkey-overlay-title="Open Settings"      { spawn-sh "qs -c noctalia-shell ipc call settings toggle"; }
+    Mod+X hotkey-overlay-title="Open SessionMenu"   { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
+    Mod+V hotkey-overlay-title="Open Clipboard"     { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
 }

@@ -145,6 +145,7 @@ function proxy() {
             export HTTP_PROXY="$url"
             export HTTPS_PROXY="$url"
             export ALL_PROXY="$url"
+            export no_proxy="127.0.0.1,localhost,[::1],192.168.1.0/24"
 
             git config --global http.proxy "$url"
             git config --global https.proxy "$url"
