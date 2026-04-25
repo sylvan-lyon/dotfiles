@@ -1,6 +1,6 @@
 vim.opt.winborder = "rounded"
 
-vim.opt.encoding = "UTF-8"
+vim.opt.encoding = "utf-8"
 vim.opt.fileencoding = "utf-8"
 vim.opt.splitright = true
 vim.opt.splitbelow = true
@@ -32,7 +32,9 @@ vim.opt.swapfile = false
 
 vim.opt.undofile = true
 
+vim.opt.selection = "inclusive"
 vim.opt.termguicolors = true
+vim.opt.guicursor = "n-v-c-sm:block,r-cr-o:hor25-blinkoff500-blinkon500,i-c-ci-ve-t:ver25-blinkoff500-blinkon500"
 
 -- remove default mode bar, because we have a nice heirline config
 vim.opt.showmode = false
@@ -50,4 +52,7 @@ end
 vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 99
 vim.opt.foldtext = "v:lua.custom_fold_text()"
-vim.opt.fillchars = { fold = " " }
+vim.opt.fillchars = {
+    fold = " ", -- 填充折叠文本的字符
+    eob = " ",  -- 填充 end of buffer 的字符
+}

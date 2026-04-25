@@ -2,17 +2,26 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 require("utils").keyset({
-    -- move text
-    { "K",         ":m '<-2<CR>gv=gv", mode = "v", desc = "[custom] move up selected text" },
-    { "J",         ":m '>+1<CR>gv=gv", mode = "v", desc = "[custom] move down selected text" },
+    { "j",          "gj",                      desc = "[custom] down(wrap awared)" },
+    { "k",          "gk",                      desc = "[custom] up  (wrap awared)" },
+
     -- split focus
-    { "<C-h>",     "<C-w>h",           mode = "n", desc = "[custom] focus on the left split" },
-    { "<C-j>",     "<C-w>j",           mode = "n", desc = "[custom] focus on the down split" },
-    { "<C-k>",     "<C-w>k",           mode = "n", desc = "[custom] focus on the upper split" },
-    { "<C-l>",     "<C-w>l",           mode = "n", desc = "[custom] focus on the right split" },
+    { "<C-h>",      "<C-w>h",                  desc = "[custom] focus on the left split" },
+    { "<C-j>",      "<C-w>j",                  desc = "[custom] focus on the down split" },
+    { "<C-k>",      "<C-w>k",                  desc = "[custom] focus on the upper split" },
+    { "<C-l>",      "<C-w>l",                  desc = "[custom] focus on the right split" },
+
+    -- move text
+    { "K",          ":silent m '<-2<CR>gv=gv", desc = "[custom] move up selected text",   mode = "v" },
+    { "J",          ":silent m '>+1<CR>gv=gv", desc = "[custom] move down selected text", mode = "v" },
+
     -- indentation
-    { "<",         "<gv",              mode = "v", desc = "[custom] indent and keep visual" },
-    { ">",         ">gv",              mode = "v", desc = "[custom] dedent and keep visual" },
+    { "<",          "<gv",                     desc = "[custom] indent and keep visual",  mode = "v" },
+    { ">",          ">gv",                     desc = "[custom] dedent and keep visual",  mode = "v", },
+
     -- lazy plugin manager
-    { "<leader>l", "<CMD>Lazy<CR>",    mode = "n", desc = "[custom] open up [l]azy" }
+    { "<leader>l",  "<CMD>Lazy<CR>",           desc = "[custom] open up [l]azy" },
+
+    -- disable highlight search
+    { "<leader>th", "<CMD>nohl<CR>",           desc = "[custom] toggle highlight search" }
 })

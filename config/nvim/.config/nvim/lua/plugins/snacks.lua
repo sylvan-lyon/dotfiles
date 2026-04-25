@@ -106,8 +106,16 @@ local image = {
 ---@type snacks.indent.Config
 local indent = {
     enabled = true,
+    indent = {
+        priority = 1,
+        enabled = true,
+        char = "┊",
+        only_scope = false,
+        only_current = false,
+    },
     scope = {
         enabled = true,
+        char = "┆",
         only_current = true,
         hl = {
             "SnacksIndent1",
@@ -268,17 +276,6 @@ return {
             { "<leader>fR", icon = nil, function() pick.resume() end, desc = "[f]ind [R]esume", },
             { "<leader>fs", icon = " ", function() pick.search_history(select_layout) end, desc = "[f]ind [s]earch history", },
             { "<leader>fu", icon = " ", function() pick.undo() end, desc = "[f]ind [u]ndo history", },
-
-            -- NOTE: LSP stuff
-            { "gd", function() pick.lsp_definitions() end, desc = "[g]oto definitions" },
-            { "gD", function() pick.lsp_declarations() end, desc = "[g]oto declarations" },
-            { "gt", function() pick.lsp_type_definitions() end, desc = "[g]oto [t]ype definitions" },
-            { "gri", function() pick.lsp_implementations() end, desc = "[g]oto [i]mplementations" },
-            { "grr", function() pick.lsp_references() end, desc = "[g]oto [r]eferences" },
-            { "gai", function() pick.lsp_incoming_calls() end, desc = "[g]oto c[a]ll [i]ncoming" },
-            { "gao", function() pick.lsp_outgoing_calls() end, desc = "[g]oto c[a]ll [o]utgoing" },
-            { "gO", function() pick.lsp_symbols() end, desc = "[g]oto d[O]cument symbols" },
-            { "gS", function() pick.lsp_workspace_symbols() end, desc = "[g]oto work[S]pace symbols" },
         })
     end
 }

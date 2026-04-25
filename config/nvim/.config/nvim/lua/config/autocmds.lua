@@ -1,3 +1,5 @@
+-- quality of life autocmds
+
 --#region
 local lazy_file_group = vim.api.nvim_create_augroup(
     "UserLazyFileGroup",
@@ -70,21 +72,29 @@ vim.api.nvim_create_autocmd('FileType', {
     group = filetype_group,
     desc = "auto setup treesitter functionality after filetype detected",
     callback = function()
-        pcall(vim.treesitter.start)
+        local ok = pcall(vim.treesitter.start)
+
+        -- set foldexpr to treesitter if foldmethod is not expr
+        -- which means no foldmethod or foldexpr is set previously
+        if ok and vim.wo.foldmethod ~= "expr" then
+            vim.wo.foldmethod = "expr"
+            vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+        end
     end,
 })
 
 -- NOTE: auto tab options
 
----@class TabOpt
----@field expandtab boolean
----@field tabstop integer
----@field shiftwidth integer
----@field softtabstop integer
 vim.api.nvim_create_autocmd("FileType", {
     group = filetype_group,
     desc = "auto change tab options",
     callback = function(event)
+        ---@class TabOpt
+        ---@field expandtab boolean
+        ---@field tabstop integer
+        ---@field shiftwidth integer
+        ---@field softtabstop integer
+
         ---Get tab option of a certain file type
         ---@param filetype string
         ---@return TabOpt
