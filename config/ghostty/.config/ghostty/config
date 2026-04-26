@@ -30,6 +30,9 @@ font-family = "Maple Mono NF CN"
 cursor-style = block
 cursor-style-blink = true
 mouse-hide-while-typing = true
+
+background-opacity = 0.9
+background-blur = true
 # window-padding-x = 2
 #
 # # Spacing around the equals sign does not matter.

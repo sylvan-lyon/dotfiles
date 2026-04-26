@@ -23,19 +23,19 @@ output "eDP-1" {
     position x=0 y=0
 }
 
-layer-rule {
-    match namespace="^quickshell$"
-    place-within-backdrop true
-}
-
 overview {
     workspace-shadow {
         off
     }
 }
 
+blur {
+    offset 6
+    saturation 1
+}
+
 environment {
-  XDG_CURRENT_DESKTOP "niri"
+    XDG_CURRENT_DESKTOP "niri"
 }
 
 hotkey-overlay {
