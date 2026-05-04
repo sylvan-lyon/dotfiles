@@ -6,6 +6,7 @@ input {
     keyboard { numlock; }
 
     touchpad {
+        off
         tap
         natural-scroll
     }

@@ -7,6 +7,6 @@ layer-rule {
 layer-rule {
     match namespace="noctalia-bar-content-*"
     background-effect {
-        blur true
+        // blur true
     }
 }
