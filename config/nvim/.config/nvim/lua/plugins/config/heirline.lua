@@ -190,7 +190,7 @@ M.mode = {
         if conditions.is_active() then
             return { fg = colors.background, bg = self.mode_colors[mode], bold = true }
         else
-            return { fg = self.mode_colors[mode], bg = colors.background, bold = true }
+            return { fg = self.mode_colors[mode], bold = true }
         end
     end,
     update = {
@@ -220,7 +220,7 @@ M.macro_recording = {
             end,
             hl = { fg = colors.dimmed_red, italic = false, bold = true },
         },
-        hl = { fg = colors.white, bg = colors.background },
+        hl = { fg = colors.white },
     },
     update = { "RecordingEnter", "RecordingLeave" },
 }
@@ -414,14 +414,14 @@ M.file_flags = {
         condition = function()
             return vim.bo.modified
         end,
-        provider = "●",
+        provider = "● ",
         hl = { fg = colors.green },
     },
     {
         condition = function()
             return not vim.bo.modifiable or vim.bo.readonly
         end,
-        provider = "",
+        provider = " ",
         hl = { fg = colors.orange },
     },
 }
@@ -671,6 +671,15 @@ M.lsp_progress = {
         callback = schedule_redraw,
     },
     hl = { fg = colors.dimmed_white, bold = false },
+}
+
+M.treesitter = {
+    condition = function()
+        local bufnr = vim.api.nvim_get_current_buf()
+        return vim.treesitter.highlighter.active[bufnr] ~= nil
+    end,
+    provider = " ",
+    hl = { fg = colors.green }
 }
 
 return M
