@@ -47,61 +47,61 @@ function Ensure-Symlink {
 $Configs = @(
   @{
     Name   = "bat"
-    Source = "$DotfilesRoot\config\bat"
+    Source = "$DotfilesRoot\config\bat\.config\bat"
     Xdg    = "$XDG_CONFIG_HOME\bat"
     Target = "$env:APPDATA\bat"
   },
   @{
     Name   = "btop"
-    Source = "$DotfilesRoot\config\btop"
+    Source = "$DotfilesRoot\config\btop\.config\btop"
     Xdg    = "$XDG_CONFIG_HOME\btop"
     Target = "$env:APPDATA\btop"
   },
   @{
     Name   = "fastfetch"
-    Source = "$DotfilesRoot\config\fastfetch"
+    Source = "$DotfilesRoot\config\fastfetch\.config\fastfetch"
     Xdg    = "$XDG_CONFIG_HOME\fastfetch"
     Target = "$env:APPDATA\fastfetch"
   },
   @{
     Name   = "ghostty"
-    Source = "$DotfilesRoot\config\ghostty"
+    Source = "$DotfilesRoot\config\ghostty\.config\ghostty"
     Xdg    = "$XDG_CONFIG_HOME\ghostty"
     Target = "$env:APPDATA\ghostty"
   },
   @{
     Name   = "nushell"
-    Source = "$DotfilesRoot\config\nushell"
+    Source = "$DotfilesRoot\config\nushell\.config\nushell"
     Xdg    = "$XDG_CONFIG_HOME\nushell"
     Target = "$env:APPDATA\nushell"
   },
   @{
     Name   = "nvim"
-    Source = "$DotfilesRoot\config\nvim"
+    Source = "$DotfilesRoot\config\nvim\.config\nvim"
     Xdg    = "$XDG_CONFIG_HOME\nvim"
     Target = "$env:LOCALAPPDATA\nvim"
   },
   @{
     Name   = "starship"
-    Source = "$DotfilesRoot\config\starship"
-    Xdg    = "$XDG_CONFIG_HOME\starship"
-    Target = "$XDG_CONFIG_HOME\starship"
+    Source = "$DotfilesRoot\config\starship\.config\starship.toml"
+    Xdg    = "$XDG_CONFIG_HOME\starship.toml"
+    Target = "$XDG_CONFIG_HOME\starship.toml"
   },
   @{
     Name   = "tealdeer"
-    Source = "$DotfilesRoot\config\tealdeer"
+    Source = "$DotfilesRoot\config\tealdeer\.config\tealdeer"
     Xdg    = "$XDG_CONFIG_HOME\tealdeer"
     Target = "$env:APPDATA\tealdeer"
   },
   @{
     Name   = "wezterm"
-    Source = "$DotfilesRoot\config\wezterm"
+    Source = "$DotfilesRoot\config\wezterm\.config\wezterm"
     Xdg    = "$XDG_CONFIG_HOME\wezterm"
     Target = "$XDG_CONFIG_HOME\wezterm"
   },
   @{
     Name   = "yazi"
-    Source = "$DotfilesRoot\config\yazi"
+    Source = "$DotfilesRoot\config\yazi\.config\yazi"
     Xdg    = "$XDG_CONFIG_HOME\yazi"
     Target = "$env:APPDATA\yazi\config"
   }
@@ -120,7 +120,7 @@ foreach ($cfg in $Configs) {
 
   # XDG → program
   Ensure-Directory (Split-Path $cfg.Target)
-  Ensure-Symlink  $cfg.Target $cfg.Xdg
+  Ensure-Symlink  $cfg.Target $cfg.Source
 }
 
 Write-Host "`nAll dotfiles deployed successfully." -ForegroundColor Cyan
