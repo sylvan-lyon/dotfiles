@@ -61,6 +61,11 @@ format = """
 [│  ](cyan)[\\(=^・・^=\\)](blue dimmed) $direnv$nix_shell$mise$package$c$cpp$cmake$rust$zig$haskell$golang$nodejs$deno$java$kotlin$gradle$ruby$python$lua$custom
 [╰╴](cyan)$character"""
 
+# format = """
+# [╭╴](cyan)$username$hostname$directory$git_branch$git_commit$jobs$status$cmd_duration
+# [│  ](cyan)[\\(=^・・^=\\)](blue dimmed) $direnv$nix_shell$mise$package$c$cpp$cmake$rust$zig$haskell$golang$nodejs$deno$java$kotlin$gradle$ruby$python$lua$custom
+# [╰╴](cyan)$character"""
+
 [character]
 disabled = false
 success_symbol = '[ ](bold cyan)'
@@ -88,7 +93,7 @@ trim_at = ''
 disabled = false
 format = '[$path]($style)[$read_only]($read_only_style) '
 style = 'cyan bold'
-read_only = ' 󰌾'
+read_only = '  '
 read_only_style = 'red'
 
 [git_branch]

@@ -16,18 +16,18 @@ extract = [
 
 # 压缩到 tar.gz 格式
 compress_tgz = [
-  { run = 'nu C:/Users/sylvan/.config/nushell/scripts/smart-archive.nu tar.gz %s', block = false, orphan = false, desc = "Smart compress in .tar.gz file", for = "windows" }
+  { run = "nu C:/Users/sylvan/.config/nushell/scripts/smart-archive.nu tar.gz %s", block = false, orphan = false, desc = "Smart compress in .tar.gz file", for = "windows" }
 ]
 
 # 压缩到 zip 格式
 compress_zip = [
-  { run = 'nu C:/Users/sylvan/.config/nushell/scripts/smart-archive.nu zip %s', block = false, orphan = false, desc = "Smart compress in .zip file", for = "windows" }
+  { run = "nu C:/Users/sylvan/.config/nushell/scripts/smart-archive.nu zip %s", block = false, orphan = false, desc = "Smart compress in .zip file", for = "windows" }
 ]
 
 # 系统默认应用打开
 open = [
   { run = 'start "" %s1', block = false, orphan = true, desc = "Open with system default", for = "windows" },
-  { run = 'xdg-open %s1', block = false, orphan = true, desc= "Open with system default", for = "linux" },
+  { run = "xdg-open %s1", block = false, orphan = true, desc = "Open with system default", for = "linux" },
 ]
 
 # 使用 explorer 查看
@@ -39,32 +39,41 @@ explorer = [
 [open]
 rules = [
   # 文本文件使用 vim 默认打开
-  { name = "*.toml", use = ["nvim", "vscode", "open", "explorer"] },
-  { name = "*.nu"  , use = ["nvim", "vscode", "open", "explorer"] },
-  { name = "*.lua" , use = ["nvim", "vscode", "open", "explorer"] },
+  { url = "*.toml", use = ["nvim", "vscode", "open", "explorer"] },
+  { url = "*.nu", use = ["nvim", "vscode", "open", "explorer"] },
+  { url = "*.lua", use = ["nvim", "vscode", "open", "explorer"] },
   { mime = "text/*", use = ["nvim", "vscode", "open", "explorer"] },
-    
+
   # 压缩文件解压
-  { name = "*.zip", use = ["extract", "open", "explorer"] },
-  { name = "*.7z", use = ["extract", "open", "explorer"] },
-  { name = "*.rar", use = ["extract", "open", "explorer"] },
-  { name = "*.tar", use = ["extract", "open", "explorer"] },
-  { name = "*.tar.gz", use = ["extract", "open", "explorer"] },
-  { name = "*.tar.xz", use = ["extract", "open", "explorer"] },
-  { name = "*.tgz", use = ["extract", "open", "explorer"] },
-  { name = "*.gz", use = ["extract", "open", "explorer"] },
-  { name = "*.bz2", use = ["extract", "open", "explorer"] },
-  
+  { url = "*.zip", use = ["extract", "open", "explorer"] },
+  { url = "*.7z", use = ["extract", "open", "explorer"] },
+  { url = "*.rar", use = ["extract", "open", "explorer"] },
+  { url = "*.tar", use = ["extract", "open", "explorer"] },
+  { url = "*.tar.gz", use = ["extract", "open", "explorer"] },
+  { url = "*.tar.xz", use = ["extract", "open", "explorer"] },
+  { url = "*.tgz", use = ["extract", "open", "explorer"] },
+  { url = "*.gz", use = ["extract", "open", "explorer"] },
+  { url = "*.bz2", use = ["extract", "open", "explorer"] },
+
   # 其他文件使用系统默认应用
-  { url = "*", use = ["open", "nvim", "vscode", "extract", "compress_tgz", "compress_zip"] }
+  { url = "*", use = [
+    "open",
+    "nvim",
+    "vscode",
+    "extract",
+    "compress_tgz",
+    "compress_zip"
+  ] }
 ]
 
 [[plugin.prepend_fetchers]]
-id   = "git"
-name = "*"
-run  = "git"
+# id    = "git" # Remove if Yazi > v26.1.22
+url   = "*"
+run   = "git"
+group = "git"
 
 [[plugin.prepend_fetchers]]
-id   = "git"
-name = "*/"
-run  = "git"
+# id    = "git" # Remove if Yazi > v26.1.22
+url   = "*/"
+run   = "git"
+group = "git"
