@@ -64,6 +64,18 @@ $env.FZF_DEFAULT_OPTS = "
 --color=selected-bg:#45475A
 --color=border:#6C7086,label:#CDD6F4"
 
+$env.FZF_DEFAULT_OPTS = "
+    --color=bg+:#1e1e2e,spinner:#585b70,hl:#eba0ac
+    --color=fg:#a6adc8,header:#cba6f7,info:#89b4fa,pointer:#a6e3a1
+    --color=marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8
+    --color=selected-bg:#11111B
+    --color=border:#9399b2,label:#cdd6f4
+    --prompt=\"\$ \"
+    --pointer=\"›\"
+    --marker=\"✓\"
+    --scrollbar=\"▐\"
+"
+
 # eza
 source $"($nu.default-config-dir)/scripts/completions/eza.nu"
 

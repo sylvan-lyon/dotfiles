@@ -1,7 +1,7 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
-return {
+local tmux_mode = {
     { key = "%",      action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }), mods = "SHIFT" },
     { key = "\"",     action = act.SplitVertical({ domain = "CurrentPaneDomain" }),   mods = "SHIFT" },
     { key = "x",      action = act.CloseCurrentPane({ confirm = true }) },
@@ -32,3 +32,13 @@ return {
     { key = "Space",  action = "PopKeyTable",                                         mods = "CTRL" },
     { key = "Escape", action = "PopKeyTable" },
 }
+
+for i = 0, 9, 1 do
+    table.insert(tmux_mode, {
+        key = tostring(i),
+        mods = "",
+        action = act.ActivateTab(i-1)
+    })
+end
+
+return tmux_mode
