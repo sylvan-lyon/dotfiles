@@ -1,7 +1,3 @@
-# ================================
-# Windows Dotfiles Deploy Script
-# ================================
-
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
