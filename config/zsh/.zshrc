@@ -99,6 +99,8 @@ fi
 export GOPATH=$HOME/.go
 export PATH="${GOPATH}/bin/":$PATH
 
+export EDITOR="nvim"
+
 # terminal utilities
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
