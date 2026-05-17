@@ -23,5 +23,5 @@ require("utils").keyset({
     { "<leader>l",  "<CMD>Lazy<CR>",           desc = "[custom] open up [l]azy" },
 
     -- disable highlight search
-    { "<leader>th", "<CMD>nohl<CR>",           desc = "[custom] toggle highlight search" }
+    { "<leader>th", "<CMD>nohl<CR>",           desc = "[t]oggle [h]ighlight search" }
 })
