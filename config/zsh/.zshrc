@@ -21,6 +21,18 @@ zinit light-mode for \
 
 ### End of Zinit's installer chunk
 
+####################################################################
+
+HISTSIZE=10000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HIST_STAMPS="yyyy.mm.dd"
+HISTUP=erase
+setopt SHARE_HISTORY        # share history in all running zsh session
+setopt HIST_IGNORE_SPACE    # Do not record an event starting with a space.
+
+bindkey -e
+
 zicompinit
 zinit light Aloxaf/fzf-tab
 zinit light zsh-users/zsh-autosuggestions
