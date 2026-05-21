@@ -31,7 +31,8 @@ overview {
 }
 
 blur {
-    offset 6
+    offset 10
+    noise 0.016
     saturation 1
 }
 
