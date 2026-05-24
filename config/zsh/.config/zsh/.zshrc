@@ -3,7 +3,7 @@ HISTSIZE=10000
 if [[ -d $XDG_DATA_HOME/zsh ]]; then else
     mkdir -p $XDG_DATA_HOME/zsh
 fi
-HISTFILE=$XDG_DATA_HOME/zsh/.zsh_history
+HISTFILE=$XDG_DATA_HOME/zsh/zsh_history
 SAVEHIST=$HISTSIZE
 HIST_STAMPS="yyyy.mm.dd"
 HISTUP=erase
