@@ -26,7 +26,7 @@ zplugin_load zdharma-continuum/fast-syntax-highlighting
 zplugin_load jeffreytse/zsh-vi-mode
 zplugin_load zsh-users/zsh-completions
 
-# 让 fzf-tab 也使用我定义的主题
+# fzf-tab configuration
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'

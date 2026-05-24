@@ -1,3 +1,5 @@
+local begin_time=$(date +%s%N)
+
 # zsh option
 HISTSIZE=10000
 if [[ -d $XDG_DATA_HOME/zsh ]]; then else
@@ -51,4 +53,10 @@ fpath=("$ZDOTDIR/completions" $fpath)
 autoload -Uz compinit
 compinit
 
+local end_time=$(date +%s%N)
+
+export STARTUPTIME=$((end_time - begin_time))
+
 fastfetch
+
+unset STARTUPTIME

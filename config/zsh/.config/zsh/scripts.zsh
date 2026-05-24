@@ -12,6 +12,11 @@ function path() {
     echo -e ${PATH//:/\\n}
 }
 
+# fpath
+function fpath() {
+    echo -e ${FPATH//:/\\n}
+}
+
 # 代理管理
 function proxy() {
     case "$1" in
