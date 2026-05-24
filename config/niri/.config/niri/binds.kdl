@@ -1,4 +1,6 @@
 binds {
+    // quit niri
+    Mod+Shift+Q { quit; }
     // === System & Overview ===
     Mod+Tab repeat=false { toggle-overview; }
     Mod+Shift+Slash { show-hotkey-overlay; }
@@ -11,7 +13,7 @@ binds {
 
     // === Window Management ===
     Mod+Q repeat=false { close-window; }
-    Mod+F       { maximize-column; }
+    Mod+F repeat=false { maximize-column; }
     Mod+Shift+F { fullscreen-window; }
     Mod+Shift+T { toggle-window-floating; }
     Mod+Shift+V { switch-focus-between-floating-and-tiling; }

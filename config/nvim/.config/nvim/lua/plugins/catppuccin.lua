@@ -41,8 +41,8 @@ return {
             custom_highlights = function(colors)
                 return {
                     -- fold text
-                    Folded = { fg = colors.flamingo, bg = colors.surface0, style = { "bold" } },
-                    FoldColumn = { fg = colors.flamingo, bg = colors.surface0, style = { "bold" } },
+                    Folded = { fg = colors.rosewater, style = { "bold" } },
+                    FoldColumn = { fg = colors.rosewater, style = { "bold", "undercurl" } },
 
                     -- flash.nvim labels
                     FlashLabel = { fg = colors.mantle, bg = colors.lavender },

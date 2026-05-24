@@ -1,0 +1,4 @@
+.config/zsh/.zcompdump
+
+# api keys... etc
+.config/zsh/secret.zsh

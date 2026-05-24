@@ -1,12 +1,21 @@
-// Set the regular wallpaper on the backdrop.
-layer-rule {
-    match namespace="^noctalia-wallpaper*"
-    place-within-backdrop true
-}
+// // Set the regular wallpaper on the backdrop.
+// layer-rule {
+//     match namespace="^noctalia-wallpaper*"
+//     place-within-backdrop true
+// }
+//
+// layer-rule {
+//     match namespace="noctalia-bar-content-*"
+//     background-effect {
+//         // blur true
+//     }
+// }
 
+/* Noctalia: blur everywhere without xray for a better look */
 layer-rule {
-    match namespace="noctalia-bar-content-*"
+    match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
     background-effect {
-        // blur true
+        blur true
+        xray false
     }
 }
