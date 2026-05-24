@@ -262,6 +262,7 @@ return {
             { "<leader>fd", icon = " ", function() pick.diagnostics() end, desc = "[f]ind [d]iagnostics", },
             { "<leader>fD", icon = " ", function() pick.diagnostics_buffer() end, desc = "[f]ind [D]iagnostics(buf)", },
             { "<leader>ff", icon = " ", function() pick.files() end, desc = "[f]ind [f]iles", },
+            { "<leader>fF", icon = " ", function() pick.files({ hidden = true }) end, desc = "[f]ind [f]iles (hidden)", },
             { "<leader>fg", icon = "󰈞 ", function() pick.grep() end, desc = "[f]ind [g]reps", },
             { "<leader>fh", icon = "󰋖 ", function() pick.help() end, desc = "[f]ind [h]elp", },
             { "<leader>fH", icon = " ", function() pick.highlights() end, desc = "[f]ind [H]ighlights", },

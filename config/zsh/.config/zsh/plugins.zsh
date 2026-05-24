@@ -25,6 +25,14 @@ zplugin_update() {
     done
 }
 
+zplugin_load zdharma-continuum/fast-syntax-highlighting
+zplugin_load zsh-users/zsh-completions
+zplugin_load zsh-users/zsh-autosuggestions
+
+# completion
+autoload -Uz compinit && compinit
+zplugin_load Aloxaf/fzf-tab
+
 # fzf-tab configuration
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
 zstyle ':completion:*:git-checkout:*' sort false
@@ -32,12 +40,3 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' menu no
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':fzf-tab:*' switch-group '<' '>'
-
-
-# completion
-zplugin_load zdharma-continuum/fast-syntax-highlighting
-zplugin_load zsh-users/zsh-completions
-zplugin_load zsh-users/zsh-autosuggestions
-zplugin_load jeffreytse/zsh-vi-mode
-autoload -Uz compinit && compinit
-zplugin_load Aloxaf/fzf-tab

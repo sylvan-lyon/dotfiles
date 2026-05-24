@@ -14,8 +14,6 @@ setopt HIST_IGNORE_SPACE    # Do not record an event starting with a space.
 setopt HIST_IGNORE_DUPS     # Do not record an duplicated event.
 setopt AUTOCD
 
-bindkey -e
-
 # fzf 颜色主题
 export FZF_DEFAULT_OPTS=" \
     --color=bg+:#1e1e2e,spinner:#585b70,hl:#eba0ac \
@@ -44,11 +42,14 @@ alias cat='bat --plain'
 # proxy on by default
 proxy on > /dev/null 2>&1
 
+# custom function path, we add our own completions
+fpath+=(
+    "$ZDOTDIR/completions"
+)
+
 source "$ZDOTDIR/plugins.zsh" # plugins
 source "$ZDOTDIR/scripts.zsh" # custom shell scripts
-
-fpath=("$ZDOTDIR/completions" $fpath)
-
+source "$ZDOTDIR/bindkey.zsh" # keybindings
 
 # profile this configuration and `fastfetch`
 local end_time=$(date +%s%N)
