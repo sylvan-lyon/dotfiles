@@ -11,8 +11,8 @@ vim.opt.relativenumber = true
 
 vim.opt.signcolumn = "yes"
 
-vim.opt.scrolloff = 4
-vim.opt.sidescrolloff = 4
+vim.opt.scrolloff = 8
+vim.opt.sidescrolloff = 8
 
 -- indentation options
 -- the width options are configured by filetype autocmds
@@ -52,6 +52,9 @@ _G.custom_fold_text = function()
 
     return start_line .. end_text
 end
+
+vim.opt.laststatus = 3 -- only show last window's statusline, feels like sharing statusline among all windwos
+vim.o.cmdheight = 0
 
 vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 99

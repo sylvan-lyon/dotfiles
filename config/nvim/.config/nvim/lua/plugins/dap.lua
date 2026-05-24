@@ -49,23 +49,7 @@ end
 
 return {
     "rcarriga/nvim-dap-ui",
-    keys = {
-        { "<leader>dR", desc = "[d]ebug [R]EPL toggle" },
-        { "<leader>di", desc = "[d]ebug step [i]nto" },
-        { "<leader>do", desc = "[d]ebug step [o]ver" },
-        { "<leader>dO", desc = "[d]ebug step [O]ut" },
-        { "<leader>dc", desc = "[d]ebug [c]ontinue" },
-        { "<leader>dC", desc = "[d]ebug run to [C]ursor" },
-        { "<leader>ds", desc = "[d]ebug [s]tart" },
-        { "<leader>dq", desc = "[d]ebug [q]uit" },
-        { "<leader>dQ", desc = "[d]ebug terminate" },
-        { "<leader>dr", desc = "[d]ebug [r]estart" },
-        { "<leader>db", desc = "[d]ebug [b]reakpoint toggle" },
-        { "<leader>dD", desc = "[d]ebug [D]elete all breakpoints" },
-        { "<leader>dB", desc = "[d]ebug [B]reakpoint with condition" },
-        { "<leader>de", desc = "[d]ebug [e]valuate",                 mode = { "n", "x" } },
-        { "<leader>du", desc = "[d]ebug [u]i" },
-    },
+    ft = { "lua", "c", "go", "cpp", "rust" },
     dependencies = {
         "mfussenegger/nvim-dap",
         -- { "theHamsta/nvim-dap-virtual-text", config = function ()

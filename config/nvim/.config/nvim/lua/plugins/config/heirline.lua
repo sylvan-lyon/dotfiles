@@ -428,8 +428,27 @@ M.file_flags = {
 
 M.file_name_block = {
     init = function(self)
-        local bufnr = self.bufnr and self.bufnr or 0
-        self.file_name = vim.api.nvim_buf_get_name(bufnr)
+        if vim.bo.filetype:match("dap") ~= nil then
+            local ft = vim.bo.filetype
+            if ft == "dapui_scopes" then
+                self.file_name = "scopes"
+            elseif ft == "dapui_breakpoints" then
+                self.file_name = "breakpoints"
+            elseif ft == "dapui_stacks" then
+                self.file_name = "stacks"
+            elseif ft == "dapui_watches" then
+                self.file_name = "watches"
+            elseif ft == "dapui_console" then
+                self.file_name = "console"
+            elseif ft == "dap-repl" then
+                self.file_name = "repl"
+            else
+                self.file_name = ft
+            end
+        else
+            local bufnr = self.bufnr and self.bufnr or 0
+            self.file_name = vim.api.nvim_buf_get_name(bufnr)
+        end
     end,
     hl = { fg = colors.white },
     M.file_icon,
