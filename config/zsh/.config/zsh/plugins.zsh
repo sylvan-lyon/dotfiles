@@ -1,6 +1,6 @@
 ZPLUGIN_DIR=$XDG_DATA_HOME/zsh/plugins
 
-zplugin_load() {
+zplugin_install() {
     local plugin_path="${ZPLUGIN_DIR}/${1}"
     if [[ ! -d $plugin_path ]]; then
         mkdir -p $plugin_path
@@ -8,8 +8,15 @@ zplugin_load() {
         git clone --depth=1 "https://github.com/${1}.git" "$plugin_path" \
             || { echo "failed to install ${1}" >&2; return 1; }
     fi
+}
 
-    source "${plugin_path}/${1:t}.plugin.zsh"
+zplugin_load() {
+    local plugin="${ZPLUGIN_DIR}/${1}/${1:t}.plugin.zsh"
+    if [[ ! -f ${plugin} ]]; then
+        zplugin_install $1
+    else
+        source "${plugin}"
+    fi
 }
 
 zplugin_update() {
@@ -20,11 +27,11 @@ zplugin_update() {
 }
 
 # plugin installation
-zplugin_load Aloxaf/fzf-tab
-zplugin_load zsh-users/zsh-autosuggestions
-zplugin_load zdharma-continuum/fast-syntax-highlighting
-zplugin_load jeffreytse/zsh-vi-mode
-zplugin_load zsh-users/zsh-completions
+zplugin_install Aloxaf/fzf-tab
+zplugin_install zdharma-continuum/fast-syntax-highlighting
+zplugin_install zsh-users/zsh-completions
+zplugin_install zsh-users/zsh-autosuggestions
+zplugin_install jeffreytse/zsh-vi-mode
 
 # fzf-tab configuration
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
@@ -33,3 +40,12 @@ zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' menu no
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':fzf-tab:*' switch-group '<' '>'
+
+
+# completion
+zplugin_load zdharma-continuum/fast-syntax-highlighting
+zplugin_load zsh-users/zsh-completions
+zplugin_load zsh-users/zsh-autosuggestions
+zplugin_load jeffreytse/zsh-vi-mode
+autoload -Uz compinit && compinit
+zplugin_load Aloxaf/fzf-tab

@@ -49,9 +49,6 @@ source "$ZDOTDIR/scripts.zsh" # custom shell scripts
 
 fpath=("$ZDOTDIR/completions" $fpath)
 
-# completion
-autoload -Uz compinit
-compinit
 
 # profile this configuration and `fastfetch`
 local end_time=$(date +%s%N)
