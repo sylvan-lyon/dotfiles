@@ -53,10 +53,8 @@ fpath=("$ZDOTDIR/completions" $fpath)
 autoload -Uz compinit
 compinit
 
+# profile this configuration and `fastfetch`
 local end_time=$(date +%s%N)
-
 export STARTUPTIME=$((end_time - begin_time))
-
 fastfetch
-
 unset STARTUPTIME

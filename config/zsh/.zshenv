@@ -1,39 +1,27 @@
 # zsh config home
 ZDOTDIR="$HOME/.config/zsh"
+export ZDOTDIR
 
 # xdg directories
-if [[ -z "$XDG_CONFIG_HOME" ]]; then
-    export XDG_CONFIG_HOME="$HOME/.config"
-fi
-
-if [[ -z "$XDG_CACHE_HOME" ]]; then
-    export XDG_CACHE_HOME="$HOME/.cache"
-fi
-
-if [[ -z "$XDG_DATA_HOME" ]]; then
-    export XDG_DATA_HOME="$HOME/.local/share"
-fi
-
-if [[ -z "$XDG_STATE_HOME" ]]; then
-    export XDG_STATE_HOME="$HOME/.local/state"
-fi
+[[ -z "$XDG_CONFIG_HOME" ]] && export XDG_CONFIG_HOME="$HOME/.config"
+[[ -z "$XDG_CACHE_HOME" ]] && export XDG_CACHE_HOME="$HOME/.cache"
+[[ -z "$XDG_DATA_HOME" ]] && export XDG_DATA_HOME="$HOME/.local/share"
+[[ -z "$XDG_STATE_HOME" ]] && export XDG_STATE_HOME="$HOME/.local/state"
 
 # secrete keys
-if [ -f "$ZDOTDIR/secret.zsh" ]; then
+if [[ -f "$ZDOTDIR/secret.zsh" ]]; then
     source "$ZDOTDIR/secret.zsh" 
 fi
 
 # cargo
-if [ -r "$HOME/.cargo/env" ]; then
+if [[ -r "$HOME/.cargo/env" ]]; then
     . "$HOME/.cargo/env"
 else
     print -P "cargo not installed"
 fi
 
 # local bin
-if [ -d "$HOME/.local/bin" ]; then
-    export PATH="$HOME/.local/bin":$PATH
-fi
+[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin":$PATH
 
 # golang
 export GOPATH=$HOME/.go

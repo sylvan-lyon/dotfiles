@@ -31,4 +31,5 @@ zstyle ':fzf-tab:*' use-fzf-default-opts yes
 zstyle ':completion:*:git-checkout:*' sort false
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' menu no
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':fzf-tab:*' switch-group '<' '>'
