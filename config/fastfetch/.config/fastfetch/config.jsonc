@@ -66,15 +66,16 @@
         },
         "break",
         {
-            "type": "shell",
-            "key": "Shell",
-            "format": "{pretty-name<12} {#dim_cyan}pid: {pid<5}  version: {version}{#}",
-            "keyColor": "blue"
-        },
-        {
             "type": "command",
             "key": "Startup",
             "text": "bash -c 'awk \"BEGIN { printf \\\"%.2fms\\\", $STARTUPTIME / 1000000 }\"'",
+            "format": "{result}",
+            "keyColor": "blue"
+        },
+        {
+            "type": "shell",
+            "key": "Shell",
+            "format": "{pretty-name<12} {#dim_cyan}pid: {pid<5}  version: {version}{#}",
             "keyColor": "blue"
         },
         {
