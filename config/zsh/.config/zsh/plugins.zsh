@@ -13,10 +13,9 @@ zplugin_install() {
 zplugin_load() {
     local plugin="${ZPLUGIN_DIR}/${1}/${1:t}.plugin.zsh"
     if [[ ! -f ${plugin} ]]; then
-        zplugin_install $1
-    else
-        source "${plugin}"
+        zplugin_install $1 || return 1;
     fi
+    source "${plugin}"
 }
 
 zplugin_update() {
@@ -25,13 +24,6 @@ zplugin_update() {
         git -C "$plugin" pull --ff-only
     done
 }
-
-# plugin installation
-zplugin_install Aloxaf/fzf-tab
-zplugin_install zdharma-continuum/fast-syntax-highlighting
-zplugin_install zsh-users/zsh-completions
-zplugin_install zsh-users/zsh-autosuggestions
-zplugin_install jeffreytse/zsh-vi-mode
 
 # fzf-tab configuration
 zstyle ':fzf-tab:*' use-fzf-default-opts yes
