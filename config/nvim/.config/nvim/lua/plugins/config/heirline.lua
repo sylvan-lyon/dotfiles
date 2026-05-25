@@ -56,9 +56,9 @@ end
 
 local M = {}
 
-M.spacer = { provider = " " }
+M.spacer = { update = false, provider = " " }
 
-M.fill = { provider = "%=" }
+M.fill = { upadte = false, provider = "%=" }
 
 -- padding spaces on left, main part will be on right
 ---@param child StatusLine
@@ -328,6 +328,29 @@ M.buffer_type = {
     end
 }
 
+
+---@enum BufTypeKind
+local BufTypeKind = {
+    normal = 0,
+    acwrite = 1,
+    nofile = 2,
+    nowrite = 3,
+    help = 4,
+    quickfix = 5,
+    prompt = 6,
+    terminal = 7
+}
+
+---@class FileBlock
+---@field bufnr integer
+---@field buftype string
+---@field file_path string
+---@field icon string
+---@field icon_color string
+---@field kind BufTypeKind
+---@field modified boolean
+
+
 M.file_type = {
     provider = function()
         return vim.bo.filetype
@@ -361,11 +384,15 @@ M.file_format = {
     end
 }
 
-M.file_icon = {
+local file_icon = {
+    ---@param self FileBlock
     init = function(self)
-        local file_name = self.file_name
-        local extension = vim.fn.fnamemodify(file_name, ":e")
-        self.icon, self.icon_color = require("nvim-web-devicons").get_icon_color(file_name, extension, { default = true })
+        if self.kind == BufTypeKind.normal or self.kind == BufTypeKind.help then
+            local file_name = self.file_path
+            local extension = vim.fn.fnamemodify(file_name, ":e")
+            self.icon, self.icon_color = require("nvim-web-devicons")
+                .get_icon_color(file_name, extension, { default = true, strict = true })
+        end
     end,
     provider = function(self)
         return self.icon and (self.icon .. " ")
@@ -375,98 +402,133 @@ M.file_icon = {
     end,
 }
 
-M.file_name = {
+local file_path = {
+    ---@param self FileBlock
+    ---@return string
     provider = function(self)
-        local file_name = vim.fn.fnamemodify(self.file_name, ":p:t")
-        if file_name == "" then return "[NO NAME]" end
-        if not conditions.width_percent_below(#file_name, 0.25) then
-            file_name = vim.fn.pathshorten(file_name)
-        end
-        return file_name:gsub("\\", "/")
+        return self.file_path
     end,
-    hl = function()
-        return { fg = utils.get_highlight("Directory").fg }
-    end,
+    hl = {
+        fg = colors.white,
+        bold = false,
+        italic = false,
+    }
 }
 
-M.file_path = {
-    provider = function(self)
-        local file_name = vim.fn.fnamemodify(self.file_name, ":~:.")
-        if file_name == "" then
-            return vim.bo.filetype ~= "" and vim.bo.filetype or vim.bo.buftype
-        end
-        if not conditions.width_percent_below(#file_name, 0.25) then
-            file_name = vim.fn.pathshorten(file_name, 4)
-        end
-        return file_name:gsub("\\", "/")
+local file_modified = {
+    condition = function()
+        return vim.bo.modified
     end,
-    hl = function(self)
-        return {
-            fg = self.is_active and colors.white or palette.subtext0,
-            bold = self.is_active or self.is_visible,
-            italic = self.is_active,
-        }
-    end,
+    provider = "● ",
+    hl = { fg = colors.green },
+    upadte = false,
 }
 
-M.file_flags = {
-    {
-        condition = function()
-            return vim.bo.modified
-        end,
-        provider = "● ",
-        hl = { fg = colors.green },
-    },
-    {
-        condition = function()
+local file_read_only = {
+    ---@param self FileBlock
+    ---@return boolean
+    condition = function(self)
+        if self.kind == BufTypeKind.normal or self.kind == BufTypeKind.help then
             return not vim.bo.modifiable or vim.bo.readonly
-        end,
-        provider = " ",
-        hl = { fg = colors.orange },
-    },
+        else
+            return false
+        end
+    end,
+    provider = " ",
+    hl = { fg = colors.orange },
 }
 
 M.file_name_block = {
-    init = function(self)
-        if vim.bo.filetype:match("dap") ~= nil then
-            local ft = vim.bo.filetype
-            if ft == "dapui_scopes" then
-                self.file_name = "scopes"
-            elseif ft == "dapui_breakpoints" then
-                self.file_name = "breakpoints"
-            elseif ft == "dapui_stacks" then
-                self.file_name = "stacks"
-            elseif ft == "dapui_watches" then
-                self.file_name = "watches"
-            elseif ft == "dapui_console" then
-                self.file_name = "console"
-            elseif ft == "dap-repl" then
-                self.file_name = "repl"
-            else
-                self.file_name = ft
+    {
+        ---@param self FileBlock
+        init = function(self)
+            self.bufnr = vim.api.nvim_get_current_buf()
+            self.buftype = vim.bo.buftype
+            if self.buftype == "" then
+                self.kind = BufTypeKind.normal
+            elseif self.buftype == "acwrite" then
+                self.kind = BufTypeKind.acwrite
+            elseif self.buftype == "nofile" then
+                self.kind = BufTypeKind.nofile
+            elseif self.buftype == "nowrite" then
+                self.kind = BufTypeKind.nowrite
+            elseif self.buftype == "help" then
+                self.kind = BufTypeKind.help
+            elseif self.buftype == "quickfix" then
+                self.kind = BufTypeKind.quickfix
+            elseif self.buftype == "prompt" then
+                self.kind = BufTypeKind.prompt
+            elseif self.buftype == "terminal" then
+                self.kind = BufTypeKind.terminal
             end
-        else
-            local bufnr = self.bufnr and self.bufnr or 0
-            self.file_name = vim.api.nvim_buf_get_name(bufnr)
-        end
-    end,
-    hl = { fg = colors.white },
-    M.file_icon,
-    M.file_name,
-    M.spacer,
-    M.file_flags,
+
+            if self.kind == BufTypeKind.normal or self.kind == BufTypeKind.help then
+                local raw = vim.api.nvim_buf_get_name(0)
+                local new_file_path = vim.fn.fnamemodify(raw, ":t")
+                if new_file_path == "" then
+                    new_file_path = "[NO NAME]"
+                else
+                    new_file_path = require("utils").is_windows and new_file_path:gsub("\\", "/") or new_file_path
+                end
+                self.file_path = new_file_path
+            end
+        end,
+        file_icon,
+        file_path,
+        M.spacer,
+        file_read_only,
+        update = "BufEnter",
+    },
+    file_modified,
 }
 
 M.file_path_block = {
-    init = function(self)
-        local bufnr = self.bufnr and self.bufnr or 0
-        self.file_name = vim.api.nvim_buf_get_name(bufnr)
-    end,
-    hl = { fg = colors.white },
-    M.file_icon,
-    M.file_path,
-    M.spacer,
-    M.file_flags,
+    {
+        ---@param self FileBlock
+        init = function(self)
+            self.bufnr = vim.api.nvim_get_current_buf()
+            self.buftype = vim.bo.buftype
+            if self.buftype == "" then
+                self.kind = BufTypeKind.normal
+            elseif self.buftype == "acwrite" then
+                self.kind = BufTypeKind.acwrite
+            elseif self.buftype == "nofile" then
+                self.kind = BufTypeKind.nofile
+            elseif self.buftype == "nowrite" then
+                self.kind = BufTypeKind.nowrite
+            elseif self.buftype == "help" then
+                self.kind = BufTypeKind.help
+            elseif self.buftype == "quickfix" then
+                self.kind = BufTypeKind.quickfix
+            elseif self.buftype == "prompt" then
+                self.kind = BufTypeKind.prompt
+            elseif self.buftype == "terminal" then
+                self.kind = BufTypeKind.terminal
+            end
+
+            if self.kind == BufTypeKind.normal or self.kind == BufTypeKind.help then
+                local raw = vim.api.nvim_buf_get_name(self.bufnr)
+                local new_file_name
+                if self.kind == BufTypeKind.normal then
+                    new_file_name = vim.fn.fnamemodify(raw, ":~:.")
+                else
+                    new_file_name = vim.fn.fnamemodify(raw, ":t")
+                end
+                if new_file_name == "" then
+                    new_file_name = "[NO NAME]"
+                else
+                    new_file_name = require("utils").is_windows and new_file_name:gsub("\\", "/") or new_file_name
+                end
+                self.file_path = new_file_name
+            end
+        end,
+        file_icon,
+        file_path,
+        M.spacer,
+        file_read_only,
+        update = "BufEnter",
+    },
+    file_modified,
 }
 
 M.tabline_file_name_block = vim.tbl_extend("force", M.file_name_block, {
@@ -557,139 +619,175 @@ M.dap_buffers = {
     hl = { fg = utils.get_highlight("Type").fg, bold = true },
 }
 
---#region
-local lsp = {
-    ---@type table<integer, { name: string, status: string }>
-    status = {},
-    progress_string = "",
-    spinner = {
-        " ", -- new
-        " ", " ", " ", " ", " ", " ", -- waxing crescent
-        " ", -- first quarter
-        " ", " ", " ", " ", " ", " ", -- waxing gibbous
-        " ", -- full
-        " ", " ", " ", " ", " ", " ", -- waning gibbous
-        " ", -- last quarter
-        " ", " ", " ", " ", " ", " ", -- waning crescent
-    },
-    -- spinner = { " ", " ", " ", " ", " ", " " },
-    -- This timer keeps redrawing every 40 ms
-    timer = vim.uv.new_timer(),
-    timer_started = false
-}
+local _updated_at = 0
+local _augroup = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true })
 
-function lsp:get_spinner()
-    local second = vim.uv.hrtime() / 1e9
-    local fps = 10
+vim.api.nvim_create_autocmd(
+    { "LspAttach", "LspDetach", "LspProgress" },
+    {
+        desc = [[alias for event { "LspAttach", "LspDetach", "LspProgress" }]],
+        group = _augroup,
 
-    return lsp.spinner[math.floor(fps * second) % #lsp.spinner + 1]
-end
+        ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
+        callback = function(event)
+            -- update interval: 40ms
+            if _updated_at < vim.uv.hrtime() - 1e6 * 40
+                -- If it's LspProgress who triggered this autocmd,
+                -- and progress kind is end,
+                -- then we force update to announce the end of progress.
+                or event.data.params and event.data.params.value.kind == "end" then
+                vim.schedule(function()
+                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
+                end)
+                _updated_at = vim.uv.hrtime()
+            end
+        end
+    }
+)
 
--- If possible ( the timer is not poisoned ),
---     start timer and keeps emit redraw event
--- else, triggers redraw once.
-function lsp:keep_drawing_if_possible()
-    if self.timer and not self.timer_started then
-        self.timer:start(0, 40, schedule_redraw)
-        self.timer_started = true
+vim.api.nvim_create_autocmd(
+    "BufEnter",
+    {
+        group = _augroup,
+        callback = function(event)
+            vim.schedule(function()
+                vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
+            end)
+        end
+    }
+)
+
+---@class LspHeirline
+---@field status table<integer, {status: string, progress_string: string, name: string}[]>
+---@field timer uv.uv_timer_t
+---@field timer_started boolean
+---@field bufnr integer
+---@field keep_drawing fun()
+---@field stop_drawing fun()
+---@field spinner string[]
+
+---@param mod LspHeirline
+local function keep_lsp_mod_redrawing(mod)
+    if mod.timer and not mod.timer_started then
+        mod.timer:start(0, 40, schedule_redraw)
+        mod.timer_started = true
     else
         schedule_redraw()
     end
 end
 
-function lsp:stop_keeping_drawing()
-    if self.timer and self.timer:is_active() then
-        self.timer:stop()
-        self.timer_started = false
+---@param mod LspHeirline
+local function stop_lsp_mod_redrawing(mod)
+    if mod.timer and mod.timer:is_active() then
+        mod.timer:stop()
+        mod.timer_started = false
     end
 end
 
----The lsp progress function
----@param progress_value { kind: string?, message: string?, percentage: integer?, title: string? }
-function lsp:format_lsp_progress(progress_value)
-    local percent = progress_value.percentage and
-        -- %%%% >-- stirng.format --> %% >-- status of neovim --> %
-        ("(%2d%%%%)"):format(progress_value.percentage) or ""
-    self.progress_string = ("%s %s"):format(percent, progress_value.title or "")
+---@param spinner string[]
+---@return string
+local function get_spinner(spinner)
+    local second = vim.uv.hrtime() / 1e9
+    local fps = 10
+
+    return spinner[math.floor(fps * second) % #spinner + 1]
 end
 
-vim.api.nvim_create_autocmd(
-    "User",
-    {
-        desc = [[update lsp status]],
-        group = vim.api.nvim_create_augroup("update lsp status of heirline", { clear = true }),
-        pattern = { "LspUpdate" },
-
-        ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
-        callback = function(event)
-            local client_id, params = event.data.client_id, event.data.params
-            local client = vim.lsp.get_client_by_id(event.data.client_id)
-
-            if client then
-                lsp.status[client_id] = { status = params and params.value.kind or "end", name = client.name }
-                if params then
-                    if params.value.kind == "begin" then
-                        lsp.progress_string = ""
-                        lsp:keep_drawing_if_possible()
-                    elseif params.value.kind == "report" then
-                        -- get most recent progress and cleanup the progress ring
-                        -- so that each call to client.progress:pop() will get most recent progress
-                        -- client.progress is not a stack but a queue
-                        ---@type nil|{ token: integer, value: nil|{ kind: string?, message: string?, percentage: integer?, title: string? } }
-                        local progress = client.progress:pop()
-                        client.progress:clear()
-                        if progress and progress.value then
-                            lsp:format_lsp_progress(progress.value)
-                        end
-                        lsp:keep_drawing_if_possible()
-                    elseif params.value.kind == "end" then
-                        lsp:stop_keeping_drawing()
-                        lsp.progress_string = "done"
-                        schedule_redraw()
-                    end
-                end
-            else
-                lsp.status[client_id] = nil
-            end
+M.lsp = {
+    ---@param self LspHeirline
+    ---@return boolean
+    condition = function(self)
+        self.status = self.status or {}
+        self.timer = self.timer or vim.uv.new_timer()
+        self.keep_drawing = self.keep_drawing or function()
+            keep_lsp_mod_redrawing(self)
         end
-    }
-)
---#endregion
+        self.stop_drawing = self.stop_drawing or function()
+            stop_lsp_mod_redrawing(self)
+        end
 
-M.lsp_status = {
-    condition = conditions.lsp_attached,
+        return conditions.lsp_attached()
+    end,
     hl = { fg = colors.dimmed_white, bold = true },
-    provider = function()
+    ---@param self LspHeirline
+    ---@return string
+    provider = function(self)
         local status = ""
+        for _, item in pairs(self.status[self.bufnr] or {}) do
+            local icon = ""
+            if item.status == "end" then
+                icon = " "
+            else
+                icon = " " .. get_spinner(self.spinner)
+            end
 
-        for _, data in ipairs(lsp.status) do
-            local icon =
-                data.status == "end" and "  " or
-                " " .. lsp:get_spinner()
-
-            status = data.name .. icon
+            status = status .. string.format("%s %s %s ", item.name, item.progress_string, icon)
         end
 
         return status
     end,
-    update = {
-        "User",
-        pattern = "LspUpdate",
-        callback = schedule_redraw,
-    }
-}
-
-M.lsp_progress = {
-    condition = conditions.lsp_attached,
-    provider = function()
-        return lsp.progress_string
-    end,
-    update = {
-        "User",
-        pattern = "LspUpdate",
-        callback = schedule_redraw,
+    static = {
+        spinner = {
+            " ", -- new
+            " ", " ", " ", " ", " ", " ", -- waxing crescent
+            " ", -- first quarter
+            " ", " ", " ", " ", " ", " ", -- waxing gibbous
+            " ", -- full
+            " ", " ", " ", " ", " ", " ", -- waning gibbous
+            " ", -- last quarter
+            " ", " ", " ", " ", " ", " ", -- waning crescent
+        },
     },
-    hl = { fg = colors.dimmed_white, bold = false },
+    update = {
+        "User",
+        pattern = "LspUpdate",
+        ---@param self LspHeirline
+        ---@param args { buf: integer, data: { client_id: integer, params: lsp.ProgressParams? }? }
+        callback = function(self, args)
+            self.bufnr = args.buf
+            if not args.data then
+                schedule_redraw()
+                return
+            end
+
+            local client_id, params = args.data.client_id, args.data.params
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+            self.status[self.bufnr] = self.status[self.bufnr] or {}
+            if client then
+                local progress_string = ""
+                if params then
+                    if params.value.kind == "begin" then
+                        progress_string = ""
+                        self.keep_drawing()
+                    elseif params.value.kind == "report" then
+                        ---@type nil|{ token: integer, value: nil|{ kind: string?, message: string?, percentage: integer?, title: string? } }
+                        local prog = client.progress:pop()
+                        client.progress:clear()
+                        if prog and prog.value then
+                            -- %%%% >-- stirng.format --> %% >-- status of neovim --> %
+                            local percent = prog.value.percentage and ("(%2d%%%%)"):format(prog.value.percentage) or ""
+                            progress_string = ("%s %s"):format(percent, prog.value.title or "")
+                        else
+                            progress_string = ""
+                        end
+                        self.keep_drawing()
+                    elseif params.value.kind == "end" then
+                        self.stop_drawing()
+                        progress_string = "done"
+                        schedule_redraw()
+                    end
+                end
+                self.status[self.bufnr][client_id] = {
+                    status = params and params.value.kind or "end",
+                    name = client.name,
+                    progress_string = progress_string
+                }
+            else
+                self.status[self.bufnr][client_id] = nil
+            end
+        end,
+    }
 }
 
 M.treesitter = {
