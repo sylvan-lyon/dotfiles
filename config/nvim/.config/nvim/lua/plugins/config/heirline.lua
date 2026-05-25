@@ -645,23 +645,10 @@ vim.api.nvim_create_autocmd(
     }
 )
 
-vim.api.nvim_create_autocmd(
-    "BufEnter",
-    {
-        group = _augroup,
-        callback = function(event)
-            vim.schedule(function()
-                vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
-            end)
-        end
-    }
-)
-
 ---@class LspHeirline
 ---@field status table<integer, {status: string, progress_string: string, name: string}[]>
 ---@field timer uv.uv_timer_t
 ---@field timer_started boolean
----@field bufnr integer
 ---@field keep_drawing fun()
 ---@field stop_drawing fun()
 ---@field spinner string[]
@@ -713,7 +700,9 @@ M.lsp = {
     ---@return string
     provider = function(self)
         local status = ""
-        for _, item in pairs(self.status[self.bufnr] or {}) do
+
+        local bufnr = vim.api.nvim_get_current_buf()
+        for _, item in pairs(self.status[bufnr] or {}) do
             local icon = ""
             if item.status == "end" then
                 icon = " "
@@ -744,7 +733,6 @@ M.lsp = {
         ---@param self LspHeirline
         ---@param args { buf: integer, data: { client_id: integer, params: lsp.ProgressParams? }? }
         callback = function(self, args)
-            self.bufnr = args.buf
             if not args.data then
                 schedule_redraw()
                 return
@@ -753,7 +741,7 @@ M.lsp = {
             local client_id, params = args.data.client_id, args.data.params
             local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-            self.status[self.bufnr] = self.status[self.bufnr] or {}
+            self.status[args.buf] = self.status[args.buf] or {}
             if client then
                 local progress_string = ""
                 if params then
@@ -778,13 +766,13 @@ M.lsp = {
                         schedule_redraw()
                     end
                 end
-                self.status[self.bufnr][client_id] = {
+                self.status[args.buf][client_id] = {
                     status = params and params.value.kind or "end",
                     name = client.name,
                     progress_string = progress_string
                 }
             else
-                self.status[self.bufnr][client_id] = nil
+                self.status[args.buf][client_id] = nil
             end
         end,
     }
