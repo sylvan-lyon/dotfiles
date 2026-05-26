@@ -39,16 +39,14 @@ alias tree='eza --tree'
 alias docker='podman'
 alias cat='bat --plain'
 
-# proxy on by default
-proxy on > /dev/null 2>&1
 
 # custom function path, we add our own completions
 fpath+=(
     "$ZDOTDIR/completions"
 )
 
-source "$ZDOTDIR/plugins.zsh" # plugins
 source "$ZDOTDIR/scripts.zsh" # custom shell scripts
+source "$ZDOTDIR/plugins.zsh" # plugins
 source "$ZDOTDIR/bindkey.zsh" # keybindings
 
 # profile this configuration and `fastfetch`

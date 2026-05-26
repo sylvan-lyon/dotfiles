@@ -43,3 +43,6 @@ function proxy() {
             ;;
     esac
 }
+
+# proxy on by default
+proxy on > /dev/null 2>&1
