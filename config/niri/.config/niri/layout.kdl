@@ -38,7 +38,7 @@ layout {
     }
     default-column-width { proportion 0.66667; }
 
-    gaps 24
+    gaps 20
     // margin
     // struts {
     //     left 5

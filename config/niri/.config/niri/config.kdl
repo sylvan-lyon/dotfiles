@@ -38,6 +38,10 @@ blur {
 
 environment {
     XDG_CURRENT_DESKTOP "niri"
+    QT_QPA_PLATFORMTHEME "gtk3"
+    ALL_PROXY "http://localhost:7890"
+    HTTP_PROXY "http://localhost:7890"
+    HTTPS_PROXY "http://localhost:7890"
 }
 
 hotkey-overlay {
@@ -68,8 +72,7 @@ recent-windows {
 }
 
 cursor {
-    xcursor-theme "Moga-White"
-    xcursor-size 32
+    xcursor-theme "Moga-Black"
 }
 
 include "./animations.kdl"
