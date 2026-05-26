@@ -2,12 +2,6 @@ local palette = require("catppuccin.palettes").get_palette()
 local utils = require("heirline.utils")
 local conditions = require("heirline.conditions")
 
-local schedule_redraw = function()
-    vim.schedule(function()
-        vim.cmd("redrawstatus")
-    end)
-end
-
 local colors = {
     diag_warn = utils.get_highlight("DiagnosticWarn").fg,
     diag_error = utils.get_highlight("DiagnosticError").fg,
@@ -54,7 +48,18 @@ local function overseer_task_for_status(st)
     }
 end
 
-local M = {}
+local M = { frame_time_in_sec = 0.04 }
+
+local last_redraw = 0
+M.schedule_redraw = function()
+    local now_in_seconds = vim.uv.hrtime() / 1e9
+    if last_redraw + M.frame_time_in_sec < now_in_seconds then
+        last_redraw = now_in_seconds
+        vim.schedule(function()
+            vim.cmd("redrawstatus")
+        end)
+    end
+end
 
 M.spacer = { update = false, provider = " " }
 
@@ -195,7 +200,7 @@ M.mode = {
     end,
     update = {
         "ModeChanged",
-        callback = schedule_redraw,
+        callback = M.schedule_redraw,
     },
 }
 
@@ -292,7 +297,7 @@ M.diagnostics = {
             self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
             self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
             self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
-            schedule_redraw()
+            M.schedule_redraw()
         end
     },
 
@@ -316,7 +321,7 @@ M.diagnostics = {
     },
     {
         provider = function(self)
-            return self.hints > 0 and (self.hint_icon .. self.hints)
+            return self.hints > 0 and (self.hint_icon .. self.hints .. " ")
         end,
         hl = { fg = colors.diag_hint },
     },
@@ -622,22 +627,32 @@ M.dap_buffers = {
 ---@class LspHeirlineStatus
 ---@field spinner string[]
 ---@field formatter fun(self, info: {name: string, info: LspProgressInfo?}): string
----@field status table<integer, {info: LspProgressInfo?, name: string}[]>
----@field timer uv.uv_timer_t
+---@field update_interval number
+---@field buffer table<integer, {last_updatesd_at: number, next_force_update: boolean, cache: string, progress: table<integer, {info: LspProgressInfo?, name: string}>}>
+---@field timer uv.uv_timer_t?
 ---@field timer_started boolean
 ---@field keep_drawing fun(self)
 ---@field stop_drawing fun(self)
 ---@field get_spinner fun(self): string
 ---@field set_status fun(self, bufnr: integer, client_id: integer, status: {info: LspProgressInfo?, name: string}?)
+---@field force_reeval fun(self, bufnr: integer)
 ---@field format fun(self, bufnr: integer): string
 local LspHeirlineStatus = {}
 
 function LspHeirlineStatus:keep_drawing()
-    if self.timer and not self.timer_started then
-        self.timer:start(0, 40, schedule_redraw)
-        self.timer_started = true
+    if self.timer then
+        if not self.timer_started then
+            self.timer:start(0, 40,
+                vim.schedule_wrap(function()
+                    -- vim.notify("again! " .. vim.uv.hrtime() / 1e9, vim.log.levels.WARN, { id = "keeps" })
+                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
+                end))
+            self.timer_started = true
+        end
     else
-        schedule_redraw()
+        vim.schedule(function()
+            vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
+        end)
     end
 end
 
@@ -646,6 +661,9 @@ function LspHeirlineStatus:stop_drawing()
         self.timer:stop()
         self.timer_started = false
     end
+    vim.schedule(function()
+        vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
+    end)
 end
 
 function LspHeirlineStatus:get_spinner()
@@ -656,26 +674,56 @@ function LspHeirlineStatus:get_spinner()
 end
 
 function LspHeirlineStatus:set_status(bufnr, client_id, status)
-    self.status[bufnr] = self.status[bufnr] or {}
-    self.status[bufnr][client_id] = status
+    self.buffer[bufnr] = self.buffer[bufnr] or {
+        last_updated_at = 0,
+        next_force_update = true,
+        cache = "unavailable",
+        progress = {}
+    }
+
+    self.buffer[bufnr].progress[client_id] = status
+end
+
+function LspHeirlineStatus:force_reeval(bufnr)
+    self.buffer[bufnr] = self.buffer[bufnr] or {
+        last_updated_at = 0,
+        next_force_update = true,
+        cache = "unavailable",
+        progress = {}
+    }
+    self.buffer[bufnr].next_force_update = true
 end
 
 function LspHeirlineStatus:format(bufnr)
-    local status = ""
-    for _, item in pairs(self.status[bufnr] or {}) do
-        status = status .. " " .. self.formatter(self:get_spinner(), item)
+    self.buffer[bufnr] = self.buffer[bufnr] or {
+        last_updated_at = 0,
+        next_force_update = true,
+        cache = "unavailable",
+        progress = {}
+    }
+
+    local this_buf = self.buffer[bufnr]
+    local now_in_seconds = vim.uv.hrtime() / 1e9
+    if this_buf.next_force_update or this_buf.last_updatesd_at + self.update_interval < now_in_seconds then
+        local status = ""
+        for _, item in pairs(this_buf.progress) do
+            status = status .. " " .. self.formatter(self:get_spinner(), item)
+        end
+        this_buf.last_updatesd_at = now_in_seconds
+        this_buf.next_force_update = false
+        this_buf.cache = status
     end
-    return status
+
+    -- vim.notify("eval" .. " " .. vim.uv.hrtime() / 1e9, vim.log.levels.TRACE, { id = "eval" })
+    return this_buf.cache
 end
 
 ---@param _args any
 ---@return LspHeirlineStatus
 function LspHeirlineStatus:new(_args)
     local args = _args or {}
+    ---@class LspHeirlineStatus
     local instance = {
-        status = args.status or {},
-        timer = args.timer or vim.uv.new_timer(),
-        timer_started = args.timer_started or false,
         formatter = args.formatter or function(spinner, item)
             local result = ""
             result = result .. "%#HeirlineLspName#"
@@ -708,8 +756,16 @@ function LspHeirlineStatus:new(_args)
             " ", " ", " ", " ", " ", " ", -- waning gibbous
             " ", -- last quarter
             " ", " ", " ", " ", " ", " ", -- waning crescent
-        }
+        },
+        update_interval = args.update_interval or 0.04,
+        buffer = {},
+        timer = vim.uv.new_timer(),
+        timer_started = false,
+        last_updated_at = {},
+        next_force_update = true,
+        per_buffer_cache = {}
     }
+
     setmetatable(instance, { __index = self })
     return instance
 end
@@ -720,10 +776,9 @@ end
 ---@field percentage integer?
 ---@field title string?
 
----@param opt {formatter: fun(spinner: string, info: LspProgressInfo): string|nil, spinner: string[]|nil}?
+---@param opt {formatter: fun(spinner: string, info: LspProgressInfo): string|nil, spinner: string[]|nil, update_interval: number}?
 ---@return table
 M.lsp = function(opt)
-    local _updated_at = 0
     local _augroup = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true })
     vim.api.nvim_set_hl(0, "HeirlineLspName", { fg = colors.dimmed_white, bold = true, dim = true })
     vim.api.nvim_set_hl(0, "HeirlineLspProg", { fg = colors.dimmed_white, dim = true, italic = true })
@@ -736,17 +791,9 @@ M.lsp = function(opt)
 
             ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
             callback = function(event)
-                -- update interval: 40ms
-                if _updated_at < vim.uv.hrtime() - 1e6 * 40
-                    -- If it's LspProgress who triggered this autocmd,
-                    -- and progress kind is end,
-                    -- then we force update to announce the end of progress.
-                    or event.data.params and event.data.params.value.kind == "end" then
-                    vim.schedule(function()
-                        vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
-                    end)
-                    _updated_at = vim.uv.hrtime()
-                end
+                vim.schedule(function()
+                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame", data = event.data })
+                end)
             end
         }
     )
@@ -777,12 +824,12 @@ M.lsp = function(opt)
         },
         update = {
             "User",
-            pattern = "LspUpdate",
+            pattern = "LspUpdateOrNextFrame",
             ---@param self {inner: LspHeirlineStatus}
             ---@param args { buf: integer, data: { client_id: integer, params: lsp.ProgressParams? }? }
             callback = function(self, args)
+                M.schedule_redraw()
                 if not args.data then
-                    schedule_redraw()
                     return
                 end
 
@@ -799,7 +846,7 @@ M.lsp = function(opt)
                             self.inner:keep_drawing()
                         elseif kind == "end" then
                             self.inner:stop_drawing()
-                            schedule_redraw()
+                            self.inner:force_reeval(args.buf)
                         end
                     end
                     self.inner:set_status(args.buf, client_id, { name = client.name, info = prog and prog.value })

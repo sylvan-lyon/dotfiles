@@ -1,4 +1,5 @@
 return {
+
     "rebelot/heirline.nvim",
     dependencies = {
         "nvim-tree/nvim-web-devicons",
@@ -11,9 +12,9 @@ return {
         require("heirline").setup({
             ---@diagnostic disable-next-line: missing-fields
             statusline = {
-                lib.right_pad(lib.mode, 1),
-                lib.right_pad(lib.file_name_block, 1),
-                lib.right_pad(lib.diagnostics, 1),
+                lib.right_pad(lib.mode, 2),
+                lib.right_pad(lib.file_name_block, 0),
+                lib.left_pad(lib.diagnostics, 1),
                 lib.right_pad(lib.lsp(), 0),
                 lib.fill,
                 lib.macro_recording,
