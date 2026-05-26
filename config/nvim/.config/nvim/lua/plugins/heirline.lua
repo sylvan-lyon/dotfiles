@@ -14,7 +14,7 @@ return {
                 lib.right_pad(lib.mode, 1),
                 lib.right_pad(lib.file_name_block, 1),
                 lib.right_pad(lib.diagnostics, 1),
-                lib.right_pad(lib.lsp, 0),
+                lib.right_pad(lib.lsp(), 0),
                 lib.fill,
                 lib.macro_recording,
                 lib.fill,

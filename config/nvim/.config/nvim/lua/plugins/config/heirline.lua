@@ -619,104 +619,87 @@ M.dap_buffers = {
     hl = { fg = utils.get_highlight("Type").fg, bold = true },
 }
 
-local _updated_at = 0
-local _augroup = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true })
-
-vim.api.nvim_create_autocmd(
-    { "LspAttach", "LspDetach", "LspProgress" },
-    {
-        desc = [[alias for event { "LspAttach", "LspDetach", "LspProgress" }]],
-        group = _augroup,
-
-        ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
-        callback = function(event)
-            -- update interval: 40ms
-            if _updated_at < vim.uv.hrtime() - 1e6 * 40
-                -- If it's LspProgress who triggered this autocmd,
-                -- and progress kind is end,
-                -- then we force update to announce the end of progress.
-                or event.data.params and event.data.params.value.kind == "end" then
-                vim.schedule(function()
-                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
-                end)
-                _updated_at = vim.uv.hrtime()
-            end
-        end
-    }
-)
-
----@class LspHeirline
----@field status table<integer, {status: string, progress_string: string, name: string}[]>
+---@class LspHeirlineStatus
+---@field spinner string[]
+---@field formatter fun(self, info: {name: string, info: LspProgressInfo?}): string
+---@field status table<integer, {info: LspProgressInfo?, name: string}[]>
 ---@field timer uv.uv_timer_t
 ---@field timer_started boolean
----@field keep_drawing fun()
----@field stop_drawing fun()
----@field spinner string[]
+---@field keep_drawing fun(self)
+---@field stop_drawing fun(self)
+---@field get_spinner fun(self): string
+---@field set_status fun(self, bufnr: integer, client_id: integer, status: {info: LspProgressInfo?, name: string}?)
+---@field format fun(self, bufnr: integer): string
+local LspHeirlineStatus = {}
 
----@param mod LspHeirline
-local function keep_lsp_mod_redrawing(mod)
-    if mod.timer and not mod.timer_started then
-        mod.timer:start(0, 40, schedule_redraw)
-        mod.timer_started = true
+function LspHeirlineStatus:keep_drawing()
+    if self.timer and not self.timer_started then
+        self.timer:start(0, 40, schedule_redraw)
+        self.timer_started = true
     else
         schedule_redraw()
     end
 end
 
----@param mod LspHeirline
-local function stop_lsp_mod_redrawing(mod)
-    if mod.timer and mod.timer:is_active() then
-        mod.timer:stop()
-        mod.timer_started = false
+function LspHeirlineStatus:stop_drawing()
+    if self.timer and self.timer:is_active() then
+        self.timer:stop()
+        self.timer_started = false
     end
 end
 
----@param spinner string[]
----@return string
-local function get_spinner(spinner)
+function LspHeirlineStatus:get_spinner()
     local second = vim.uv.hrtime() / 1e9
     local fps = 10
 
-    return spinner[math.floor(fps * second) % #spinner + 1]
+    return self.spinner[math.floor(fps * second) % #self.spinner + 1]
 end
 
-M.lsp = {
-    ---@param self LspHeirline
-    ---@return boolean
-    condition = function(self)
-        self.status = self.status or {}
-        self.timer = self.timer or vim.uv.new_timer()
-        self.keep_drawing = self.keep_drawing or function()
-            keep_lsp_mod_redrawing(self)
-        end
-        self.stop_drawing = self.stop_drawing or function()
-            stop_lsp_mod_redrawing(self)
-        end
+function LspHeirlineStatus:set_status(bufnr, client_id, status)
+    self.status[bufnr] = self.status[bufnr] or {}
+    self.status[bufnr][client_id] = status
+end
 
-        return conditions.lsp_attached()
-    end,
-    hl = { fg = colors.dimmed_white, bold = true },
-    ---@param self LspHeirline
-    ---@return string
-    provider = function(self)
-        local status = ""
+function LspHeirlineStatus:format(bufnr)
+    local status = ""
+    for _, item in pairs(self.status[bufnr] or {}) do
+        status = status .. " " .. self.formatter(self:get_spinner(), item)
+    end
+    return status
+end
 
-        local bufnr = vim.api.nvim_get_current_buf()
-        for _, item in pairs(self.status[bufnr] or {}) do
-            local icon = ""
-            if item.status == "end" then
-                icon = " "
+---@param _args any
+---@return LspHeirlineStatus
+function LspHeirlineStatus:new(_args)
+    local args = _args or {}
+    local instance = {
+        status = args.status or {},
+        timer = args.timer or vim.uv.new_timer(),
+        timer_started = args.timer_started or false,
+        formatter = args.formatter or function(spinner, item)
+            local result = ""
+            result = result .. "%#HeirlineLspName#"
+            result = result .. item.name
+
+            if not item.info or item.info and item.info.kind == "end" then
+                result = result .. " " .. " %*"
+                return result
             else
-                icon = " " .. get_spinner(self.spinner)
+                result = result .. " " .. spinner
             end
 
-            status = status .. string.format("%s %s %s ", item.name, item.progress_string, icon)
-        end
+            result = result .. "%#HeirlineLspProg#"
+            if item.info and item.info.title then
+                result = result .. " " .. item.info.title
+            end
+            if item.info and item.info.percentage then
+                result = result .. " " .. ("%2d%%%%"):format(item.info.percentage)
+            end
+            result = result .. "%*"
 
-        return status
-    end,
-    static = {
-        spinner = {
+            return result
+        end,
+        spinner = args.spinner or {
             " ", -- new
             " ", " ", " ", " ", " ", " ", -- waxing crescent
             " ", -- first quarter
@@ -725,58 +708,108 @@ M.lsp = {
             " ", " ", " ", " ", " ", " ", -- waning gibbous
             " ", -- last quarter
             " ", " ", " ", " ", " ", " ", -- waning crescent
-        },
-    },
-    update = {
-        "User",
-        pattern = "LspUpdate",
-        ---@param self LspHeirline
-        ---@param args { buf: integer, data: { client_id: integer, params: lsp.ProgressParams? }? }
-        callback = function(self, args)
-            if not args.data then
-                schedule_redraw()
-                return
-            end
-
-            local client_id, params = args.data.client_id, args.data.params
-            local client = vim.lsp.get_client_by_id(args.data.client_id)
-
-            self.status[args.buf] = self.status[args.buf] or {}
-            if client then
-                local progress_string = ""
-                if params then
-                    if params.value.kind == "begin" then
-                        progress_string = ""
-                        self.keep_drawing()
-                    elseif params.value.kind == "report" then
-                        ---@type nil|{ token: integer, value: nil|{ kind: string?, message: string?, percentage: integer?, title: string? } }
-                        local prog = client.progress:pop()
-                        client.progress:clear()
-                        if prog and prog.value then
-                            -- %%%% >-- stirng.format --> %% >-- status of neovim --> %
-                            local percent = prog.value.percentage and ("(%2d%%%%)"):format(prog.value.percentage) or ""
-                            progress_string = ("%s %s"):format(percent, prog.value.title or "")
-                        else
-                            progress_string = ""
-                        end
-                        self.keep_drawing()
-                    elseif params.value.kind == "end" then
-                        self.stop_drawing()
-                        progress_string = "done"
-                        schedule_redraw()
-                    end
-                end
-                self.status[args.buf][client_id] = {
-                    status = params and params.value.kind or "end",
-                    name = client.name,
-                    progress_string = progress_string
-                }
-            else
-                self.status[args.buf][client_id] = nil
-            end
-        end,
+        }
     }
-}
+    setmetatable(instance, { __index = self })
+    return instance
+end
+
+---@class LspProgressInfo
+---@field kind string?
+---@field message string?
+---@field percentage integer?
+---@field title string?
+
+---@param opt {formatter: fun(spinner: string, info: LspProgressInfo): string|nil, spinner: string[]|nil}?
+---@return table
+M.lsp = function(opt)
+    local _updated_at = 0
+    local _augroup = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true })
+    vim.api.nvim_set_hl(0, "HeirlineLspName", { fg = colors.dimmed_white, bold = true, dim = true })
+    vim.api.nvim_set_hl(0, "HeirlineLspProg", { fg = colors.dimmed_white, dim = true, italic = true })
+
+    vim.api.nvim_create_autocmd(
+        { "LspAttach", "LspDetach", "LspProgress" },
+        {
+            desc = [[alias for event { "LspAttach", "LspDetach", "LspProgress" }]],
+            group = _augroup,
+
+            ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
+            callback = function(event)
+                -- update interval: 40ms
+                if _updated_at < vim.uv.hrtime() - 1e6 * 40
+                    -- If it's LspProgress who triggered this autocmd,
+                    -- and progress kind is end,
+                    -- then we force update to announce the end of progress.
+                    or event.data.params and event.data.params.value.kind == "end" then
+                    vim.schedule(function()
+                        vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdate", data = event.data })
+                    end)
+                    _updated_at = vim.uv.hrtime()
+                end
+            end
+        }
+    )
+
+    return {
+        ---@param self {inner: LspHeirlineStatus}
+        ---@return boolean
+        condition = function(self)
+            self.inner = self.inner or LspHeirlineStatus:new(opt)
+            return conditions.lsp_attached()
+        end,
+        ---@param self {inner: LspHeirlineStatus}
+        ---@return string
+        provider = function(self)
+            return self.inner:format(vim.api.nvim_get_current_buf())
+        end,
+        static = {
+            spinner = {
+                " ", -- new
+                " ", " ", " ", " ", " ", " ", -- waxing crescent
+                " ", -- first quarter
+                " ", " ", " ", " ", " ", " ", -- waxing gibbous
+                " ", -- full
+                " ", " ", " ", " ", " ", " ", -- waning gibbous
+                " ", -- last quarter
+                " ", " ", " ", " ", " ", " ", -- waning crescent
+            },
+        },
+        update = {
+            "User",
+            pattern = "LspUpdate",
+            ---@param self {inner: LspHeirlineStatus}
+            ---@param args { buf: integer, data: { client_id: integer, params: lsp.ProgressParams? }? }
+            callback = function(self, args)
+                if not args.data then
+                    schedule_redraw()
+                    return
+                end
+
+                local client_id, params = args.data.client_id, args.data.params
+                local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+                if client then
+                    ---@type nil|{ token: integer, value: LspProgressInfo? }
+                    local prog = client.progress:pop()
+                    client.progress:clear()
+                    if params then
+                        local kind = params.value.kind
+                        if kind == "begin" or kind == "report" then
+                            self.inner:keep_drawing()
+                        elseif kind == "end" then
+                            self.inner:stop_drawing()
+                            schedule_redraw()
+                        end
+                    end
+                    self.inner:set_status(args.buf, client_id, { name = client.name, info = prog and prog.value })
+                else
+                    self.inner:set_status(args.buf, client_id, nil)
+                end
+            end
+        },
+    }
+end
 
 M.treesitter = {
     condition = function()
