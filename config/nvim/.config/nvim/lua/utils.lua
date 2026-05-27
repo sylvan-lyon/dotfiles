@@ -4,9 +4,11 @@ local is_linux = sysinfo.sysname == "Linux"
 local is_macos = sysinfo.sysname == "Darwin"
 local is_unix_like = is_linux or is_macos
 
----@class Keymap
+---@class Keymap: vim.keymap.set.Opts
 ---@field [1] string
 ---@field [2] string|function
+---
+---@class WTF
 ---@field mode? string|string[]
 ---@field desc? string
 ---@field noremap? boolean
