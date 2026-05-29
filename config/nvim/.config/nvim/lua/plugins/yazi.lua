@@ -1,7 +1,7 @@
 return {
     "mikavilpas/yazi.nvim",
     version = "*", -- use the latest stable version
-    event = "VeryLazy",
+    keys = { { "<leader>e" }, "<leader>E" },
     dependencies = {
         { "nvim-lua/plenary.nvim", lazy = true },
     },
@@ -21,7 +21,8 @@ return {
         })
 
         require("utils").keyset({
-            { "<leader>e", "<cmd>Yazi toggle<cr>", desc = "[e]xplorer" },
+            { "<leader>e", "<cmd>Yazi toggle<cr>", desc = "[e]xplorer (toggle)" },
+            { "<leader>E", "<cmd>Yazi cwd<cr>",    desc = "[e]xplorer (cwd)" },
         })
     end
 }
