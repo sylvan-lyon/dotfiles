@@ -1,5 +1,6 @@
 return {
     "folke/flash.nvim",
+    name = "flash",
     -- event = "VeryLazy",
     -- keys = {
     --     { "s",     mode = { "n", "x", "o" }, desc = "Flash" },

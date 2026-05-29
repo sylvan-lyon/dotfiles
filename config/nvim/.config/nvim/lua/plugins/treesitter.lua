@@ -18,6 +18,7 @@ local ensure_installed = {
 return {
     {
         "nvim-treesitter/nvim-treesitter",
+        name = "treesitter-installer",
         -- lazy = false,
         cmd = {
             "TSInstall",
@@ -60,7 +61,8 @@ return {
     },
     {
         "nvim-treesitter/nvim-treesitter-context",
-        event = "User LazyFilePost",
+        name   = "treesitter-context",
+        event  = "User LazyFilePost",
         config = function()
             require("treesitter-context").setup({
                 multiline_threshold = 1,

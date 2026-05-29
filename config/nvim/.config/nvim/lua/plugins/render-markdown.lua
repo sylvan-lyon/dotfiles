@@ -1,5 +1,6 @@
 return {
     "MeanderingProgrammer/render-markdown.nvim",
+    name = "render-markdown",
     ft = "markdown",
     dependencies = "nvim-tree/nvim-web-devicons", -- if you prefer nvim-web-devicons
     config = function()

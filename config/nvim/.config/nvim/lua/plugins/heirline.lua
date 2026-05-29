@@ -1,6 +1,6 @@
 return {
-
     "rebelot/heirline.nvim",
+    name = "heirline",
     dependencies = {
         "nvim-tree/nvim-web-devicons",
         "catppuccin/nvim",

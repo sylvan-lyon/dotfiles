@@ -175,6 +175,7 @@ end
 
 return {
     "neovim/nvim-lspconfig",
+    name = "lspconfig",
     dependencies = "mason-org/mason.nvim",
     event = "User LazyFilePre",
     config = function(_, _)
@@ -196,6 +197,9 @@ return {
         local result = load_lsp_config()
         if result then
             for name, config in pairs(result) do
+                vim.notify(name .. " was overrided:" .. "\n" .. vim.inspect(config), vim.log.levels.INFO,
+                    { title = "LSP override", id = "_lsp" .. name })
+
                 local preset_on_attach = vim.lsp.config[name] and vim.lsp.config[name].on_attach
                 local proj_on_attach = config.on_attach
 

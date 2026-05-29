@@ -1,16 +1,17 @@
+require("utils").keyset({
+    { "<leader>tc", "<CMD>ColorizerToggle<CR>", desc = "[t]oggle [c]olorizer" }
+})
+
 return {
-    'norcalli/nvim-colorizer.lua',
-    lazy = false,
+    "catgoose/nvim-colorizer.lua",
+    name = "colorizer",
     cmd = {
-        -- "ColorizerAttachToBuffer",
-        -- "ColorizerDetachFromBuffer",
-        -- "ColorizerReloadAllBuffers",
-        -- "ColorizerToggle"
+        "ColorizerAttachToBuffer",
+        "ColorizerDetachFromBuffer",
+        "ColorizerReloadAllBuffers",
+        "ColorizerToggle"
     },
     config = function()
         require("colorizer").setup({})
-        require("utils").keyset({
-            { "<leader>tc", "<CMD>ColorizerToggle<CR>", desc = "[t]oggle [c]olorizer" }
-        })
     end
 }

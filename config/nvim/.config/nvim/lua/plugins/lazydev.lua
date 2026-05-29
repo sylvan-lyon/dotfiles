@@ -1,5 +1,6 @@
 return {
     "folke/lazydev.nvim",
+    name = "lazydev",
     ft = "lua", -- only load on lua files
     config = function()
         require("lazydev").setup({

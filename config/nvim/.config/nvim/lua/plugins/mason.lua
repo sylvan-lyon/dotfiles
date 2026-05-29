@@ -1,5 +1,6 @@
 return {
     "mason-org/mason.nvim",
+    name = "mason",
     cmd = { "Mason", "MasonInstall", "MasonUpdate", "MasonUninstall", "MasonLog" },
     config = function(_, _)
         require("mason").setup({

@@ -644,7 +644,6 @@ function LspHeirlineStatus:keep_drawing()
         if not self.timer_started then
             self.timer:start(0, 40,
                 vim.schedule_wrap(function()
-                    -- vim.notify("again! " .. vim.uv.hrtime() / 1e9, vim.log.levels.WARN, { id = "keeps" })
                     vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
                 end))
             self.timer_started = true

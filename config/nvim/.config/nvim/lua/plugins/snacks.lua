@@ -201,6 +201,7 @@ local toggle = {
 
 return {
     "folke/snacks.nvim",
+    name = "snacks",
     priority = 1000,
     lazy = false,
     config = function()

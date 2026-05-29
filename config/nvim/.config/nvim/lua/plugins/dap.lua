@@ -49,14 +49,12 @@ end
 
 return {
     "rcarriga/nvim-dap-ui",
+    name = "dap-ui",
     ft = { "lua", "c", "go", "cpp", "rust" },
     dependencies = {
-        "mfussenegger/nvim-dap",
-        -- { "theHamsta/nvim-dap-virtual-text", config = function ()
-        --     require("nvim-dap-virtual-text").setup({})
-        -- end },
-        "mason-org/mason.nvim",
-        "nvim-neotest/nvim-nio"
+        { "mfussenegger/nvim-dap", name = "dap" },
+        { "mason-org/mason.nvim",  name = "mason" },
+        { "nvim-neotest/nvim-nio", name = "nio" }
     },
     config = function()
         local dap, dapui = require("dap"), require("dapui")

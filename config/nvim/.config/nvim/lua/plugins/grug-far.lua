@@ -1,5 +1,6 @@
 return {
     "MagicDuck/grug-far.nvim",
+    name = "grug-far",
     cmd = {
         "GrugFar",
         "GrugFarWithin",
