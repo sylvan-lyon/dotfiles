@@ -618,16 +618,21 @@ M.dap_buffers = {
     hl = { fg = utils.get_highlight("Type").fg, bold = true },
 }
 
+---@class LspProgressInfo
+---@field kind string?
+---@field message string?
+---@field percentage integer?
+---@field title string?
+
 ---@class LspHeirlineStatus
 ---@field spinner string[]
 ---@field formatter fun(self, info: {name: string, info: LspProgressInfo?}): string
 ---@field update_interval number
----@field buffer table<integer, {last_updatesd_at: number, next_force_update: boolean, cache: string, progress: table<integer, {info: LspProgressInfo?, name: string}>}> per buffer status
+---@field buffer table<integer, {last_updated_at: number, next_force_update: boolean, cache: string, progress: table<integer, {info: LspProgressInfo?, name: string}>}> per buffer status
 ---@field timer uv.uv_timer_t?
 ---@field keep_drawing fun(self)
 ---@field stop_drawing fun(self)
 ---@field get_spinner fun(self): string
----@field set_status fun(self, bufnr: integer, client_id: integer, status: {info: LspProgressInfo?, name: string}?)
 ---@field force_reeval fun(self, bufnr: integer)
 ---@field format fun(self, bufnr: integer): string
 local LspHeirlineStatus = {}
@@ -660,15 +665,14 @@ function LspHeirlineStatus:get_spinner()
     return self.spinner[math.floor(fps * second) % #self.spinner + 1]
 end
 
-function LspHeirlineStatus:set_status(bufnr, client_id, status)
+function LspHeirlineStatus:get_buffer(bufnr)
     self.buffer[bufnr] = self.buffer[bufnr] or {
         last_updated_at = 0,
         next_force_update = true,
         cache = "unavailable",
         progress = {}
     }
-
-    self.buffer[bufnr].progress[client_id] = status
+    return self.buffer[bufnr]
 end
 
 function LspHeirlineStatus:force_reeval(bufnr)
@@ -691,12 +695,12 @@ function LspHeirlineStatus:format(bufnr)
 
     local this_buf = self.buffer[bufnr]
     local now_in_seconds = vim.uv.hrtime() / 1e9
-    if this_buf.next_force_update or this_buf.last_updatesd_at + self.update_interval < now_in_seconds then
+    if this_buf.next_force_update or this_buf.last_updated_at + self.update_interval < now_in_seconds then
         local status = ""
         for _, item in pairs(this_buf.progress) do
             status = status .. " " .. self.formatter(self:get_spinner(), item)
         end
-        this_buf.last_updatesd_at = now_in_seconds
+        this_buf.last_updated_at = now_in_seconds
         this_buf.next_force_update = false
         this_buf.cache = status
     end
@@ -756,12 +760,6 @@ function LspHeirlineStatus:new(_args)
     return instance
 end
 
----@class LspProgressInfo
----@field kind string?
----@field message string?
----@field percentage integer?
----@field title string?
-
 ---@param opt {formatter: fun(spinner: string, info: LspProgressInfo): string|nil, spinner: string[]|nil, update_interval: number}?
 ---@return table
 M.lsp = function(opt)
@@ -779,35 +777,23 @@ M.lsp = function(opt)
             local client_id, params = event.data.client_id, event.data.params
             local client = vim.lsp.get_client_by_id(event.data.client_id)
 
-            assert(client ~= nil, "error implementation in heirline")
-            if client then
-                ---@type nil|{ token: integer, value: LspProgressInfo? }
-                local prog = client.progress:pop()
-                client.progress:clear()
-                if params then
-                    local kind = params.value.kind
-                    if kind == "begin" or kind == "report" then
-                        status:keep_drawing()
-                    elseif kind == "end" then
-                        status:stop_drawing()
-                        status:force_reeval(event.buf)
-                    end
-                end
-                status.buffer[event.buf].progress[client_id] = { name = client.name, info = prog and prog.value }
+            if not client then
+                return
             end
-        end,
-        group = _augroup
-    })
 
-    vim.api.nvim_create_autocmd("LspAttach", {
-        ---@param event { data: { client_id: integer } }
-        callback = function(event)
-            status.buffer[event.buf] = status.buffer[event.buf] or {
-                last_updated_at = false,
-                next_force_update = true,
-                cache = "unavailable",
-                progress = {}
-            }
+            ---@type nil|{ token: integer, value: LspProgressInfo? }
+            local prog = client.progress:pop()
+            client.progress:clear()
+            if params then
+                local kind = params.value.kind
+                if kind == "begin" or kind == "report" then
+                    status:keep_drawing()
+                elseif kind == "end" then
+                    status:stop_drawing()
+                    status:force_reeval(event.buf)
+                end
+            end
+            status:get_buffer(event.buf).progress[client_id] = { name = client.name, info = prog and prog.value }
         end,
         group = _augroup
     })

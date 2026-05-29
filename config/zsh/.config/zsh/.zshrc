@@ -45,6 +45,7 @@ fpath+=(
     "$ZDOTDIR/completions"
 )
 
+source "$ZDOTDIR/env.zsh"
 source "$ZDOTDIR/scripts.zsh" # custom shell scripts
 source "$ZDOTDIR/plugins.zsh" # plugins
 source "$ZDOTDIR/bindkey.zsh" # keybindings

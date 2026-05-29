@@ -3,7 +3,7 @@ return {
     priority = 1000,
     lazy = false,
     config = function()
-        require("snacks").setup(require("plugins.config.snacks"))
+        require("plugins.config.snacks").setup()
 
         local pick = Snacks.picker
 

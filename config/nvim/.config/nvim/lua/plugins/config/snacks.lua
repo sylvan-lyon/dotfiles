@@ -1,5 +1,8 @@
 ---@type snacks.animate.Config
-local animate = nil
+local animate = {
+    duration = 20,
+    easing = "inOutCirc"
+}
 
 ---@type snacks.bigfile.Config
 local bigfile = { enabled = true }
@@ -113,6 +116,7 @@ local indent = {
         only_scope = false,
         only_current = false,
     },
+    animate = { easing = "inOutCirc" },
     scope = {
         enabled = true,
         char = "┆",
@@ -181,7 +185,7 @@ local scratch = {
 ---@type snacks.scroll.Config
 local scroll = {
     enabled = true,
-    animate = {},
+    animate = { easing = "inOutCirc" },
     animate_repeat = {},
 }
 
@@ -200,25 +204,28 @@ local toggle = {
 }
 
 return {
-    animate = animate,
-    bigfile = bigfile,
-    dashboard = dashboard,
-    explorer = explorer,
-    gh = gh,
-    gitbrowse = git_browse,
-    image = image,
-    indent = indent,
-    input = input,
-    lazygit = lazigit,
-    notifier = notifier,
-    picker = picker,
-    profiler = profiler,
-    quickfile = quickfile,
-    scope = scope,
-    scratch = scratch,
-    scroll = scroll,
-    statuscolumn = { enabled = true },
-    terminal = terminal,
-    toggle = toggle,
-    words = { enabled = true },
+    setup = function()
+        require("snacks").setup({
+            animate = animate,
+            bigfile = bigfile,
+            dashboard = dashboard,
+            explorer = explorer,
+            gh = gh,
+            gitbrowse = git_browse,
+            image = image,
+            indent = indent,
+            input = input,
+            lazygit = lazigit,
+            notifier = notifier,
+            picker = picker,
+            profiler = profiler,
+            quickfile = quickfile,
+            scope = scope,
+            scratch = scratch,
+            scroll = scroll,
+            statuscolumn = { enabled = true },
+            terminal = terminal,
+            toggle = toggle,
+        })
+    end
 }
