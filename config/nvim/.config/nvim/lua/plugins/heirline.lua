@@ -34,14 +34,13 @@ return {
             winbar = {
                 {
                     lib.fill,
-                    lib.buffer_type,
                     lib.file_path_block,
                 }
             },
             opts = {
                 disable_winbar_cb = function(args)
                     return conditions.buffer_matches({
-                        buftype = { "nofile", "prompt", "help", "quickfix", "term" },
+                        buftype = { "nofile", "prompt", "quickfix", "term" },
                     }, args.buf)
                 end
             },

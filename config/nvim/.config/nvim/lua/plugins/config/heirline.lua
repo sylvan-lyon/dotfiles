@@ -512,19 +512,13 @@ M.file_path_block = {
             end
 
             if self.kind == BufTypeKind.normal or self.kind == BufTypeKind.help then
-                local raw = vim.api.nvim_buf_get_name(self.bufnr)
-                local new_file_name
-                if self.kind == BufTypeKind.normal then
-                    new_file_name = vim.fn.fnamemodify(raw, ":~:.")
+                local path = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(self.bufnr), ":~:.")
+                if path == "" then
+                    path = "[NO NAME]"
                 else
-                    new_file_name = vim.fn.fnamemodify(raw, ":t")
+                    path = require("utils").is_windows and path:gsub("\\", "/") or path
                 end
-                if new_file_name == "" then
-                    new_file_name = "[NO NAME]"
-                else
-                    new_file_name = require("utils").is_windows and new_file_name:gsub("\\", "/") or new_file_name
-                end
-                self.file_path = new_file_name
+                self.file_path = path
             end
         end,
         file_icon,
@@ -628,9 +622,8 @@ M.dap_buffers = {
 ---@field spinner string[]
 ---@field formatter fun(self, info: {name: string, info: LspProgressInfo?}): string
 ---@field update_interval number
----@field buffer table<integer, {last_updatesd_at: number, next_force_update: boolean, cache: string, progress: table<integer, {info: LspProgressInfo?, name: string}>}>
+---@field buffer table<integer, {last_updatesd_at: number, next_force_update: boolean, cache: string, progress: table<integer, {info: LspProgressInfo?, name: string}>}> per buffer status
 ---@field timer uv.uv_timer_t?
----@field timer_started boolean
 ---@field keep_drawing fun(self)
 ---@field stop_drawing fun(self)
 ---@field get_spinner fun(self): string
@@ -640,15 +633,11 @@ M.dap_buffers = {
 local LspHeirlineStatus = {}
 
 function LspHeirlineStatus:keep_drawing()
-    if self.timer then
-        if not self.timer_started then
-            self.timer:start(0, 40,
-                vim.schedule_wrap(function()
-                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
-                end))
-            self.timer_started = true
-        end
-    else
+    if self.timer and not self.timer:is_active() then
+        self.timer:start(0, 40, vim.schedule_wrap(function()
+            vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
+        end))
+    elseif not self.timer then
         vim.schedule(function()
             vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
         end)
@@ -658,7 +647,6 @@ end
 function LspHeirlineStatus:stop_drawing()
     if self.timer and self.timer:is_active() then
         self.timer:stop()
-        self.timer_started = false
     end
     vim.schedule(function()
         vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame" })
@@ -759,7 +747,6 @@ function LspHeirlineStatus:new(_args)
         update_interval = args.update_interval or 0.04,
         buffer = {},
         timer = vim.uv.new_timer(),
-        timer_started = false,
         last_updated_at = {},
         next_force_update = true,
         per_buffer_cache = {}
@@ -778,82 +765,74 @@ end
 ---@param opt {formatter: fun(spinner: string, info: LspProgressInfo): string|nil, spinner: string[]|nil, update_interval: number}?
 ---@return table
 M.lsp = function(opt)
-    local _augroup = vim.api.nvim_create_augroup("alias for lsp status events", { clear = true })
+    local status = LspHeirlineStatus:new(opt)
+
+    local _augroup = vim.api.nvim_create_augroup("autocmds to manage lsp status", { clear = true })
     vim.api.nvim_set_hl(0, "HeirlineLspName", { fg = colors.dimmed_white, bold = true, dim = true })
     vim.api.nvim_set_hl(0, "HeirlineLspProg", { fg = colors.dimmed_white, dim = true, italic = true })
 
-    vim.api.nvim_create_autocmd(
-        { "LspAttach", "LspDetach", "LspProgress" },
-        {
-            desc = [[alias for event { "LspAttach", "LspDetach", "LspProgress" }]],
-            group = _augroup,
+    vim.api.nvim_create_autocmd("LspProgress", {
+        ---@param event { data: { client_id: integer, params: lsp.ProgressParams } }
+        callback = function(event)
+            M.schedule_redraw()
 
-            ---@param event { data: { client_id: integer, params: lsp.ProgressParams|nil } }
-            callback = function(event)
-                vim.schedule(function()
-                    vim.api.nvim_exec_autocmds("User", { pattern = "LspUpdateOrNextFrame", data = event.data })
-                end)
+            local client_id, params = event.data.client_id, event.data.params
+            local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+            assert(client ~= nil, "error implementation in heirline")
+            if client then
+                ---@type nil|{ token: integer, value: LspProgressInfo? }
+                local prog = client.progress:pop()
+                client.progress:clear()
+                if params then
+                    local kind = params.value.kind
+                    if kind == "begin" or kind == "report" then
+                        status:keep_drawing()
+                    elseif kind == "end" then
+                        status:stop_drawing()
+                        status:force_reeval(event.buf)
+                    end
+                end
+                status.buffer[event.buf].progress[client_id] = { name = client.name, info = prog and prog.value }
             end
-        }
-    )
+        end,
+        group = _augroup
+    })
+
+    vim.api.nvim_create_autocmd("LspAttach", {
+        ---@param event { data: { client_id: integer } }
+        callback = function(event)
+            status.buffer[event.buf] = status.buffer[event.buf] or {
+                last_updated_at = false,
+                next_force_update = true,
+                cache = "unavailable",
+                progress = {}
+            }
+        end,
+        group = _augroup
+    })
+
+    vim.api.nvim_create_autocmd("LspDetach", {
+        ---@param event { data: { client_id: integer } }
+        callback = function(event)
+            status.buffer[event.buf].progress[event.data.client_id] = nil
+        end,
+        group = _augroup
+    })
+
+    vim.api.nvim_create_autocmd("BufDelete", {
+        callback = function(event)
+            status.buffer[event.buf] = nil
+        end,
+        group = _augroup
+    })
 
     return {
-        ---@param self {inner: LspHeirlineStatus}
-        ---@return boolean
-        condition = function(self)
-            self.inner = self.inner or LspHeirlineStatus:new(opt)
-            return conditions.lsp_attached()
+        condition = conditions.lsp_attached,
+        provider = function()
+            return status:format(vim.api.nvim_get_current_buf())
         end,
-        ---@param self {inner: LspHeirlineStatus}
-        ---@return string
-        provider = function(self)
-            return self.inner:format(vim.api.nvim_get_current_buf())
-        end,
-        static = {
-            spinner = {
-                " ", -- new
-                " ", " ", " ", " ", " ", " ", -- waxing crescent
-                " ", -- first quarter
-                " ", " ", " ", " ", " ", " ", -- waxing gibbous
-                " ", -- full
-                " ", " ", " ", " ", " ", " ", -- waning gibbous
-                " ", -- last quarter
-                " ", " ", " ", " ", " ", " ", -- waning crescent
-            },
-        },
-        update = {
-            "User",
-            pattern = "LspUpdateOrNextFrame",
-            ---@param self {inner: LspHeirlineStatus}
-            ---@param args { buf: integer, data: { client_id: integer, params: lsp.ProgressParams? }? }
-            callback = function(self, args)
-                M.schedule_redraw()
-                if not args.data then
-                    return
-                end
-
-                local client_id, params = args.data.client_id, args.data.params
-                local client = vim.lsp.get_client_by_id(args.data.client_id)
-
-                if client then
-                    ---@type nil|{ token: integer, value: LspProgressInfo? }
-                    local prog = client.progress:pop()
-                    client.progress:clear()
-                    if params then
-                        local kind = params.value.kind
-                        if kind == "begin" or kind == "report" then
-                            self.inner:keep_drawing()
-                        elseif kind == "end" then
-                            self.inner:stop_drawing()
-                            self.inner:force_reeval(args.buf)
-                        end
-                    end
-                    self.inner:set_status(args.buf, client_id, { name = client.name, info = prog and prog.value })
-                else
-                    self.inner:set_status(args.buf, client_id, nil)
-                end
-            end
-        },
+        update = true,
     }
 end
 
