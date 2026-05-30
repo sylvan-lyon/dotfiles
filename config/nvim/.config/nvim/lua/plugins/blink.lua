@@ -54,6 +54,7 @@ return {
                         min_width = 25,
                         max_height = 16,
                         auto_show = true,
+                        -- draw = { treesitter = { "lsp" } },
                     },
                     accept = { auto_brackets = { enabled = true } },
                     list = { selection = { preselect = true, auto_insert = false } },
@@ -72,9 +73,11 @@ return {
                         show_with_menu = true,
                         show_without_menu = true,
                     },
+                    trigger = { show_on_trigger_character = true },
                 },
 
                 signature = { enabled = true },
+
 
                 cmdline = {
                     completion = {

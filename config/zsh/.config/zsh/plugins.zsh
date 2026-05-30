@@ -11,17 +11,28 @@ zplugin_install() {
 }
 
 zplugin_load() {
-    local plugin="${ZPLUGIN_DIR}/${1}/${1:t}.plugin.zsh"
-    if [[ ! -f ${plugin} ]]; then
+    local plugin_entry="${ZPLUGIN_DIR}/${1}/${1:t}.plugin.zsh"
+    if [[ ! -f ${plugin_entry} ]]; then
         zplugin_install $1 || return 1;
     fi
-    source "${plugin}"
+    source "${plugin_entry}"
 }
 
 zplugin_update() {
     for plugin in "$ZPLUGIN_DIR"/*/*; do
         echo "Updating ${plugin:t2}..."
         git -C "$plugin" pull --ff-only
+    done
+}
+
+zplugin_remove() {
+    for plugin_spec in $*; do
+        local plugin_path="${ZPLUGIN_DIR}/${plugin_spec}"
+        if [[ ! -d $plugin_path ]]; then
+            echo "${plugin_spec} is not installed, so nothing happened"
+        else
+            rm -rf $plugin_path
+        fi
     done
 }
 
