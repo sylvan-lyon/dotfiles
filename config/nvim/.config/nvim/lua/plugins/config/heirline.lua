@@ -676,24 +676,11 @@ function LspHeirlineStatus:get_buffer(bufnr)
 end
 
 function LspHeirlineStatus:force_reeval(bufnr)
-    self.buffer[bufnr] = self.buffer[bufnr] or {
-        last_updated_at = 0,
-        next_force_update = true,
-        cache = "unavailable",
-        progress = {}
-    }
-    self.buffer[bufnr].next_force_update = true
+    self:get_buffer(bufnr).next_force_update = true
 end
 
 function LspHeirlineStatus:format(bufnr)
-    self.buffer[bufnr] = self.buffer[bufnr] or {
-        last_updated_at = 0,
-        next_force_update = true,
-        cache = "unavailable",
-        progress = {}
-    }
-
-    local this_buf = self.buffer[bufnr]
+    local this_buf = self:get_buffer(bufnr)
     local now_in_seconds = vim.uv.hrtime() / 1e9
     if this_buf.next_force_update or this_buf.last_updated_at + self.update_interval < now_in_seconds then
         local status = ""
@@ -801,7 +788,7 @@ M.lsp = function(opt)
     vim.api.nvim_create_autocmd("LspDetach", {
         ---@param event { data: { client_id: integer } }
         callback = function(event)
-            status.buffer[event.buf].progress[event.data.client_id] = nil
+            status:get_buffer(event.buf).progress[event.data.client_id] = nil
         end,
         group = _augroup
     })
