@@ -627,7 +627,7 @@ M.dap_buffers = {
 ---@class LspHeirlineStatus
 ---@field spinner string[]
 ---@field formatter fun(self, info: {name: string, info: LspProgressInfo?}): string
----@field update_interval number
+---@field update_interval integer
 ---@field buffer table<integer, {last_updated_at: number, next_force_update: boolean, cache: string, progress: table<integer, {info: LspProgressInfo?, name: string}>}> per buffer status
 ---@field timer uv.uv_timer_t?
 ---@field keep_drawing fun(self)
@@ -666,6 +666,10 @@ function LspHeirlineStatus:get_spinner()
 end
 
 function LspHeirlineStatus:get_buffer(bufnr)
+    if self.buffer[bufnr] then
+        return self.buffer[bufnr]
+    end
+
     self.buffer[bufnr] = self.buffer[bufnr] or {
         last_updated_at = 0,
         next_force_update = true,
@@ -681,18 +685,18 @@ end
 
 function LspHeirlineStatus:format(bufnr)
     local this_buf = self:get_buffer(bufnr)
-    local now_in_seconds = vim.uv.hrtime() / 1e9
-    if this_buf.next_force_update or this_buf.last_updated_at + self.update_interval < now_in_seconds then
+    local now = vim.uv.hrtime()
+
+    if this_buf.next_force_update or this_buf.last_updated_at + self.update_interval < now then
         local status = ""
         for _, item in pairs(this_buf.progress) do
             status = status .. " " .. self.formatter(self:get_spinner(), item)
         end
-        this_buf.last_updated_at = now_in_seconds
+        this_buf.last_updated_at = now
         this_buf.next_force_update = false
         this_buf.cache = status
     end
 
-    -- vim.notify("eval" .. " " .. vim.uv.hrtime() / 1e9, vim.log.levels.TRACE, { id = "eval" })
     return this_buf.cache
 end
 
@@ -735,7 +739,7 @@ function LspHeirlineStatus:new(_args)
             " ", -- last quarter
             " ", " ", " ", " ", " ", " ", -- waning crescent
         },
-        update_interval = args.update_interval or 0.04,
+        update_interval = math.floor((args.update_interval or 0.04) * 1e9),
         buffer = {},
         timer = vim.uv.new_timer(),
         last_updated_at = {},
