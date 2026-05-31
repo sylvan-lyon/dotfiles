@@ -5,8 +5,20 @@ local config = wezterm.config_builder()
 
 
 ------------ 设置默认的启动shell ----------------
-config.default_prog = { "nu" }
-config.wsl_domains = domains.wsl_domains
+if wezterm.target_triple:find("windows") then
+    config.default_prog = { "nu" }
+    config.wsl_domains = domains.wsl_domains
+    wezterm.on("gui-startup", function(cmd)
+        local screen = wezterm.gui.screens().active
+        local _, _, window = wezterm.mux.spawn_window(cmd or {})
+        local dimension = window:gui_window():get_dimensions()
+        local width, height = dimension.pixel_width, dimension.pixel_height
+        window:gui_window():set_position(
+            (screen.width - width) / 2,
+            (screen.height - height) / 2
+        )
+    end)
+end
 config.disable_default_key_bindings = true
 config.disable_default_mouse_bindings = true
 
@@ -23,7 +35,6 @@ config.status_update_interval = 16
 config.initial_cols = 140
 config.initial_rows = 40
 
-require("events.gui_startup")
 require("style").apply_to(config)
 require("bindings").apply_all_to(config)
 require("events.format_tab_title")
