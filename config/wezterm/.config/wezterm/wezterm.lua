@@ -5,7 +5,7 @@ local config = wezterm.config_builder()
 
 
 ------------ 设置默认的启动shell ----------------
-if wezterm.target_triple:find("windows") then
+if require("utils").is_windows() then
     config.default_prog = { "nu" }
     config.wsl_domains = domains.wsl_domains
     wezterm.on("gui-startup", function(cmd)

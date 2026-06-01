@@ -62,6 +62,10 @@ M.apply_to = function(config)
     config.cursor_blink_ease_in = "EaseOut"
     config.cursor_blink_ease_out = "EaseOut"
     config.cursor_blink_rate = 618
+
+    if not require("utils").is_windows() then
+        config.window_background_opacity = 0.85
+    end
 end
 
 return M

@@ -8,5 +8,9 @@ return {
         table.move(t1, 1, #t1, 1, result)
         table.move(t2, 1, #t2, #t1 + 1, result)
         return result
+    end,
+
+    is_windows = function ()
+        return require("wezterm").target_triple:find("windows") and true or false
     end
 }
