@@ -34,7 +34,7 @@ M.apply_to = function(config)
     config.color_scheme = 'custom_catppuccin'
 
     -------------------- 窗口样式 --------------------
-    config.window_decorations = "RESIZE"
+    config.window_decorations = "NONE"
 
     --------------------- tab 栏 ---------------------
     config.use_fancy_tab_bar = false

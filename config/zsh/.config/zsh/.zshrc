@@ -32,13 +32,6 @@ eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(fzf --zsh)"
 
-# aliases
-alias ls='eza'
-alias ll='eza -l'
-alias tree='eza --tree'
-alias docker='podman'
-alias cat='bat --plain'
-
 
 # custom function path, we add our own completions
 fpath+=(
@@ -46,6 +39,7 @@ fpath+=(
 )
 
 source "$ZDOTDIR/env.zsh"
+source "$ZDOTDIR/aliases.zsh" # aliases
 source "$ZDOTDIR/scripts.zsh" # custom shell scripts
 source "$ZDOTDIR/plugins.zsh" # plugins
 source "$ZDOTDIR/bindkey.zsh" # keybindings
